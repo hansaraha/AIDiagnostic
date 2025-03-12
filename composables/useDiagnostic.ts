@@ -1,60 +1,198 @@
 import { ref } from 'vue';
-import type { UserData, DiagnosticResult, CourseRecommendation, ServiceRecommendation } from '~/types/questionnaire';
+import type { UserData, DiagnosticResult } from '~/types/questionnaire';
+import useApiService from './useApiService';
 
 export default function useDiagnostic(userData: Ref<UserData>) {
   const isAnalyzing = ref(false);
+  const apiService = useApiService();
 
-  // Function to analyze the user profile and generate recommendations
+  // Función para analizar el perfil y generar recomendaciones
   const analyzeProfile = async () => {
     isAnalyzing.value = true;
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    // Generate the diagnostic result based on user data
-    const diagnosticResult = generateDiagnosticResult();
+    console.log('Iniciando análisis de perfil');
     
-    // Set the result to userData
-    userData.value.diagnostic = diagnosticResult;
+    // En una SPA, accedemos a la configuración a través de useRuntimeConfig
+    const config = useRuntimeConfig();
+    const useMockApi = config.public.useMockApi === 'true';
     
-    isAnalyzing.value = false;
+    console.log('Modo mock API:', useMockApi);
     
-    return diagnosticResult;
+    try {
+      // Verificar si debemos usar datos mock según la configuración
+      if (useMockApi) {
+        console.log('Usando datos mock para el diagnóstico');
+        // En modo mock, simulamos una demora
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Generamos resultados locales
+        const diagnosticResult = await generateLocalDiagnosticResult();
+        console.log('Diagnóstico mock generado:', diagnosticResult);
+        userData.value.diagnostic = diagnosticResult;
+        return diagnosticResult;
+      } else {
+        console.log('Enviando datos reales a la API para diagnóstico');
+        // En producción, utilizamos el servicio de API para enviar los datos a n8n
+        const result = await apiService.submitQuestionnaire(userData.value);
+        
+        console.log('Diagnóstico recibido de API:', result);
+        
+        // Verificamos que el resultado contenga los datos necesarios
+        if (!result.courses || !result.services) {
+          console.warn('El diagnóstico no contiene cursos o servicios');
+        }
+        
+        // Actualizamos el estado con los resultados
+        userData.value.diagnostic = result;
+        
+        console.log('Estado de usuario actualizado con diagnóstico');
+        
+        return result;
+      }
+    } catch (error) {
+      console.error('Error al analizar perfil:', error);
+      // En caso de error, generamos un diagnóstico local como fallback
+      console.log('Generando diagnóstico fallback debido a error');
+      const fallbackDiagnostic = await generateLocalDiagnosticResult();
+      userData.value.diagnostic = fallbackDiagnostic;
+      return fallbackDiagnostic;
+    } finally {
+      isAnalyzing.value = false;
+      console.log('Análisis de perfil completado');
+    }
   };
 
-  // Function to generate diagnostic result based on user answers
-  const generateDiagnosticResult = (): DiagnosticResult => {
-    // Default values
-    let professionalProfile = 'Innovador Tecnológico';
-    let strengths = ['Creatividad', 'Adaptabilidad', 'Pensamiento Crítico'];
-    let recommendations = [
-      'Explora nuevas herramientas de IA para mejorar tus procesos.',
-      'Considera colaborar con otros profesionales en proyectos innovadores.',
-      'Mantente al día con las últimas tendencias tecnológicas.'
+ // Función local para generar el diagnóstico (usado como fallback o en modo mock)
+ const generateLocalDiagnosticResult = async (): Promise<DiagnosticResult> => {
+  console.log('Generando diagnóstico local');
+  try {
+    // Intentamos obtener cursos y servicios reales incluso en modo mock
+    console.log('Obteniendo cursos y servicios para diagnóstico local');
+    const { courses, services } = await apiService.getCoursesAndServices();
+    console.log('Cursos obtenidos para diagnóstico local:', courses);
+    console.log('Servicios obtenidos para diagnóstico local:', services);
+    
+    // Si obtuvimos datos reales, los usamos
+    if (courses.length > 0 && services.length > 0) {
+      console.log('Usando datos reales para diagnóstico local');
+      // Seleccionamos algunos cursos y servicios según el perfil
+      const selectedCourses = courses.slice(0, Math.min(2, courses.length));
+      const selectedServices = services.slice(0, Math.min(1, services.length));
+      
+      console.log('Cursos seleccionados para diagnóstico local:', selectedCourses);
+      console.log('Servicios seleccionados para diagnóstico local:', selectedServices);
+      
+      const result = {
+        professionalProfile: determineProfile(),
+        strengths: determineStrengths(),
+        recommendations: determineRecommendations(),
+        courses: selectedCourses,
+        services: selectedServices
+      };
+      
+      console.log('Diagnóstico local generado con datos reales:', result);
+      return result;
+    }
+  } catch (error) {
+    console.error('Error al obtener cursos y servicios para diagnóstico local:', error);
+    // Continuamos con datos mock si hay un error
+  }
+  
+  console.log('Generando diagnóstico local con datos dummy');
+  
+  // Si no se pudieron obtener datos reales, usamos datos dummy
+  const dummyCourses = generateDummyCourses();
+  const dummyServices = generateDummyServices();
+  
+  const result = {
+    professionalProfile: determineProfile(),
+    strengths: determineStrengths(),
+    recommendations: determineRecommendations(),
+    courses: dummyCourses,
+    services: dummyServices
+  };
+  
+  console.log('Diagnóstico local con datos dummy:', result);
+  return result as DiagnosticResult;
+};
+
+  // Determinar el perfil profesional basado en las respuestas
+  const determineProfile = (): string => {
+    // Lógica simple basada en el tipo de trabajador
+    if (userData.value.workStatus === 'freelancer') {
+      return 'Profesional Independiente Innovador';
+    } else if (userData.value.workStatus === 'business_owner') {
+      return 'Líder Empresarial Tecnológico';
+    } else {
+      return 'Profesional Corporativo Adaptable';
+    }
+  };
+
+  // Determinar fortalezas basadas en las respuestas
+  const determineStrengths = (): string[] => {
+    const strengths = ['Adaptabilidad', 'Pensamiento analítico'];
+    
+    // Añadir fortalezas basadas en respuestas específicas
+    if (userData.value.workStatus === 'freelancer') {
+      strengths.push('Autonomía', 'Versatilidad');
+      
+      // Añadir basado en experiencia
+      if (userData.value.freelancer?.experience === 'more_than_6') {
+        strengths.push('Experiencia consolidada');
+      }
+      
+      // Añadir basado en número de clientes
+      if (userData.value.freelancer?.clientsPerMonth === 'more_than_10') {
+        strengths.push('Gestión de múltiples clientes');
+      }
+    } else if (userData.value.workStatus === 'business_owner') {
+      strengths.push('Liderazgo', 'Visión estratégica');
+      
+      // Añadir basado en tamaño de empresa
+      if (userData.value.businessOwner?.employeeCount === '50_plus') {
+        strengths.push('Gestión de equipos grandes');
+      }
+    }
+    
+    // Añadir basado en inversión en IA
+    if (userData.value.commonAI?.investment === 'over_100') {
+      strengths.push('Inversión en tecnología');
+    }
+    
+    return strengths;
+  };
+
+  // Determinar recomendaciones basadas en las respuestas
+  const determineRecommendations = (): string[] => {
+    const recommendations = [
+      'Integrar herramientas de IA en tu flujo de trabajo',
+      'Mantente actualizado con las últimas tendencias en IA'
     ];
     
-    // Generate personalized courses based on user profile
-    const courses = generateCourseRecommendations();
+    // Añadir recomendaciones específicas según el perfil
+    if (userData.value.workStatus === 'freelancer') {
+      recommendations.push(
+        'Considera automatizar tareas repetitivas para aumentar tu productividad',
+        'Explora herramientas de IA que te ayuden a mejorar tus propuestas comerciales'
+      );
+    } else if (userData.value.workStatus === 'business_owner') {
+      recommendations.push(
+        'Implementa soluciones de IA para optimizar procesos en tu empresa',
+        'Considera formar a tu equipo en el uso efectivo de herramientas de IA'
+      );
+    } else {
+      recommendations.push(
+        'Utiliza herramientas de IA para destacar en tu entorno laboral',
+        'Desarrolla habilidades en IA que complementen tu perfil profesional'
+      );
+    }
     
-    // Generate service recommendations
-    const services = generateServiceRecommendations();
-
-    // Return the compiled result
-    return {
-      professionalProfile,
-      strengths,
-      recommendations,
-      courses,
-      services
-    };
+    return recommendations;
   };
 
-  // Generate course recommendations based on user profile
-  const generateCourseRecommendations = (): CourseRecommendation[] => {
-    let courses: CourseRecommendation[] = [];
-    
+  // Generar cursos dummy para fallback
+  const generateDummyCourses = () => {
     if (userData.value.workStatus === 'freelancer') {
-      courses = [
+      return [
         {
           title: 'Automatización Freelance con IA',
           description: 'Aprende a automatizar tareas repetitivas para aumentar tu productividad como freelancer.',
@@ -68,17 +206,10 @@ export default function useDiagnostic(userData: Ref<UserData>) {
           difficulty: 'principiante',
           price: '69€',
           link: '#propuestas-comerciales'
-        },
-        {
-          title: 'Optimización SEO con IA',
-          description: 'Mejora la visibilidad de tu portafolio y contenidos con las últimas técnicas de SEO potenciadas por IA.',
-          difficulty: 'avanzado',
-          price: '129€',
-          link: '#seo-con-ia'
         }
       ];
     } else if (userData.value.workStatus === 'business_owner') {
-      courses = [
+      return [
         {
           title: 'IA para Emprendedores',
           description: 'Estrategias para implementar IA en tu negocio y obtener ventajas competitivas.',
@@ -92,18 +223,11 @@ export default function useDiagnostic(userData: Ref<UserData>) {
           difficulty: 'avanzado',
           price: '199€',
           link: '#automatizacion-procesos'
-        },
-        {
-          title: 'IA para Marketing y Ventas',
-          description: 'Aprovecha el poder de la IA para optimizar tus estrategias de marketing y aumentar las conversiones.',
-          difficulty: 'principiante',
-          price: '99€',
-          link: '#ia-marketing-ventas'
         }
       ];
     } else {
-      // For employees or others
-      courses = [
+      // Para empleados u otros
+      return [
         {
           title: 'IA para Productividad Personal',
           description: 'Optimiza tu trabajo diario y destaca en tu empresa con herramientas de IA.',
@@ -117,74 +241,34 @@ export default function useDiagnostic(userData: Ref<UserData>) {
           difficulty: 'intermedio',
           price: '109€',
           link: '#automatizacion-informes'
-        },
-        {
-          title: 'Desarrollo Profesional con IA',
-          description: 'Prepárate para el futuro laboral con habilidades de IA que serán indispensables en los próximos años.',
-          difficulty: 'avanzado',
-          price: '159€',
-          link: '#desarrollo-profesional-ia'
         }
       ];
     }
-    
-    return courses;
   };
 
-  // Generate service recommendations
-  const generateServiceRecommendations = (): ServiceRecommendation[] => {
-    let services: ServiceRecommendation[] = [
+  // Generar servicios dummy para fallback
+  const generateDummyServices = () => {
+    return [
       {
         title: 'Asistente Virtual IA',
         description: 'Un asistente virtual personalizado que maneja tus emails, agenda y tareas administrativas.',
         type: 'automatización',
         price: 'Desde 49€/mes',
         link: '#asistente-virtual'
-      },
-      {
-        title: 'Creación Automática de Contenido',
-        description: 'Genera contenido de alta calidad para blogs, redes sociales y emails en una fracción del tiempo.',
-        type: 'creatividad',
-        price: 'Desde 39€/mes',
-        link: '#creacion-contenido'
-      },
-      {
-        title: 'Dashboard Analítico Personalizado',
-        description: 'Visualiza todos tus datos importantes en un solo lugar con actualizaciones en tiempo real.',
-        type: 'análisis',
-        price: 'Desde 79€/mes',
-        link: '#dashboard-analitico'
       }
     ];
-    
-    // Additional customization based on AI usage
-    if (userData.value.commonAI?.investment === 'over_100') {
-      // For users who already invest a lot in AI
-      services.push({
-        title: 'Consultoría en Integración Avanzada de IA',
-        description: 'Optimiza tu inversión en IA con un plan personalizado para integrar todas tus herramientas.',
-        type: 'productividad',
-        price: 'Desde 299€/sesión',
-        link: '#consultoria-ia'
-      });
-    }
-    
-    if (userData.value.commonAI?.projectImpact === 'positive') {
-      // For users who are already seeing positive results with AI
-      services.push({
-        title: 'Escalado de Soluciones IA',
-        description: 'Lleva tus éxitos con IA al siguiente nivel con soluciones escalables para proyectos más grandes.',
-        type: 'automatización',
-        price: 'Desde 199€/mes',
-        link: '#escalado-ia'
-      });
-    }
-    
-    return services;
+  };
+
+  // Función para registrar clics en recomendaciones (para futuras implementaciones)
+  const trackRecommendationClick = async (itemId: string, itemType: 'course' | 'service') => {
+    console.log(`Clic en ${itemType}: ${itemId}`);
+    // Aquí se podría implementar tracking real en el futuro
   };
 
   return {
-    isAnalyzing,
-    analyzeProfile
+    isLoading: computed(() => isAnalyzing.value || apiService.isLoading.value),
+    error: apiService.error,
+    analyzeProfile,
+    trackRecommendationClick
   };
 }
