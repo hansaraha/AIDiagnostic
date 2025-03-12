@@ -123,7 +123,7 @@ export default function useQuestionnaire() {
     return 'results';
   };
   
-  // Function to move to the next step
+  // Function to move to the next step - SIMPLIFIED VERSION WITHOUT VALIDATION
   const nextStep = () => {
     if (currentStep.value === 'tip') {
       // After a tip is shown, continue to the next question
@@ -165,7 +165,7 @@ export default function useQuestionnaire() {
         }
       }
       
-      // Proceed to next step
+      // Simply proceed to next step without validation
       currentStep.value = getNextStep(currentStep.value);
       updateProgress();
     }

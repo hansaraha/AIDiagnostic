@@ -14,6 +14,11 @@
         DIAGNÓSTICO IA
       </h1>
 
+      <!-- Error message global -->
+      <div v-if="validationError && !isStepValid" class="mb-4 p-3 bg-red-50 text-red-600 rounded-md max-w-2xl mx-auto">
+        {{ validationError }}
+      </div>
+
       <!-- Component selection based on current step -->
       <QuestionnaireStepWelcome
         v-if="currentStep === 'welcome'"
@@ -163,23 +168,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type {
-  UserData,
-  FreelancerServiceOption,
-  FreelancerExperienceOption,
-  FreelancerClientsOption,
-  FreelancerPlatformOption,
-  BusinessTypeOption,
-  BusinessSizeOption,
-  BusinessAgeOption,
-  BusinessAIPolicyOption,
-  AIFundingOption,
-  AIDisclosureOption,
-  AIInvestmentOption,
-  AIValuePropositionOption,
-  AIRateAdjustmentOption,
-  AIProjectImpactOption,
-} from "~/types/questionnaire";
+import type { UserData } from "~/types/questionnaire";
 
 // Use the composables (auto-imported by Nuxt)
 const {
@@ -191,11 +180,14 @@ const {
   currentQuestion,
   conversationalMessage,
   currentSection,
+  validationError,
+  isStepValid,
   nextStep,
   continueAfterMessage,
   restartQuestionnaire,
   getProfileDescription,
   isValidEmail,
+  validateCurrentStep
 } = useQuestionnaire();
 
 const {
@@ -320,7 +312,7 @@ const businessOtherType = computed({
   },
 });
 
-// Computed properties for v-model bindings with proper typing
+// Computed properties for v-model bindings with simplified typing
 // Freelancer properties
 const freelancerServices = computed<string[]>({
   get: () => userData.value.freelancer?.services || [],
@@ -330,9 +322,7 @@ const freelancerServices = computed<string[]>({
   },
 });
 
-const freelancerExperience = computed<
-  FreelancerExperienceOption["value"] | string
->({
+const freelancerExperience = computed<string>({
   get: () => userData.value.freelancer?.experience || "less_than_1",
   set: (value) => {
     const freelancer = ensureFreelancerData();
@@ -340,7 +330,7 @@ const freelancerExperience = computed<
   },
 });
 
-const freelancerClients = computed<FreelancerClientsOption["value"] | string>({
+const freelancerClients = computed<string>({
   get: () => userData.value.freelancer?.clientsPerMonth || "1_2",
   set: (value) => {
     const freelancer = ensureFreelancerData();
@@ -357,7 +347,7 @@ const freelancerPlatforms = computed<string[]>({
 });
 
 // Business owner properties
-const businessType = computed<BusinessTypeOption["value"] | string>({
+const businessType = computed<string>({
   get: () => userData.value.businessOwner?.businessType || "tech_startup",
   set: (value) => {
     const businessOwner = ensureBusinessOwnerData();
@@ -365,7 +355,7 @@ const businessType = computed<BusinessTypeOption["value"] | string>({
   },
 });
 
-const businessSize = computed<BusinessSizeOption["value"] | string>({
+const businessSize = computed<string>({
   get: () => userData.value.businessOwner?.employeeCount || "solo",
   set: (value) => {
     const businessOwner = ensureBusinessOwnerData();
@@ -373,7 +363,7 @@ const businessSize = computed<BusinessSizeOption["value"] | string>({
   },
 });
 
-const businessAge = computed<BusinessAgeOption["value"] | string>({
+const businessAge = computed<string>({
   get: () => userData.value.businessOwner?.foundingTime || "less_than_1",
   set: (value) => {
     const businessOwner = ensureBusinessOwnerData();
@@ -381,7 +371,7 @@ const businessAge = computed<BusinessAgeOption["value"] | string>({
   },
 });
 
-const businessAIPolicy = computed<BusinessAIPolicyOption["value"] | string>({
+const businessAIPolicy = computed<string>({
   get: () => userData.value.businessOwner?.aiPolicy || "not_considered",
   set: (value) => {
     const businessOwner = ensureBusinessOwnerData();
@@ -390,7 +380,7 @@ const businessAIPolicy = computed<BusinessAIPolicyOption["value"] | string>({
 });
 
 // AI-related properties
-const aiFunding = computed<AIFundingOption["value"] | string>({
+const aiFunding = computed<string>({
   get: () => userData.value.commonAI?.funding || "",
   set: (value) => {
     const commonAI = ensureCommonAIData();
@@ -398,7 +388,7 @@ const aiFunding = computed<AIFundingOption["value"] | string>({
   },
 });
 
-const aiDisclosure = computed<AIDisclosureOption["value"] | string>({
+const aiDisclosure = computed<string>({
   get: () => userData.value.commonAI?.disclosure || "",
   set: (value) => {
     const commonAI = ensureCommonAIData();
@@ -406,7 +396,7 @@ const aiDisclosure = computed<AIDisclosureOption["value"] | string>({
   },
 });
 
-const aiInvestment = computed<AIInvestmentOption["value"] | string>({
+const aiInvestment = computed<string>({
   get: () => userData.value.commonAI?.investment || "",
   set: (value) => {
     const commonAI = ensureCommonAIData();
@@ -414,17 +404,15 @@ const aiInvestment = computed<AIInvestmentOption["value"] | string>({
   },
 });
 
-const aiValueProposition = computed<AIValuePropositionOption["value"] | string>(
-  {
-    get: () => userData.value.commonAI?.valueProposition || "",
-    set: (value) => {
-      const commonAI = ensureCommonAIData();
-      commonAI.valueProposition = value as any;
-    },
-  }
-);
+const aiValueProposition = computed<string>({
+  get: () => userData.value.commonAI?.valueProposition || "",
+  set: (value) => {
+    const commonAI = ensureCommonAIData();
+    commonAI.valueProposition = value as any;
+  },
+});
 
-const aiRateAdjustment = computed<AIRateAdjustmentOption["value"] | string>({
+const aiRateAdjustment = computed<string>({
   get: () => userData.value.commonAI?.rateAdjustment || "",
   set: (value) => {
     const commonAI = ensureCommonAIData();
@@ -432,7 +420,7 @@ const aiRateAdjustment = computed<AIRateAdjustmentOption["value"] | string>({
   },
 });
 
-const aiProjectImpact = computed<AIProjectImpactOption["value"] | string>({
+const aiProjectImpact = computed<string>({
   get: () => userData.value.commonAI?.projectImpact || "",
   set: (value) => {
     const commonAI = ensureCommonAIData();
