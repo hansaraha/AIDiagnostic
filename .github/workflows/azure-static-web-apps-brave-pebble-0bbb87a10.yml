@@ -31,20 +31,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      - name: Build Nuxt 3 SPA
+      - name: Build for Azure Static Web Apps
         run: |
-          # Build the SPA
-          npm run build
+          # Use the exact command from the documentation
+          npx nuxi build --preset=azure
           
-          # Create index.html if it doesn't exist
-          if [ ! -f .output/public/index.html ]; then
-            echo "Creating index.html file"
-            cp dist/index.html .output/public/index.html 2>/dev/null || echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/_nuxt/entry.css"><script src="/_nuxt/entry.js" defer></script></head><body><div id="app"></div></body></html>' > .output/public/index.html
-          fi
-          
-          # Debug
-          echo "Contents of output directory:"
-          ls -la .output/public || echo "Output directory not found"
+          # Debug output
+          echo "Output files:"
+          ls -la .output/public/
           
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
@@ -58,18 +52,18 @@ jobs:
                return await coredemo.getIDToken()
            result-encoding: string
            
-      - name: Build And Deploy
+      - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_PEBBLE_0BBB87A10 }}
           action: "upload"
-          app_location: ".output/public" # Changed to directly point to the built output
-          api_location: "" # Empty for SPA
-          output_location: "" # Not needed since we're pointing directly to the build output
+          app_location: "/" 
+          api_location: ""
+          output_location: ".output/public"
           github_id_token: ${{ steps.idtoken.outputs.result }}
           skip_app_build: true
-          
+
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
