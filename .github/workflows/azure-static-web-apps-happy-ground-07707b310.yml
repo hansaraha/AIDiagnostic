@@ -3,11 +3,11 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - development
+      - main  # This should match the branch your Azure Static Web App is configured for
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - development
+      - main  # This should match the branch your Azure Static Web App is configured for
 
 jobs:
   build_and_deploy_job:
@@ -29,8 +29,6 @@ jobs:
         
       - name: Build Nuxt 3 SPA
         run: |
-          # Add SPA target to nuxt.config.js if not already set
-          echo "Building Nuxt 3 as SPA"
           npm run build
         env:
           NITRO_PRESET: static
