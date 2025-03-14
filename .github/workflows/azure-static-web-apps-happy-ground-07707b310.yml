@@ -22,15 +22,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '16'
           
       - name: Install dependencies
         run: npm ci
         
-      - name: Build Nuxt 3 app
-        run: npm run build
-        env:
-          NITRO_PRESET: static
+      # No manual build step needed - Azure Static Web Apps will handle this
+      # Nuxt 3 will be automatically converted to static assets + Azure Functions
           
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
@@ -39,10 +37,11 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_HAPPY_GROUND_07707B310 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/" # App source code path
-          api_location: "" # Set to empty if not using API
-          output_location: ".output/public" # Built app content directory for Nuxt 3
-          skip_app_build: true # Skip the build step as we've already built the app
+          app_location: "/" # Root of your Nuxt 3 app
+          api_location: ".output/server" # Server functions location for Nuxt 3
+          output_location: ".output/public" # Static assets for Nuxt 3
+          # Do not skip app build - let the Azure action handle it
+          skip_app_build: false
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
