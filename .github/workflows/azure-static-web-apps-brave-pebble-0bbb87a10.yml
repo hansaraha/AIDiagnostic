@@ -9,11 +9,6 @@ on:
     branches:
       - main
 
-# Ensure only one deployment workflow runs at a time
-concurrency:
-  group: "azure-static-web-apps-${{ github.ref }}"
-  cancel-in-progress: true
-
 jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
@@ -47,23 +42,15 @@ jobs:
         id: deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_PEBBLE_0BBB87A10 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           ###### Repository/Build Configurations ######
           app_location: "/" # App source code path
-          api_location: "api" # Api source code path - update if you have an API
+          api_location: "" # Api source code path - empty if you have no API
           output_location: ".output/public" # Built Nuxt 3 content directory
           skip_app_build: true # Skip the build step as we've already built the app
           ###### End of Repository/Build Configurations ######
-          
-      - name: Archive build artifacts
-        if: success()
-        uses: actions/upload-artifact@v3
-        with:
-          name: nuxt-build
-          path: .output
-          retention-days: 7
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -74,5 +61,5 @@ jobs:
         id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_PEBBLE_0BBB87A10 }}
           action: "close"
