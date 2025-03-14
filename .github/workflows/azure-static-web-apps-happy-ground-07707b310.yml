@@ -37,18 +37,12 @@ jobs:
         env:
           NITRO_PRESET: static
           
-      - name: Install OIDC Client
-        run: npm install @actions/core@1.10.1 @actions/http-client
-        
-      - name: Get Id Token
+      # Remove the problematic OIDC token approach and use direct OIDC provider
+      - name: Get ID Token
         id: idtoken
-        uses: actions/github-script@v7
+        uses: actions/id-token-claim@v1
         with:
-          script: |
-            const core = require('@actions/core')
-            const token = await core.getIDToken()
-            core.setOutput('result', token)
-          result-encoding: string
+          audience: api://AzureADTokenExchange
           
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
@@ -61,7 +55,7 @@ jobs:
           api_location: "api" # Api source code path - optional (set to empty string if not used)
           output_location: ".output/public" # Built app content directory for Nuxt 3
           skip_app_build: true # Skip the build step as we've already built the app
-          github_id_token: ${{ steps.idtoken.outputs.result }}
+          github_id_token: ${{ steps.idtoken.outputs.token }}
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
