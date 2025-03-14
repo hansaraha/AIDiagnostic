@@ -58,9 +58,9 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_PEBBLE_0BBB87A10 }}
           action: "upload"
-          app_location: "/" 
+          app_location: ".out/putpublic" 
           api_location: ""
-          output_location: ".output/public"
+          output_location: ".out/putpublic"
           github_id_token: ${{ steps.idtoken.outputs.result }}
           skip_app_build: true
 
