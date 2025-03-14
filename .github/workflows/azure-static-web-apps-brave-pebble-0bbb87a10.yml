@@ -31,10 +31,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      - name: Build Nuxt 3 with Azure preset
+      - name: Build Nuxt 3 SPA
         run: |
-          # Build the app specifically for Azure Static Web Apps
-          npx nuxi build --preset=azure
+          # Build the SPA
+          npm run build
+          
+          # Create index.html if it doesn't exist
+          if [ ! -f .output/public/index.html ]; then
+            echo "Creating index.html file"
+            cp dist/index.html .output/public/index.html 2>/dev/null || echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/_nuxt/entry.css"><script src="/_nuxt/entry.js" defer></script></head><body><div id="app"></div></body></html>' > .output/public/index.html
+          fi
+          
+          # Debug
+          echo "Contents of output directory:"
+          ls -la .output/public || echo "Output directory not found"
           
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
@@ -54,15 +64,12 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_PEBBLE_0BBB87A10 }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: ".output/server" # Api source code path for Nuxt 3 with Azure preset
-          output_location: ".output/public" # Built app content directory
+          app_location: ".output/public" # Changed to directly point to the built output
+          api_location: "" # Empty for SPA
+          output_location: "" # Not needed since we're pointing directly to the build output
           github_id_token: ${{ steps.idtoken.outputs.result }}
-          skip_app_build: true # Skip the build as we're building manually with the Azure preset
-          ###### End of Repository/Build Configurations ######
-
+          skip_app_build: true
+          
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
