@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "npx nuxi build --preset=azure",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "preview": "npx @azure/static-web-apps-cli start .output/public --api-location .output/server",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
