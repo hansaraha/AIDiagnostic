@@ -37,6 +37,24 @@ jobs:
         env:
           # Add any environment variables needed for your build
           NUXT_PUBLIC_API_BASE: ${{ secrets.API_BASE_URL || 'https://api.example.com' }}
+          USE_MOCK_API: 'true'
+          APP_BASE_URL: ${{ secrets.APP_BASE_URL || 'https://your-app-url.com' }}
+      
+      - name: Verify build output
+        run: |
+          echo "Content of root directory:"
+          ls -la
+          echo "Content of .output directory:"
+          ls -la .output || echo ".output directory not found!"
+          echo "Content of .output/public directory:"
+          ls -la .output/public || echo ".output/public directory not found!"
+          
+          # Check if the output contains an index.html file
+          if [ -f ".output/public/index.html" ]; then
+            echo "index.html found"
+          else
+            echo "WARNING: index.html not found!"
+          fi
           
       - name: Deploy to Azure Static Web Apps
         id: deploy
@@ -45,12 +63,12 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_PEBBLE_0BBB87A10 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations ######
-          app_location: "/" # App source code path
-          api_location: "" # Api source code path - empty if you have no API
-          output_location: ".output/public" # Built Nuxt 3 content directory
-          skip_app_build: true # Skip the build step as we've already built the app
-          ###### End of Repository/Build Configurations ######
+          app_location: "/" 
+          api_location: ""
+          output_location: ".output/public"
+          skip_app_build: true
+          # Add these additional parameters for more detailed build logs
+          verbose: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

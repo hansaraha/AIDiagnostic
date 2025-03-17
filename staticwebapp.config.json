@@ -1,7 +1,10 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/_nuxt/*", "/assets/*", "/api/*", "/*.*"]
+    "exclude": [
+      "/_nuxt/*.{js,css,map,json,ico,png,jpg,jpeg,gif,svg,webp,woff,woff2,ttf,eot,otf}",
+      "/assets/*.{js,css,map,json,ico,png,jpg,jpeg,gif,svg,webp,woff,woff2,ttf,eot,otf}"
+    ]
   },
   "routes": [
     {
