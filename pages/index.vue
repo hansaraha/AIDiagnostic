@@ -1,5 +1,8 @@
 <template>
   <div class="h-full bg-gray-50 flex flex-col">
+    <!-- Offline Banner -->
+    <OfflineBanner />
+
     <!-- Progress bar -->
     <QuestionnaireProgressBar
       :progress="progress"
@@ -14,10 +17,14 @@
         DIAGNÓSTICO IA
       </h1>
 
-      <!-- Error message global -->
-      <div v-if="validationError && !isStepValid" class="mb-4 p-3 bg-red-50 text-red-600 rounded-md max-w-2xl mx-auto">
-        {{ validationError }}
-      </div>
+      <!-- Global error message -->
+      <ErrorMessage
+        v-if="error"
+        :error="error"
+        class="max-w-2xl mx-auto mb-4"
+        @retry="handleErrorRetry"
+        @dismiss="handleDismissError"
+      />
 
       <!-- Component selection based on current step -->
       <QuestionnaireStepWelcome
@@ -139,13 +146,17 @@
         v-else-if="currentStep === 'analysis'"
         :profile-description="getProfileDescription()"
         :is-analyzing="isAnalyzing"
+        :error="analysisError"
         @analyze="handleAnalyzeProfile"
+        @clearError="clearAnalysisError"
       />
 
       <QuestionnaireStepResults
         v-else-if="currentStep === 'results'"
         :diagnostic="userData.diagnostic"
         :user-name="userData.name"
+        :user-id="userData.id || ''"
+        :referral-code="userData.referralCode || ''"
         @restart="restartQuestionnaire"
       />
 
@@ -167,8 +178,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import type { UserData } from "~/types/questionnaire";
+import useErrorHandling from "~/composables/useErrorHandling";
+import type { ErrorState } from "~/composables/useErrorHandling";
+import ErrorMessage from "~/components/ui/ErrorMessage.vue";
+import OfflineBanner from "~/components/ui/OfflineBanner.vue";
 
 // Use the composables (auto-imported by Nuxt)
 const {
@@ -187,7 +202,8 @@ const {
   restartQuestionnaire,
   getProfileDescription,
   isValidEmail,
-  validateCurrentStep
+  validateCurrentStep,
+  clearError,
 } = useQuestionnaire();
 
 const {
@@ -216,40 +232,139 @@ const {
   selectAIProjectImpact,
 } = useAIQuestions(userData);
 
-const { isAnalyzing, analyzeProfile } = useDiagnostic(userData);
+const {
+  isAnalyzing,
+  analyzeProfile,
+  error: diagnosticError,
+} = useDiagnostic(userData);
+const {
+  error: errorHandlingState,
+  setError,
+  handleFetchError,
+} = useErrorHandling();
+
+// Refs para manejar errores específicos
+const analysisError = ref<ErrorState | null>(null);
+
+// Error global para mostrar en la UI
+const error = computed(() => {
+  return diagnosticError.value || errorHandlingState.value;
+});
+
+// Function to handle error dismissal
+const handleDismissError = () => {
+  // Call clearError regardless of which error is showing
+  // This ensures we reset all error states in the app
+  clearError();
+
+  // Also clear the analysis error if it exists
+  clearAnalysisError();
+};
+
+// Función para manejar el reintento de operaciones tras un error
+const handleErrorRetry = async () => {
+  if (error.value?.retry) {
+    await error.value.retry();
+  }
+};
+
+// Función para limpiar errores específicos del análisis
+const clearAnalysisError = () => {
+  analysisError.value = null;
+};
 
 const handleAnalyzeProfile = async () => {
-  console.log("Iniciando handleAnalyzeProfile");
+  console.log("Starting handleAnalyzeProfile");
+  console.log("userData:", userData);
+  console.log("analysisError:", analysisError);
+  console.log("Is nextStep a function?", typeof nextStep === 'function');
+  console.log("Is setError a function?", typeof setError === 'function');
+  console.log("Is handleFetchError a function?", typeof handleFetchError === 'function');
+
+  // Make sure we have initialized objects before using them
+  if (!userData.value) {
+    userData.value = {};
+  }
+
+  if (analysisError && typeof analysisError.value === "function") {
+    analysisError.value = null;
+  }
 
   try {
+    // Verificamos conexión a internet
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      if (setError) {
+        analysisError.value = setError(
+          "connection",
+          "No hay conexión a internet. Por favor, verifica tu conexión e inténtalo de nuevo.",
+          null,
+          handleAnalyzeProfile
+        );
+      }
+      return;
+    }
+
     // Llama a la función del composable para generar el diagnóstico
     console.log("Llamando a analyzeProfile");
-    const result = await analyzeProfile();
+    const result = await useApiService().submitQuestionnaire(userData.value);
 
     console.log("Resultado de analyzeProfile:", result);
 
     // Verificamos que tenemos datos en el resultado
     if (!result) {
       console.error("No se recibió resultado de analyzeProfile");
-    } else {
-      console.log("Cursos en resultado:", result.courses);
-      console.log("Servicios en resultado:", result.services);
+      throw new Error("No se recibió resultado del diagnóstico");
     }
 
-    // Verificamos que los datos se guardaron correctamente en userData
-    console.log(
-      "userData.diagnostic después de analyzeProfile:",
-      userData.value.diagnostic
-    );
+    // Initialize diagnostic object if it doesn't exist
+    if (!userData.value.diagnostic) {
+      userData.value.diagnostic = {};
+    }
+
+    // Update the diagnostic properties one by one to avoid issues
+    userData.value.diagnostic.professionalProfile =
+      result.professionalProfile || "";
+    userData.value.diagnostic.strengths = result.strengths || [];
+    userData.value.diagnostic.recommendations = result.recommendations || [];
+    userData.value.diagnostic.courses = result.courses || [];
+    userData.value.diagnostic.services = result.services || [];
+
+    // Actualizamos ID y código de referido si los recibimos
+    if (result.userId) {
+      userData.value.id = result.userId;
+    }
+
+    if (result.referralCode) {
+      userData.value.referralCode = result.referralCode;
+    }
 
     // Una vez completado el análisis, avanzamos al siguiente paso
     console.log("Avanzando al siguiente paso");
-    nextStep();
+    if (typeof nextStep === "function") {
+      nextStep();
+    }
 
     return result;
   } catch (error) {
     console.error("Error en handleAnalyzeProfile:", error);
-    // Podrías mostrar un mensaje de error al usuario si lo deseas
+
+    // Si el error ya es un ErrorState de nuestro sistema, lo propagamos directamente
+    if (error && typeof error === "object" && "type" in error) {
+      if (analysisError) {
+        analysisError.value = error;
+      }
+    } else {
+      // Si no, creamos un nuevo error
+      if (handleFetchError && analysisError) {
+        analysisError.value = handleFetchError(
+          error,
+          "Error al procesar tu diagnóstico. Por favor, inténtalo de nuevo.",
+          handleAnalyzeProfile
+        );
+      }
+    }
+  } finally {
+    isAnalyzing.value = false;
   }
 };
 

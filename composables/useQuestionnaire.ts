@@ -1,5 +1,6 @@
 import { ref, reactive, computed } from 'vue';
 import type { UserData } from '~/types/questionnaire';
+import useErrorHandling from './useErrorHandling';
 
 // Import specialized composables
 import useProgress from './useProgress';
@@ -7,6 +8,9 @@ import useFeedback from './useFeedback';
 import useValidation from './useValidation';
 
 export default function useQuestionnaire() {
+  // Error handling
+  const { error, setError, clearError } = useErrorHandling();
+  
   // User data state with reactive to ensure nested objects are tracked
   const userData = ref<UserData>({
     name: '',
@@ -21,6 +25,26 @@ export default function useQuestionnaire() {
       services: []
     }
   });
+  
+  // Try to load saved progress from localStorage on init
+  const loadSavedProgress = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedData = localStorage.getItem('questionnaireProgress');
+        if (savedData) {
+          const parsedData = JSON.parse(savedData);
+          // Only restore if the data is not from a completed questionnaire
+          if (parsedData && parsedData.currentStep !== 'results') {
+            userData.value = parsedData.userData;
+            currentStep.value = parsedData.currentStep;
+            lastQuestionStep.value = parsedData.lastQuestionStep || '';
+          }
+        }
+      } catch (e) {
+        console.error('Error loading saved progress', e);
+      }
+    }
+  };
   
   // Navigation and state tracking
   const currentStep = ref('welcome');
@@ -41,11 +65,28 @@ export default function useQuestionnaire() {
   const currentQuestion = ref('');
   const conversationalMessage = ref('');
   const nextStepAfterConversation = ref('');
+  const validationError = ref('');
+  const isStepValid = ref(true);
   
   // Use specialized composables
   const { progress, currentSection, updateProgress } = useProgress(userData, currentStep);
   const { generateFeedback, getWorkStatusLabel } = useFeedback(userData);
   const { isValidEmail } = useValidation();
+  
+  // Function to save current progress to localStorage
+  const saveProgress = () => {
+    if (typeof window !== 'undefined' && currentStep.value !== 'results') {
+      try {
+        localStorage.setItem('questionnaireProgress', JSON.stringify({
+          userData: userData.value,
+          currentStep: currentStep.value,
+          lastQuestionStep: lastQuestionStep.value
+        }));
+      } catch (e) {
+        console.error('Error saving progress', e);
+      }
+    }
+  };
   
   // Function to update the current question text
   const updateCurrentQuestion = () => {
@@ -123,8 +164,91 @@ export default function useQuestionnaire() {
     return 'results';
   };
   
-  // Function to move to the next step - SIMPLIFIED VERSION WITHOUT VALIDATION
+  // Validate current step before proceeding
+  const validateCurrentStep = (): boolean => {
+    validationError.value = '';
+    isStepValid.value = true;
+    
+    switch (currentStep.value) {
+      case 'name':
+        if (!userData.value.name.trim()) {
+          validationError.value = 'Por favor, ingresa tu nombre para continuar.';
+          isStepValid.value = false;
+        }
+        break;
+        
+      case 'work_status':
+        if (!userData.value.workStatus) {
+          validationError.value = 'Por favor, selecciona tu situación laboral.';
+          isStepValid.value = false;
+        } else if (userData.value.workStatus === 'other' && !userData.value.otherWorkStatus?.trim()) {
+          validationError.value = 'Por favor, especifica tu situación laboral.';
+          isStepValid.value = false;
+        }
+        break;
+        
+      case 'freelancer_services':
+        if (!userData.value.freelancer?.services.length) {
+          validationError.value = 'Por favor, selecciona al menos un servicio.';
+          isStepValid.value = false;
+        } else if (
+          userData.value.freelancer.services.includes('other') && 
+          !userData.value.freelancer.otherService?.trim()
+        ) {
+          validationError.value = 'Por favor, especifica el otro servicio.';
+          isStepValid.value = false;
+        }
+        break;
+        
+      case 'freelancer_platforms':
+        if (!userData.value.freelancer?.platforms.length) {
+          validationError.value = 'Por favor, selecciona al menos una plataforma.';
+          isStepValid.value = false;
+        } else if (
+          userData.value.freelancer.platforms.includes('other') && 
+          !userData.value.freelancer.otherPlatform?.trim()
+        ) {
+          validationError.value = 'Por favor, especifica la otra plataforma.';
+          isStepValid.value = false;
+        }
+        break;
+        
+      case 'business_type':
+        if (!userData.value.businessOwner?.businessType) {
+          validationError.value = 'Por favor, selecciona el tipo de negocio.';
+          isStepValid.value = false;
+        } else if (
+          userData.value.businessOwner.businessType === 'other' && 
+          !userData.value.businessOwner.otherBusinessType?.trim()
+        ) {
+          validationError.value = 'Por favor, especifica el tipo de negocio.';
+          isStepValid.value = false;
+        }
+        break;
+        
+      case 'email':
+        if (!userData.value.email) {
+          validationError.value = 'Por favor, ingresa tu dirección de correo electrónico.';
+          isStepValid.value = false;
+        } else if (!isValidEmail(userData.value.email)) {
+          validationError.value = 'Por favor, ingresa una dirección de correo electrónico válida.';
+          isStepValid.value = false;
+        }
+        break;
+    }
+    
+    return isStepValid.value;
+  };
+  
+  // Function to move to the next step
   const nextStep = () => {
+    // Validate the current step (if applicable)
+    if (['name', 'work_status', 'freelancer_services', 'freelancer_platforms', 'business_type', 'email'].includes(currentStep.value)) {
+      if (!validateCurrentStep()) {
+        return; // Do not proceed if validation fails
+      }
+    }
+    
     if (currentStep.value === 'tip') {
       // After a tip is shown, continue to the next question
       currentStep.value = getNextStep(lastQuestionStep.value);
@@ -150,6 +274,7 @@ export default function useQuestionnaire() {
           // Change to the conversational message screen
           currentStep.value = 'conversation';
           updateProgress();
+          saveProgress(); // Save progress after each step
           return; // Exit early as we'll continue from the conversation screen
         }
         
@@ -161,13 +286,15 @@ export default function useQuestionnaire() {
           // Reset counter for next tip interval
           questionCounter.value = 0;
           updateProgress();
+          saveProgress(); // Save progress after each step
           return; // Exit early as we'll continue from the tip
         }
       }
       
-      // Simply proceed to next step without validation
+      // Simply proceed to next step
       currentStep.value = getNextStep(currentStep.value);
       updateProgress();
+      saveProgress(); // Save progress after each step
     }
   };
   
@@ -176,6 +303,7 @@ export default function useQuestionnaire() {
     // Proceed to the next stored step
     currentStep.value = nextStepAfterConversation.value;
     updateProgress();
+    saveProgress(); // Save progress after each step
   };
   
   // Function to restart the questionnaire
@@ -199,6 +327,11 @@ export default function useQuestionnaire() {
     questionCounter.value = 0;
     tipInterval.value = Math.floor(Math.random() * 3) + 2;
     updateCurrentQuestion();
+    
+    // Clear saved progress
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('questionnaireProgress');
+    }
   };
   
   // Get profile description for the analysis screen
@@ -245,8 +378,16 @@ export default function useQuestionnaire() {
     return description;
   };
   
+  // Generate a unique referral code for this user
+  const generateReferralCode = (): string => {
+    const namePart = userData.value.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().substring(0, 5);
+    const randomPart = Math.random().toString(36).substring(2, 8);
+    return `${namePart}-${randomPart}`;
+  };
+  
   // Initialize
   updateCurrentQuestion();
+  loadSavedProgress();
   
   return {
     userData,
@@ -257,11 +398,16 @@ export default function useQuestionnaire() {
     currentQuestion,
     conversationalMessage,
     currentSection,
+    validationError,
+    isStepValid,
     nextStep,
     continueAfterMessage,
     restartQuestionnaire,
     getNextStep,
     getProfileDescription,
-    isValidEmail
+    isValidEmail,
+    validateCurrentStep,
+    error,
+    clearError
   };
 }

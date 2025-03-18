@@ -33,8 +33,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // Estas variables estarán disponibles en el cliente
-      apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:5678/webhook',
-      useMockApi: process.env.USE_MOCK_API || 'true',
+      apiBaseUrl: 'https://holaamigo.app.n8n.cloud/webhook-test/questionnaire-analysis',// process.env.API_BASE_URL || 'https://holaamigo.app.n8n.cloud/webhook/questionnaire-analysis',
+      useMockApi: process.env.USE_MOCK_API || 'false', // Cambiado a 'false' por defecto
       appBaseUrl: process.env.APP_BASE_URL || 'http://localhost:3000'
     }
   },
@@ -44,7 +44,7 @@ export default defineNuxtConfig({
     server: {
       proxy: {
         '/api': {
-          target: process.env.API_BASE_URL || 'http://localhost:5678/webhook',
+          target: process.env.API_BASE_URL || 'https://holaamigo.app.n8n.cloud/webhook',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, '')
         }

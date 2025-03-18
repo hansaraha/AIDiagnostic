@@ -46,6 +46,8 @@ export interface DiagnosticResult {
   recommendations: string[];
   courses: CourseRecommendation[];
   services: ServiceRecommendation[];
+  userId?: string; // ID del usuario en el sistema
+  referralCode?: string; // Código único para referir a otros usuarios
 }
 
 export interface CourseRecommendation {

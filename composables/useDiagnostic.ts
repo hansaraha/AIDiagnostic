@@ -1,13 +1,16 @@
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import type { UserData, DiagnosticResult } from '~/types/questionnaire';
 import useApiService from './useApiService';
+import useErrorHandling from './useErrorHandling';
 
 export default function useDiagnostic(userData: Ref<UserData>) {
   const isAnalyzing = ref(false);
   const apiService = useApiService();
+  const { error, setError, handleFetchError, clearError } = useErrorHandling();
 
   // Función para analizar el perfil y generar recomendaciones
   const analyzeProfile = async () => {
+    clearError(); // Clear any existing errors
     isAnalyzing.value = true;
     
     console.log('Iniciando análisis de perfil');
@@ -31,89 +34,145 @@ export default function useDiagnostic(userData: Ref<UserData>) {
         return diagnosticResult;
       } else {
         console.log('Enviando datos reales a la API para diagnóstico');
-        // En producción, utilizamos el servicio de API para enviar los datos a n8n
-        const result = await apiService.submitQuestionnaire(userData.value);
-        
-        console.log('Diagnóstico recibido de API:', result);
-        
-        // Verificamos que el resultado contenga los datos necesarios
-        if (!result.courses || !result.services) {
-          console.warn('El diagnóstico no contiene cursos o servicios');
+        try {
+          // En producción, utilizamos el servicio de API para enviar los datos a n8n
+          const result = await apiService.submitQuestionnaire(userData.value);
+          
+          console.log('Diagnóstico recibido de API:', result);
+          
+          // Verificamos que el resultado contenga los datos necesarios
+          if (!result.courses || !result.services) {
+            console.warn('El diagnóstico no contiene cursos o servicios');
+          }
+          
+          // Actualizamos el estado con los resultados
+          userData.value.diagnostic = result;
+          
+          // Actualizamos ID y código de referido si los recibimos
+          if (result.userId) {
+            userData.value.id = result.userId;
+          }
+          
+          if (result.referralCode) {
+            userData.value.referralCode = result.referralCode;
+          }
+          
+          console.log('Estado de usuario actualizado con diagnóstico');
+          
+          return result;
+        } catch (apiError) {
+          console.error('Error al obtener diagnóstico de API:', apiError);
+          
+          // Reintentamos una vez más antes de usar el fallback
+          const retryFn = async () => {
+            try {
+              console.log('Reintentando obtener diagnóstico de API...');
+              const result = await apiService.submitQuestionnaire(userData.value);
+              userData.value.diagnostic = result;
+              return result;
+            } catch (retryError) {
+              // Si el reintento falla, usamos el diagnóstico local como fallback
+              console.log('Reintento fallido, usando diagnóstico local como fallback');
+              const fallbackDiagnostic = await generateLocalDiagnosticResult();
+              userData.value.diagnostic = fallbackDiagnostic;
+              return fallbackDiagnostic;
+            }
+          };
+          
+          // Si el error ya es un ErrorState de nuestro sistema, lo propagamos con la función de reintento
+          if (apiError && typeof apiError === 'object' && 'type' in apiError) {
+            // Actualizamos el error con la función de reintento
+            apiError.retry = retryFn;
+            throw apiError;
+          }
+          
+          // Si no es un ErrorState, creamos uno nuevo
+          throw handleFetchError(
+            apiError, 
+            'Error al generar el diagnóstico. Por favor, inténtalo de nuevo.',
+            retryFn
+          );
         }
-        
-        // Actualizamos el estado con los resultados
-        userData.value.diagnostic = result;
-        
-        console.log('Estado de usuario actualizado con diagnóstico');
-        
-        return result;
       }
     } catch (error) {
       console.error('Error al analizar perfil:', error);
-      // En caso de error, generamos un diagnóstico local como fallback
+      
+      // Si es un error que ya hemos manejado, lo propagamos
+      if (error && typeof error === 'object' && 'type' in error) {
+        throw error;
+      }
+      
+      // En caso de otros errores, generamos un diagnóstico local como fallback y propagamos el error
       console.log('Generando diagnóstico fallback debido a error');
       const fallbackDiagnostic = await generateLocalDiagnosticResult();
       userData.value.diagnostic = fallbackDiagnostic;
-      return fallbackDiagnostic;
+      
+      const retryFn = async () => await analyzeProfile();
+      
+      throw handleFetchError(
+        error,
+        'Error al analizar tu perfil. Se ha generado un diagnóstico básico como alternativa.',
+        retryFn
+      );
     } finally {
       isAnalyzing.value = false;
       console.log('Análisis de perfil completado');
     }
   };
 
- // Función local para generar el diagnóstico (usado como fallback o en modo mock)
- const generateLocalDiagnosticResult = async (): Promise<DiagnosticResult> => {
-  console.log('Generando diagnóstico local');
-  try {
-    // Intentamos obtener cursos y servicios reales incluso en modo mock
-    console.log('Obteniendo cursos y servicios para diagnóstico local');
-    const { courses, services } = await apiService.getCoursesAndServices();
-    console.log('Cursos obtenidos para diagnóstico local:', courses);
-    console.log('Servicios obtenidos para diagnóstico local:', services);
-    
-    // Si obtuvimos datos reales, los usamos
-    if (courses.length > 0 && services.length > 0) {
-      console.log('Usando datos reales para diagnóstico local');
-      // Seleccionamos algunos cursos y servicios según el perfil
-      const selectedCourses = courses.slice(0, Math.min(2, courses.length));
-      const selectedServices = services.slice(0, Math.min(1, services.length));
+  // Función local para generar el diagnóstico (usado como fallback o en modo mock)
+  const generateLocalDiagnosticResult = async (): Promise<DiagnosticResult> => {
+    console.log('Generando diagnóstico local');
+    try {
+      // Intentamos obtener cursos y servicios reales incluso en modo mock
+      console.log('Obteniendo cursos y servicios para diagnóstico local');
+      const { courses, services } = await apiService.getCoursesAndServices();
+      console.log('Cursos obtenidos para diagnóstico local:', courses);
+      console.log('Servicios obtenidos para diagnóstico local:', services);
       
-      console.log('Cursos seleccionados para diagnóstico local:', selectedCourses);
-      console.log('Servicios seleccionados para diagnóstico local:', selectedServices);
-      
-      const result = {
-        professionalProfile: determineProfile(),
-        strengths: determineStrengths(),
-        recommendations: determineRecommendations(),
-        courses: selectedCourses,
-        services: selectedServices
-      };
-      
-      console.log('Diagnóstico local generado con datos reales:', result);
-      return result;
+      // Si obtuvimos datos reales, los usamos
+      if (courses.length > 0 && services.length > 0) {
+        console.log('Usando datos reales para diagnóstico local');
+        // Seleccionamos algunos cursos y servicios según el perfil
+        const selectedCourses = courses.slice(0, Math.min(2, courses.length));
+        const selectedServices = services.slice(0, Math.min(1, services.length));
+        
+        console.log('Cursos seleccionados para diagnóstico local:', selectedCourses);
+        console.log('Servicios seleccionados para diagnóstico local:', selectedServices);
+        
+        const result = {
+          professionalProfile: determineProfile(),
+          strengths: determineStrengths(),
+          recommendations: determineRecommendations(),
+          courses: selectedCourses,
+          services: selectedServices
+        };
+        
+        console.log('Diagnóstico local generado con datos reales:', result);
+        return result;
+      }
+    } catch (error) {
+      console.error('Error al obtener cursos y servicios para diagnóstico local:', error);
+      // Continuamos con datos mock si hay un error
     }
-  } catch (error) {
-    console.error('Error al obtener cursos y servicios para diagnóstico local:', error);
-    // Continuamos con datos mock si hay un error
-  }
-  
-  console.log('Generando diagnóstico local con datos dummy');
-  
-  // Si no se pudieron obtener datos reales, usamos datos dummy
-  const dummyCourses = generateDummyCourses();
-  const dummyServices = generateDummyServices();
-  
-  const result = {
-    professionalProfile: determineProfile(),
-    strengths: determineStrengths(),
-    recommendations: determineRecommendations(),
-    courses: dummyCourses,
-    services: dummyServices
+    
+    console.log('Generando diagnóstico local con datos dummy');
+    
+    // Si no se pudieron obtener datos reales, usamos datos dummy
+    const dummyCourses = generateDummyCourses();
+    const dummyServices = generateDummyServices();
+    
+    const result = {
+      professionalProfile: determineProfile(),
+      strengths: determineStrengths(),
+      recommendations: determineRecommendations(),
+      courses: dummyCourses,
+      services: dummyServices
+    };
+    
+    console.log('Diagnóstico local con datos dummy:', result);
+    return result as DiagnosticResult;
   };
-  
-  console.log('Diagnóstico local con datos dummy:', result);
-  return result as DiagnosticResult;
-};
 
   // Determinar el perfil profesional basado en las respuestas
   const determineProfile = (): string => {
@@ -259,6 +318,11 @@ export default function useDiagnostic(userData: Ref<UserData>) {
     ];
   };
 
+  // Función para limpiar errores específicos del diagnóstico
+  const clearDiagnosticError = () => {
+    clearError();
+  };
+
   // Función para registrar clics en recomendaciones (para futuras implementaciones)
   const trackRecommendationClick = async (itemId: string, itemType: 'course' | 'service') => {
     console.log(`Clic en ${itemType}: ${itemId}`);
@@ -267,8 +331,9 @@ export default function useDiagnostic(userData: Ref<UserData>) {
 
   return {
     isLoading: computed(() => isAnalyzing.value || apiService.isLoading.value),
-    error: apiService.error,
+    error, // Export the error directly to allow clear operations
     analyzeProfile,
-    trackRecommendationClick
+    trackRecommendationClick,
+    clearDiagnosticError
   };
 }
