@@ -32,7 +32,7 @@
     </div>
 
     <!-- Main content with dynamic padding based on header visibility -->
-    <div class="h-full" :class="currentStep !== 'welcome' && currentStep !== 'analysis' ? 'pt-0' : 'pt-8'">
+    <div class="h-full" :class="currentStep !== 'welcome' && currentStep !== 'analysis' ? 'pt-24' : 'pt-8'">
 
       <!-- Global error message -->
       <ErrorMessage v-if="error" :error="error" class="max-w-2xl mx-auto mb-4" @retry="handleErrorRetry"
