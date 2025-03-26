@@ -1,3 +1,5 @@
+
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   // Configurar como SPA - esto es crucial para deshabilitar SSR
@@ -6,7 +8,10 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   
-  modules: ['@nuxt/ui'],
+  modules: ['@nuxt/ui', '@vueuse/nuxt'],
+  
+  // Custom CSS for UI kit
+  css: ['~/assets/css/main.css'],
   
   colorMode: {
     preference: 'light',

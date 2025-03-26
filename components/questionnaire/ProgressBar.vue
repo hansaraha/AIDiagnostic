@@ -1,13 +1,21 @@
 <template>
-    <div class="container mx-auto px-4 pt-4">
-      <div class="h-2.5 w-full bg-slate-200 rounded">
-        <div class="h-2.5 bg-indigo-900 rounded" :style="{ width: `${progress}%` }"></div>
-      </div>
-      <div class="text-right text-sm text-gray-500 mt-1">
+  <div class="w-full">
+    <div class="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div 
+        class="h-2 bg-indigo-600 dark:bg-indigo-500 rounded-full transition-all duration-300 ease-in-out" 
+        :style="{ width: `${progress}%` }"
+      ></div>
+    </div>
+    <div class="flex justify-between items-center mt-1">
+      <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
         {{ sectionText }}
       </div>
+      <div class="text-xs sm:text-sm font-medium text-indigo-600 dark:text-indigo-400">
+        {{ Math.round(progress) }}%
+      </div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script setup lang="ts">
   defineProps({

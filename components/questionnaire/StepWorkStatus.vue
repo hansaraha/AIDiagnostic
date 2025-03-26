@@ -9,8 +9,8 @@
       <div 
         v-for="option in options" 
         :key="option.value" 
-        class="border rounded p-3 cursor-pointer"
-        :class="selectedValue === option.value ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200'"
+        class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"
+        :class="selectedValue === option.value ? ' bg-[#5D49F6] bg-opacity-10 dark:bg-opacity-20' : 'border-[#5D49F6]'"
         @click="selectOption(option.value)"
       >
         {{ option.label }}

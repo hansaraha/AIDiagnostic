@@ -1,45 +1,48 @@
 <template>
-    <div v-if="error" :class="[
-      'rounded-lg p-4 mb-4 flex items-start',
-      errorClasses[error.type] || errorClasses.unknown
-    ]">
-      <div class="mr-3 flex-shrink-0">
-        <UIcon :name="errorIcon" class="h-5 w-5" />
-      </div>
-      <div class="flex-grow">
-        <h3 class="text-sm font-medium">{{ errorTitle }}</h3>
-        <div class="mt-1 text-sm">
-          {{ error.message }}
-          <div v-if="showDetails && error.details" class="mt-2 text-xs whitespace-pre-wrap bg-white bg-opacity-20 p-2 rounded">
-            {{ JSON.stringify(error.details, null, 2) }}
-          </div>
-        </div>
-        <div class="mt-3 flex items-center">
-          <UButton
-            v-if="error.retry"
-            size="sm"
-            :color="buttonColor"
-            :variant="buttonVariant"
-            @click="retryOperation"
-            :loading="isRetrying"
-            :disabled="isRetrying"
-          >
-            Reintentar
-          </UButton>
-          <UButton
-            v-if="dismissable"
-            size="sm"
-            color="gray"
-            variant="ghost"
-            class="ml-2"
-            @click="dismiss"
-          >
-            Cerrar
-          </UButton>
-        </div>
-      </div>
+  <UAlert
+    v-if="error"
+    :variant="alertVariant"
+    :color="alertColor"
+    :icon="errorIcon"
+    class="w-full mb-4"
+  >
+    <template #title>
+      <span class="font-medium">{{ errorTitle }}</span>
+    </template>
+    <p class="text-sm sm:text-base">{{ error.message }}</p>
+    <div 
+      v-if="showDetails && error.details" 
+      class="mt-2 text-xs whitespace-pre-wrap p-2 rounded bg-white dark:bg-gray-800 bg-opacity-20 dark:bg-opacity-20"
+    >
+      {{ JSON.stringify(error.details, null, 2) }}
     </div>
-  </template>
+    
+    <template #footer>
+      <div class="flex flex-wrap gap-2 mt-2">
+        <UButton
+          v-if="error.retry"
+          size="sm"
+          :color="buttonColor"
+          :variant="buttonVariant"
+          @click="retryOperation"
+          :loading="isRetrying"
+          :disabled="isRetrying"
+        >
+          Reintentar
+        </UButton>
+        <UButton
+          v-if="dismissable"
+          size="sm"
+          color="gray"
+          variant="ghost"
+          @click="dismiss"
+        >
+          Cerrar
+        </UButton>
+      </div>
+    </template>
+  </UAlert>
+</template>
   
   <script setup lang="ts">
   import { computed, ref } from 'vue';
@@ -64,14 +67,14 @@
   
   const isRetrying = ref(false);
   
-  // Define styles for different error types
-  const errorClasses = {
-    connection: 'bg-yellow-50 text-yellow-800 border-l-4 border-yellow-400',
-    server: 'bg-red-50 text-red-800 border-l-4 border-red-500',
-    validation: 'bg-orange-50 text-orange-800 border-l-4 border-orange-400',
-    notFound: 'bg-blue-50 text-blue-800 border-l-4 border-blue-400',
-    unknown: 'bg-gray-50 text-gray-800 border-l-4 border-gray-400'
-  };
+  // Alert variant (subtle by default)
+  const alertVariant = computed(() => 'soft');
+  
+  // Alert color based on error type
+  const alertColor = computed(() => {
+    if (!props.error) return 'gray';
+    return buttonColor.value;
+  });
   
   // Map error types to icons
   const errorIconMap = {

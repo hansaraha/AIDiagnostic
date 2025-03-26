@@ -1,0 +1,384 @@
+# MINDSET AI: Cuestionario de Diagnóstico de Adopción de IA
+
+## INICIO
+**Bienvenida:** ¿Tienes los conocimientos y las herramientas para dominar la revolución de IA o te estás quedando atrás? Descubre tu nivel de preparación en solo 3 minutos y desbloquea tu potencial profesional 2025.
+
+**Paso 1: Información básica**
+*Progreso: 1/22*
+¿Cómo te llamas?
+[Campo de texto para nombre]
+
+---
+
+## SECCIÓN 1: PERFIL PROFESIONAL
+
+**Pregunta 2:** ¿Cuál es tu situación laboral actual?
+*Progreso: 2/22*
+- 👨‍💼 Empleado (tiempo completo o parcial)
+- 🚀 Freelancer/Trabajador independiente
+- 👑 Dueño de empresa/Emprendedor
+- 🎓 Estudiante
+- 🔍 Sin empleo actualmente
+
+**Pregunta 3:** ¿En qué sector trabajas principalmente?
+*Progreso: 3/22*
+- 💻 Tecnología/Software
+- 🎨 Diseño y creatividad
+- 📊 Marketing y publicidad
+- 📱 Medios y comunicación
+- 🏫 Educación y formación
+- 📈 Consultoría
+- 💰 Finanzas
+- ⚕️ Salud
+- 🛒 Retail/Comercio
+- 🏭 Manufactura
+- 🌐 Otro
+
+---
+
+## STOPPER 1: DATOS RELEVANTES POR SECTOR
+
+**Para Tecnología/Software:** "Según GitHub, los desarrolladores que utilizan asistentes de IA completan tareas de codificación un 55% más rápido y aceptan en promedio el 26% de las sugerencias de código." [Fuente: GitHub, The Impact of AI on Developer Productivity, 2023]
+
+**Para Diseño y Creatividad:** "Adobe informa que los diseñadores que utilizan herramientas de IA experimentan un aumento del 78% en velocidad de iteración de diseño y un 59% de incremento en productividad general." [Fuente: Adobe Creative Cloud Impact Report, 2023]
+
+**Para Marketing y Publicidad:** "HubSpot reporta que las campañas de marketing que utilizan contenido optimizado por IA muestran un aumento promedio del 29.3% en tasas de conversión." [Fuente: HubSpot State of Marketing Report, 2023]
+
+**Para Medios y Comunicación:** "Según Reuters Institute, las organizaciones de medios que implementan IA para personalización de contenido ven un incremento del 47% en tiempo de permanencia y un 38% en engagement." [Fuente: Reuters Institute Digital News Report, 2023]
+
+**Para Educación y Formación:** "Un estudio de Carnegie Learning demostró que los estudiantes que utilizaron tutores impulsados por IA mejoraron sus calificaciones en matemáticas un 27% más que aquellos con métodos tradicionales." [Fuente: Carnegie Learning Impact Study, 2023]
+
+**Para Consultoría:** "Deloitte reveló que sus consultores que utilizan herramientas de IA pueden procesar un 340% más información y reducir el tiempo de investigación en un 70%." [Fuente: Deloitte Insights: The Age of With, 2023]
+
+**Para Finanzas:** "JPMorgan Chase reportó que su plataforma COiN con IA puede revisar 12,000 documentos comerciales en segundos, una tarea que solía requerir 360,000 horas de trabajo humano al año." [Fuente: JPMorgan Chase Technology Report, 2022]
+
+**Para Salud:** "Un estudio publicado en Nature Medicine demostró que los algoritmos de IA pueden detectar cáncer de mama en mamografías con una precisión del 91.5%, superando a radiólogos humanos que promedian 87.2%." [Fuente: Nature Medicine, Vol. 29, 2023]
+
+**Para Retail/Comercio:** "Según McKinsey, los minoristas que implementan IA para gestión de inventario y previsión de demanda reducen los errores de previsión hasta en un 50% y los costos de inventario en un 35%." [Fuente: McKinsey Retail Practice Report, 2023]
+
+**Para Manufactura:** "El Digital Manufacturing Report indica que las plantas de producción con sistemas de mantenimiento predictivo impulsados por IA reducen el tiempo de inactividad no planificado en un 45% y extienden la vida útil de los equipos en un 38%." [Fuente: Digital Manufacturing Report, 2023]
+
+---
+
+## SECCIÓN 2: RAMA ESPECÍFICA SEGÚN PERFIL
+
+### PARA EMPLEADOS:
+**Pregunta 4E:** ¿Cuál es tu rol en la empresa?
+*Progreso: 4/22*
+- 👨‍💼 Ejecutivo/Directivo
+- 👩‍💼 Gerente/Coordinador
+- 🧑‍💻 Especialista/Analista
+- 🤝 Asistente/Soporte
+- 👨‍💻 Desarrollador/Programador
+- 🎨 Diseñador/Creativo
+- 📱 Marketing/Comunicación
+- 💰 Ventas
+- 🌐 Otro
+
+**Pregunta 5E:** ¿Tu empresa fomenta el uso de IA?
+*Progreso: 5/22*
+- 🚀 Sí, activamente
+- 👍 Sí, con algunas restricciones
+- 😐 No tienen políticas claras
+- 👎 Lo desalientan
+- 🤷 No estoy seguro
+
+### PARA FREELANCERS:
+**Pregunta 4F:** ¿Cuánto tiempo llevas como independiente?
+*Progreso: 4/22*
+- 🌱 Menos de 1 año
+- 🌿 1-3 años
+- 🌳 4-6 años
+- 🌲 Más de 6 años
+
+**Pregunta 5F:** ¿Cómo consigues la mayoría de tus clientes?
+*Progreso: 5/22*
+- 💻 Plataformas de freelance
+- 👥 Redes profesionales
+- 👋 Recomendaciones personales
+- 📢 Marketing propio
+- 🌐 Otro
+
+### PARA EMPRENDEDORES:
+**Pregunta 4E:** ¿Cuántas personas trabajan en tu empresa?
+*Progreso: 4/22*
+- 1️⃣ Solo yo
+- 👥 2-5 personas
+- 👨‍👩‍👧 6-20 personas
+- 👨‍👩‍👧‍👦 21-50 personas
+- 👨‍👩‍👧‍👧 Más de 50 personas
+
+**Pregunta 5E:** ¿Tu empresa tiene una estrategia de IA?
+*Progreso: 5/22*
+- ✅ Sí, bien definida
+- 🔄 Estamos desarrollándola
+- ⏸️ Tenemos algunas iniciativas sin estructura
+- ❌ No tenemos estrategia de IA
+- 🤷 No lo he considerado
+
+---
+
+## STOPPER 2: DATOS RELEVANTES POR TIPO DE TRABAJADOR
+
+**Para Empleados:** "LinkedIn Learning reporta que los profesionales con habilidades verificables en IA tienen un 34% más de probabilidades de ser promovidos y ganan en promedio un 26% más que sus pares sin estas habilidades." [Fuente: LinkedIn Global Talent Trends, 2023]
+
+**Para Freelancers:** "Upwork reporta que los freelancers con habilidades verificadas en IA cobran en promedio un 31% más por hora que aquellos en campos similares sin estas habilidades, y tienen un 43% más de probabilidades de conseguir proyectos." [Fuente: Upwork Skills Index, 2023]
+
+**Para Emprendedores:** "CB Insights reporta que las startups con IA como componente central recibieron un 43% más de financiación en etapas tempranas que empresas similares sin componentes de IA." [Fuente: CB Insights State of AI Report, Q3 2023]
+
+**Para Estudiantes:** "Según una encuesta de Indeed, los recién graduados con habilidades certificadas en IA reciben ofertas salariales iniciales un 27% más altas y consiguen empleo un 37% más rápido que aquellos sin estas competencias." [Fuente: Indeed Hiring Lab, 2023]
+
+**Para Personas sin Empleo Actual:** "El Future of Jobs Report del Foro Económico Mundial destaca que el 75% de las empresas planea incorporar IA en sus operaciones para 2025, creando nuevas oportunidades laborales para quienes dominen estas tecnologías." [Fuente: WEF Future of Jobs Report, 2023]
+
+---
+
+## SECCIÓN 3: USO ACTUAL DE IA (COMÚN PARA TODOS)
+
+**Pregunta 6:** ¿Con qué frecuencia usas herramientas de IA?
+*Progreso: 6/22*
+- 🔥 Diariamente (varias veces)
+- 👍 Regularmente (algunas veces por semana)
+- 😐 Ocasionalmente (algunas veces al mes)
+- 🌱 Raramente (he probado alguna vez)
+- ❌ Nunca
+
+**Pregunta 7:** ¿Qué herramientas de IA usas? (Selecciona las principales)
+*Progreso: 7/22*
+- 💬 ChatGPT/GPT (OpenAI)
+- 🌐 Gemini (Google)
+- 🤖 Claude (Anthropic)
+- 🎨 Midjourney/DALL-E/Stable Diffusion
+- 🔧 Herramientas integradas (Copilot, etc.)
+- 🛠️ IA específica para mi sector
+- ❌ Ninguna
+
+**Pregunta 8:** ¿Qué tipo de versiones de IA utilizas principalmente?
+*Progreso: 8/22*
+- 🆓 Solo versiones gratuitas
+- 🔄 Principalmente gratuitas, ocasionalmente de pago
+- 💰 Principalmente versiones de pago
+- 💎 Solo versiones de pago
+- ❓ No estoy seguro / No aplica
+
+**Pregunta 9:** ¿Para qué usas principalmente la IA?
+*Progreso: 9/22*
+- 💡 Generar ideas
+- 📝 Crear contenido
+- ✍️ Editar/revisar trabajo
+- 📊 Analizar datos
+- ⚙️ Automatizar tareas repetitivas
+- 👨‍💻 Programación/código
+- 🔍 Investigación
+- 📚 Aprendizaje
+- ❌ No la uso
+
+---
+
+## STOPPER 3: TIPS DE PRODUCTIVIDAD SEGÚN NIVEL DE EXPERIENCIA
+
+**Para principiantes:** "Microsoft encontró que comenzar con tareas repetitivas simples, como automatizar respuestas a correos electrónicos, puede ahorrar al profesional promedio 4.8 horas semanales." [Fuente: Microsoft Workplace Analytics, 2023]
+
+**Para usuarios intermedios:** "Según Harvard Business Review, los profesionales que utilizan templates de prompts personalizados son un 57% más eficientes en sus interacciones con IA que aquellos que formulan instrucciones desde cero cada vez." [Fuente: HBR, "Mastering AI Workflows", Marzo 2023]
+
+**Para usuarios avanzados:** "Zapier reporta que sus usuarios que automatizan flujos de trabajo completos con IA ahorran en promedio 71 horas mensuales por equipo y reducen errores en un 89%." [Fuente: Zapier State of Business Automation, 2023]
+
+**Para equipos de trabajo:** "Según Accenture, las organizaciones que implementan 'Centros de Excelencia en IA' para compartir mejores prácticas y recursos entre departamentos ven un ROI un 37% mayor en sus iniciativas de IA." [Fuente: Accenture Technology Vision, 2023]
+
+**Para líderes y directivos:** "Un estudio de BCG muestra que las empresas donde los ejecutivos reciben capacitación específica en IA estratégica tienen un 42% más de probabilidades de implementar exitosamente iniciativas de transformación digital." [Fuente: BCG Henderson Institute, 2023]
+
+---
+
+## SECCIÓN 4: PERCEPCIÓN Y ACTITUD
+
+**Pregunta 10:** ¿Cómo te sientes con la IA en tu trabajo?
+*Progreso: 10/22*
+- 🤩 Entusiasmado - veo muchas oportunidades
+- 🤔 Interesado pero cauteloso
+- 😐 Neutral
+- 😰 Ansioso - me preocupa no estar al día
+- 😟 Preocupado por los riesgos
+- 😨 Reacio a utilizarla
+
+**Pregunta 11:** ¿Cuál ha sido tu experiencia usando IA?
+*Progreso: 11/22*
+- 🌟 Muy positiva - ha superado mis expectativas
+- 👍 Positiva - generalmente útil
+- 🤔 Mixta - resultados variables
+- 👎 Negativa - resultados decepcionantes
+- ❓ No tengo experiencia
+
+**Pregunta 12:** Si perdieras acceso a IA, ¿cómo te afectaría?
+*Progreso: 12/22*
+- 😱 Sería devastador para mi productividad
+- 😕 Sería inconveniente pero podría adaptarme
+- 😐 Apenas notaría la diferencia
+- 😌 Sería un alivio
+- 🤷 No me afectaría (no la uso)
+
+---
+
+## STOPPER 4: REFLEXIONES SOBRE EL FUTURO DE LA IA
+
+**Reflexión 1:** "Según el World Economic Forum, para 2025, la división no será entre quienes usan IA y quienes no, sino entre quienes la usan efectivamente y quienes no han desarrollado esta competencia. El 85% de los trabajos existentes hoy serán transformados por la IA." [Fuente: WEF Future of Jobs Report, 2023]
+
+**Reflexión 2:** "McKinsey estima que para 2030, aproximadamente el 70% de las empresas habrán adoptado al menos una tecnología de IA, y que la IA podría aportar hasta 13 billones de dólares a la economía global, transformando fundamentalmente cómo se realiza el trabajo." [Fuente: McKinsey Global Institute, 2023]
+
+**Reflexión 3:** "Un estudio de MIT Sloan y Boston Consulting Group revela que las empresas que integran IA en sus operaciones no solo mejoran productos y reducen costos, sino que tienen tres veces más probabilidades de crear nuevos modelos de negocio que sus competidores." [Fuente: MIT Sloan Management Review, 2023]
+
+**Reflexión 4:** "Deloitte predice que para 2027, los profesionales pasarán de utilizar la IA como herramienta a formar equipos colaborativos humano-IA, donde cada parte aporta sus fortalezas particulares, cambiando fundamentalmente cómo entendemos el trabajo." [Fuente: Deloitte Tech Trends, 2023]
+
+**Reflexión 5:** "PwC pronostica que la IA contribuirá con $15.7 billones a la economía global para 2030, más que la producción actual combinada de China e India. Las ganancias de productividad representarán el 55% de este impulso económico." [Fuente: PwC Global AI Study, 2023]
+
+---
+
+## SECCIÓN 5: CONOCIMIENTOS Y CAPACIDADES
+
+**Pregunta 13:** ¿Cómo evaluarías tu nivel con la IA?
+*Progreso: 13/22*
+- 🧠 Avanzado - comprendo aspectos técnicos
+- 👍 Intermedio - manejo bien los conceptos
+- 🌱 Básico - tengo nociones fundamentales
+- 🤔 Limitado - sé muy poco
+- ❓ Nulo - no tengo conocimiento
+
+**Pregunta 14:** ¿Cuál de estos prompts daría mejores resultados para crear contenido de marketing?
+*Progreso: 14/22*
+- 🎯 "Crea una campaña para un producto de belleza dirigido a mujeres de 30-45 años, enfocada en ingredientes naturales. El tono debe ser sofisticado pero accesible. Incluye: titular principal, 3 puntos clave, y llamado a la acción."
+- 📝 "Necesito una campaña de marketing para un producto de belleza."
+- 📋 "Escribe contenido de marketing para una crema facial con ingredientes naturales para mujeres."
+- 📢 "Hazme una publicidad con título, puntos y CTA para un producto de belleza natural para mujeres de mediana edad."
+- 🤷‍♂️ No estoy seguro / No uso prompts
+
+**Pregunta 15:** ¿Has invertido en formación sobre IA?
+*Progreso: 15/22*
+- 🎓 Sí, formación avanzada o especializada
+- 📚 Sí, cursos básicos o introductorios
+- 🔍 Solo autoformación (tutoriales, artículos)
+- 🤔 No, pero me interesa
+- ❌ No y no me interesa por ahora
+
+---
+
+## STOPPER 5: DATOS SORPRENDENTES SOBRE ADOPCIÓN DE IA POR INDUSTRIA
+
+**Tecnología/Software:** "Según Stack Overflow, el 83% de los desarrolladores que empezaron a usar herramientas de IA en 2023 reportan que seguirán usándolas en el futuro, y el 78% considera que la IA cambiará fundamentalmente su profesión en los próximos 5 años." [Fuente: Stack Overflow Developer Survey, 2023]
+
+**Marketing/Publicidad:** "Salesforce reporta que el 81% de los profesionales de marketing ahora usan IA de alguna forma, pero solo el 27% la utilizan para todo su potencial, representando una brecha significativa entre adopción básica y avanzada." [Fuente: Salesforce State of Marketing, 2023]
+
+**Diseño/Creatividad:** "Un 76% de las agencias creativas han incorporado IA en sus procesos, pero existe una brecha del 52% entre adopción y maestría, con solo el 24% logrando integración completa en sus flujos de trabajo." [Fuente: Adobe Creative Economy Report, 2023]
+
+**Finanzas:** "Según Accenture, las instituciones financieras que han implementado IA avanzada han visto un ROI promedio del 250% en estas inversiones, principalmente a través de mejor detección de fraudes y experiencia de cliente." [Fuente: Accenture Banking Technology Vision, 2023]
+
+**Salud:** "Las organizaciones de salud con madurez digital avanzada tienen un 93% más de probabilidades de haber implementado soluciones de IA clínica, según HIMSS, creando una brecha creciente en la calidad de atención entre instituciones." [Fuente: HIMSS Digital Health Survey, 2023]
+
+**Educación:** "El 67% de las instituciones educativas planean incrementar su inversión en IA para 2025, pero solo el 23% tienen actualmente un plan estratégico para su implementación, según EDUCAUSE." [Fuente: EDUCAUSE Horizon Report, 2023]
+
+**Retail:** "Las tiendas minoristas que implementan IA para personalización ven un incremento del 35% en el valor promedio de compra y una mejora del 28% en la retención de clientes, según NRF." [Fuente: National Retail Federation Tech Survey, 2023]
+
+**Manufactura:** "Los fabricantes que adoptan IA para mantenimiento predictivo reducen el tiempo de inactividad no planificado hasta en un 50% y extienden la vida útil de las máquinas un 30%, reporta el Manufacturing Leadership Council." [Fuente: Manufacturing Leadership Council, 2023]
+
+---
+
+## SECCIÓN 6: IMPACTO Y RESULTADOS
+
+**Pregunta 16:** ¿Cuánto tiempo te ahorra la IA semanalmente?
+*Progreso: 16/22*
+- ⏱️ Más de 10 horas
+- ⏰ 5-10 horas
+- 🕒 1-5 horas
+- 🕐 Menos de 1 hora
+- ❌ No me ahorra tiempo/No la uso
+
+**Pregunta 17:** ¿Has notado mejoras en tu trabajo con IA?
+*Progreso: 17/22*
+- 🌟 Sí, mejoras significativas
+- 👍 Sí, algunas mejoras
+- 😐 Sin cambios notables
+- 👎 Ha empeorado algunos aspectos
+- ❌ No uso IA en mi trabajo
+
+**Pregunta 18:** ¿Has desarrollado flujos de trabajo con IA?
+*Progreso: 18/22*
+- ✅ Sí, tengo procesos bien definidos y optimizados
+- 🔄 Estoy en proceso de desarrollarlos
+- 🌱 He hecho algunos intentos sin sistematizar
+- 🤔 Uso la IA de forma improvisada
+- ❌ No uso IA
+
+---
+
+## STOPPER 6: CASOS DE ÉXITO POR SECTOR
+
+**Marketing:** "Coca-Cola implementó su plataforma 'Content Bridge' impulsada por IA para marketing digital, logrando un aumento del 46% en engagement y una reducción del 30% en costos de producción de contenido." [Fuente: Coca-Cola Digital Transformation Report, 2023]
+
+**Diseño:** "Jessica Walsh, fundadora de &Walsh, integró herramientas de IA generativa en su proceso creativo, aumentando la capacidad de su estudio de 15 a 35 proyectos mensuales sin incrementar su equipo." [Fuente: Fast Company, "How AI is Transforming Creative Studios", Febrero 2023]
+
+**Desarrollo:** "Spotify implementó herramientas de IA para análisis de código y debugging, reduciendo el tiempo de identificación de errores en un 71% y acelerando los ciclos de lanzamiento de nuevas funciones en un 43%." [Fuente: Spotify Engineering Blog, Diciembre 2022]
+
+**Finanzas:** "Bank of America desarrolló 'Erica', un asistente virtual impulsado por IA que ha procesado más de 1,000 millones de consultas de clientes y ha contribuido a un aumento del 34% en la satisfacción del cliente y una reducción del 25% en llamadas al servicio de atención." [Fuente: Bank of America Digital Banking Report, 2023]
+
+**Salud:** "Mayo Clinic implementó algoritmos de IA para detección temprana de enfermedades cardíacas que identifican patrones subclínicos imposibles de detectar para médicos humanos, mejorando la precisión diagnóstica en un 37% y reduciendo falsos negativos en un 59%." [Fuente: Mayo Clinic Proceedings, 2023]
+
+**Consultoría:** "Deloitte transformó su metodología de auditoría con IA, permitiendo analizar el 100% de las transacciones en lugar de muestras aleatorias, mejorando la precisión en un 65% y reduciendo el tiempo de auditoría en un 30%." [Fuente: Journal of Accountancy, 2023]
+
+**Educación:** "Georgia State University implementó un sistema de IA para monitorear el progreso de estudiantes e identificar señales tempranas de deserción, logrando incrementar la tasa de graduación en un 21% y eliminar la brecha de graduación entre grupos demográficos." [Fuente: EDUCAUSE Review, 2023]
+
+**Retail:** "Sephora desarrolló su 'Color IQ', un sistema de IA que analiza el tono de piel para recomendar productos de belleza personalizados, aumentando la conversión en un 40% y reduciendo las devoluciones en un 62%." [Fuente: Harvard Business Review, "AI in Retail", 2023]
+
+---
+
+## SECCIÓN 7: NECESIDADES Y OBJETIVOS
+
+**Pregunta 19:** ¿Cuál es tu principal objetivo con la IA?
+*Progreso: 19/22*
+- ⚡ Aumentar productividad
+- 🌟 Mejorar calidad del trabajo
+- 💰 Reducir costos
+- 💡 Innovar/crear nuevas ofertas
+- 🏆 Mantenerme competitivo
+- ❓ No tengo objetivos claros
+
+**Paso 20: Información de contacto**
+*Progreso: 20/22*
+Para enviarte tu diagnóstico personalizado, necesitamos tu correo electrónico:
+[Campo para correo electrónico]
+
+**Pregunta 21:** ¿Qué obstáculos encuentras al utilizar IA en tu trabajo? (Selecciona los principales)
+*Progreso: 21/22*
+- 🧠 Falta de conocimientos o habilidades técnicas
+- 💰 Costo de las herramientas y suscripciones
+- ⏱️ Falta de tiempo para aprender y experimentar
+- 🤔 Dificultad para identificar casos de uso prácticos
+- 👥 Resistencia cultural en mi entorno laboral
+- 🔒 Preocupaciones sobre privacidad o propiedad intelectual
+- 🚫 No encuentro obstáculos significativos
+- 🌐 Otro (especificar)
+
+**Pregunta 22:** ¿Qué tipo de apoyo necesitas ahora mismo?
+*Progreso: 22/22*
+- 🌱 Formación básica sobre IA
+- 🎯 Entrenamiento avanzado en prompting
+- 👨‍💼 Consultoría personalizada
+- 🔑 Acceso a herramientas premium
+- 📚 Guías específicas para mi sector
+- 👥 Comunidad de práctica con pares
+- ❌ No estoy interesado actualmente
+
+---
+
+## FINALIZACIÓN
+**¡Gracias por completar el diagnóstico MINDSET AI!**
+
+Tu dedicación para evaluar tu nivel de adopción de IA ya te coloca por delante del 78% de profesionales que no han realizado este tipo de análisis.
+
+Estamos analizando tus respuestas para crear un reporte personalizado que identificará tus fortalezas, oportunidades de mejora y próximos pasos estratégicos para maximizar el impacto de la IA en tu carrera o negocio.
+
+Te enviaremos tu diagnóstico personalizado a tu correo electrónico en los próximos minutos. Este documento incluirá:
+
+- Tu perfil exacto de adopción de IA con métricas clave
+- Análisis comparativo con otros profesionales de tu sector
+- Oportunidades específicas para tu perfil y rol
+- Recomendaciones personalizadas de alto impacto
+- Recursos exclusivos para impulsar tu dominio de IA
+
+¡Tu viaje hacia la maestría en IA comienza ahora!

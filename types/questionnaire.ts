@@ -2,43 +2,95 @@
 export interface UserData {
   id?: string; // ID único para tracking
   name: string;
-  workStatus?: 'employee' | 'freelancer' | 'business_owner' | 'full_time' | 'part_time' | 'other';
-  otherWorkStatus?: string;
-  services?: ('development' | 'design' | 'marketing' | 'content')[];
-  experience?: 'less_than_1' | '1_to_3' | '4_to_6' | 'more_than_6';
   email?: string;
+  workStatus: WorkStatus;
+  otherWorkStatus?: string;
+  sector: Sector;
+  otherSector?: string;
   freelancer?: FreelancerData;
   businessOwner?: BusinessOwnerData;
-  commonAI?: CommonAIData;
+  aiUsage: AIUsageData;
   diagnostic?: DiagnosticResult;
   referralCode?: string; // Código de referido para tracking
 }
 
+export type WorkStatus = 'employee' | 'freelancer' | 'business_owner' | 'student' | 'unemployed' | 'other';
+
+export type Sector = 
+  | 'tech' 
+  | 'design' 
+  | 'marketing'
+  | 'media'
+  | 'education'
+  | 'consulting'
+  | 'finance'
+  | 'health'
+  | 'retail'
+  | 'manufacturing'
+  | 'other';
+
 export interface FreelancerData {
-  services: ('development' | 'design' | 'marketing' | 'content' | 'consulting' | 'education' | 'translation' | 'other')[];
-  otherService?: string;
   experience: 'less_than_1' | '1_to_3' | '4_to_6' | 'more_than_6';
-  clientsPerMonth: '1_2' | '3_5' | '6_10' | 'more_than_10';
-  platforms: ('upwork' | 'fiverr' | 'freelancer' | 'toptal' | 'linkedin' | 'personal_website' | 'referrals' | 'direct_network' | 'other')[];
-  otherPlatform?: string;
+  clientAcquisition: 'platforms' | 'network' | 'referrals' | 'marketing' | 'other';
 }
 
 export interface BusinessOwnerData {
-  businessType: 'tech_startup' | 'professional_services' | 'retail' | 'manufacturing' | 'creative_agency' | 'consulting' | 'other';
-  otherBusinessType?: string;
   employeeCount: 'solo' | '2_5' | '6_20' | '21_50' | '50_plus';
-  foundingTime: 'less_than_1' | '1_to_3' | '4_to_6' | 'more_than_6';
-  aiPolicy: 'formal' | 'planned' | 'no_plans' | 'not_considered';
+  aiStrategy: 'defined' | 'developing' | 'unstructured' | 'none' | 'not_considered';
 }
 
-export interface CommonAIData {
-  funding?: 'personal' | 'business' | 'client' | 'free';
-  disclosure?: 'always' | 'sometimes' | 'never' | 'when_asked';
-  investment?: 'none' | 'under_50' | '50_to_100' | 'over_100';
-  valueProposition?: 'yes' | 'no' | 'working_on_it';
-  rateAdjustment?: 'increased' | 'decreased' | 'same' | 'case_by_case';
-  projectImpact?: 'positive' | 'negative' | 'neutral' | 'mixed';
+export interface AIUsageData {
+  frequency: 'daily' | 'weekly' | 'monthly' | 'rarely' | 'never';
+  tools: AITool[];
+  otherTool?: string;
+  versions: 'free_only' | 'mostly_free' | 'mostly_paid' | 'paid_only' | 'unsure';
+  purposes: AIPurpose[];
+  feeling: AIFeeling;
+  experience: AIExperience;
+  impact: AIImpact;
 }
+
+export type AITool = 
+  | 'chatgpt'
+  | 'gemini'
+  | 'claude'
+  | 'image_ai'
+  | 'integrated'
+  | 'sector_specific'
+  | 'none';
+
+export type AIPurpose =
+  | 'ideation'
+  | 'content'
+  | 'editing'
+  | 'analysis'
+  | 'automation'
+  | 'programming'
+  | 'research'
+  | 'learning'
+  | 'none';
+
+export type AIFeeling =
+  | 'excited'
+  | 'cautious'
+  | 'neutral'
+  | 'anxious'
+  | 'concerned'
+  | 'reluctant';
+
+export type AIExperience =
+  | 'very_positive'
+  | 'positive'
+  | 'mixed'
+  | 'negative'
+  | 'no_experience';
+
+export type AIImpact =
+  | 'critical'
+  | 'significant'
+  | 'moderate'
+  | 'minimal'
+  | 'none';
 
 export interface DiagnosticResult {
   professionalProfile: string;

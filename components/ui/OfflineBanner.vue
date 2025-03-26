@@ -1,12 +1,25 @@
 <template>
-    <div 
+  <transition
+    enter-active-class="transition duration-300 ease-out"
+    enter-from-class="transform -translate-y-full opacity-0"
+    enter-to-class="transform translate-y-0 opacity-100"
+    leave-active-class="transition duration-200 ease-in"
+    leave-from-class="transform translate-y-0 opacity-100"
+    leave-to-class="transform -translate-y-full opacity-0"
+  >
+    <UAlert
       v-if="isOffline"
-      class="fixed top-0 left-0 w-full z-50 bg-yellow-500 text-yellow-900 py-2 px-4 flex items-center justify-center shadow-md"
+      color="yellow"
+      variant="solid"
+      icon="i-heroicons-signal-slash"
+      class="fixed top-0 left-0 w-full z-50 rounded-none shadow-md"
     >
-      <UIcon name="i-heroicons-signal-slash" class="h-5 w-5 mr-2" />
-      <span>No hay conexión a internet. Algunas funciones pueden no estar disponibles.</span>
-    </div>
-  </template>
+      <p class="text-xs sm:text-sm md:text-base">
+        No hay conexión a internet. Algunas funciones pueden no estar disponibles.
+      </p>
+    </UAlert>
+  </transition>
+</template>
   
   <script setup lang="ts">
   import useOfflineDetection from '~/composables/useOfflineDetection';

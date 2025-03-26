@@ -12,10 +12,12 @@ export default function useOfflineDetection() {
   // Manejadores de eventos
   const handleOffline = () => {
     isOffline.value = true;
+    document.body.classList.add('is-offline');
   };
   
   const handleOnline = () => {
     isOffline.value = false;
+    document.body.classList.remove('is-offline');
   };
   
   // Configurar event listeners

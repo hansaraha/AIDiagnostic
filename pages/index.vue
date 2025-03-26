@@ -1,293 +1,264 @@
 <template>
-  <div class="h-full bg-gray-50 flex flex-col">
-    <!-- Offline Banner -->
+  <div>
     <OfflineBanner />
-
-    <!-- Progress bar -->
-    <QuestionnaireProgressBar
-      :progress="progress"
-      :sectionText="currentSection"
-    />
-
-    <!-- Main content -->
+    <!-- Header only appears after the welcome screen -->
     <div
-      class="container mx-auto px-4 py-8 flex-grow flex flex-col justify-center"
-    >
-      <h1 class="text-center text-2xl font-bold text-indigo-900 mb-8">
-        DIAGNÓSTICO IA
-      </h1>
+    :class="{
+      'pb-5': currentStep !== 'welcome',
+    }"
+      class="fixed top-0 left-0 right-0 w-full  dark:bg-gradient-to-b dark:from-[#403397] from-70% dark:via-[#403397] dark:to-transparent z-10 transition-all duration-300 ease-in-out">
+      <div class="container-responsive py-4 flex items-center "
+        :class="{ 'justify-between': currentStep !== 'welcome', 'justify-end': currentStep === 'welcome' }">
+        <h1 v-if="currentStep !== 'welcome'" class="text-responsive-lg text-indigo-900 dark:text-indigo-300">
+          MINDSET AI
+        </h1>
+
+        <!-- Color mode toggle and progress info -->
+        <div class="flex items-center gap-4">
+          <ColorModeToggle />
+
+          <!-- Progress bar (desktop) -->
+          <div v-if="currentStep !== 'welcome'" class="hidden sm:block w-48 md:w-64 lg:w-80">
+            <QuestionnaireProgressBar :progress="progress" :sectionText="currentSection" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile progress bar -->
+      <div v-if="currentStep !== 'welcome'" class="sm:hidden container-responsive pb-2">
+        <QuestionnaireProgressBar :progress="progress" :sectionText="currentSection" />
+      </div>
+    </div>
+
+    <!-- Main content with dynamic padding based on header visibility -->
+    <div class="container-narrow py-8 question-container" :class="currentStep !== 'welcome' ? 'pt-24' : 'pt-8'">
 
       <!-- Global error message -->
-      <ErrorMessage
-        v-if="error"
-        :error="error"
-        class="max-w-2xl mx-auto mb-4"
-        @retry="handleErrorRetry"
-        @dismiss="handleDismissError"
-      />
+      <ErrorMessage v-if="error" :error="error" class="max-w-2xl mx-auto mb-4" @retry="handleErrorRetry"
+        @dismiss="handleDismissError" />
 
       <!-- Component selection based on current step -->
-      <QuestionnaireStepWelcome
-        v-if="currentStep === 'welcome'"
-        @next="nextStep"
-      />
+      <QuestionnaireStepWelcome v-if="currentStep === 'welcome'" @next="nextStep" />
 
-      <QuestionnaireStepName
-        v-else-if="currentStep === 'name'"
-        v-model="userData.name"
-        @next="nextStep"
-      />
+      <QuestionnaireStepWorkStatus v-else-if="currentStep === 'work_status'" v-model="userData.workStatus"
+        v-model:otherWorkStatus="userData.otherWorkStatus" @next="nextStep" />
 
-      <QuestionnaireStepWorkStatus
-        v-else-if="currentStep === 'work_status'"
-        v-model="userData.workStatus"
-        v-model:otherWorkStatus="userData.otherWorkStatus"
-        @next="nextStep"
-      />
+      <QuestionnaireSectorQuestion v-else-if="currentStep === 'sector'" v-model="userData.sector"
+        v-model:otherSector="userData.otherSector" @next="nextStep" />
 
       <!-- Freelancer specific steps -->
-      <QuestionnaireStepFreelancerServicesQuestion
-        v-else-if="currentStep === 'freelancer_services'"
-        v-model="freelancerServices"
-        v-model:otherService="freelancerOtherService"
-        @next="nextStep"
-      />
+      <QuestionnaireFreelancerExperienceQuestion v-else-if="currentStep === 'freelancer_experience'"
+        v-model="userData.freelancer.experience" @next="nextStep" />
 
-      <QuestionnaireStepFreelancerExperienceQuestion
-        v-else-if="currentStep === 'freelancer_experience'"
-        v-model="freelancerExperience"
-        @next="nextStep"
-      />
-
-      <QuestionnaireStepFreelancerClientsQuestion
-        v-else-if="currentStep === 'freelancer_clients'"
-        v-model="freelancerClients"
-        @next="nextStep"
-      />
-
-      <QuestionnaireStepFreelancerPlatformsQuestion
-        v-else-if="currentStep === 'freelancer_platforms'"
-        v-model="freelancerPlatforms"
-        v-model:otherPlatform="freelancerOtherPlatform"
-        @next="nextStep"
-      />
+      <QuestionnaireFreelancerPlatformsQuestion v-else-if="currentStep === 'freelancer_platforms'"
+        v-model="userData.freelancer.clientAcquisition" @next="nextStep" />
 
       <!-- Business owner specific steps -->
-      <QuestionnaireStepBusinessOwnerTypeQuestion
-        v-else-if="currentStep === 'business_type'"
-        v-model="businessType"
-        v-model:otherBusinessType="businessOtherType"
-        @next="nextStep"
-      />
+      <QuestionnaireBusinessSizeQuestion v-else-if="currentStep === 'business_size'"
+        v-model="userData.businessOwner.employeeCount" @next="nextStep" />
 
-      <QuestionnaireStepBusinessOwnerSizeQuestion
-        v-else-if="currentStep === 'business_size'"
-        v-model="businessSize"
-        @next="nextStep"
-      />
+      <QuestionnaireAIStrategyQuestion v-else-if="currentStep === 'business_ai_strategy'"
+        v-model="userData.businessOwner.aiStrategy" @next="nextStep" />
 
-      <QuestionnaireStepBusinessOwnerAgeQuestion
-        v-else-if="currentStep === 'business_age'"
-        v-model="businessAge"
-        @next="nextStep"
-      />
+      <!-- AI Usage questions -->
+      <QuestionnaireAIFrequencyQuestion v-else-if="currentStep === 'ai_frequency'" v-model="userData.aiUsage.frequency"
+        @next="nextStep" />
 
-      <QuestionnaireStepBusinessOwnerAIPolicyQuestion
-        v-else-if="currentStep === 'business_ai_policy'"
-        v-model="businessAIPolicy"
-        @next="nextStep"
-      />
+      <QuestionnaireAIToolsQuestion v-else-if="currentStep === 'ai_tools'" v-model="userData.aiUsage.tools"
+        v-model:otherTool="userData.aiUsage.otherTool" @next="nextStep" />
 
-      <!-- Common AI-related steps across all user types -->
-      <QuestionnaireStepCommonAIFundingQuestion
-        v-else-if="currentStep === 'ai_funding'"
-        v-model="aiFunding"
-        @next="nextStep"
-      />
+      <QuestionnaireAIVersionsQuestion v-else-if="currentStep === 'ai_versions'" v-model="userData.aiUsage.versions"
+        @next="nextStep" />
 
-      <QuestionnaireStepCommonAIDisclosureQuestion
-        v-else-if="currentStep === 'ai_disclosure'"
-        v-model="aiDisclosure"
-        @next="nextStep"
-      />
+      <QuestionnaireAIUsageQuestion v-else-if="currentStep === 'ai_purposes'" v-model="userData.aiUsage.purposes"
+        @next="nextStep" />
 
-      <QuestionnaireStepCommonAIInvestmentQuestion
-        v-else-if="currentStep === 'ai_investment'"
-        v-model="aiInvestment"
-        @next="nextStep"
-      />
+      <QuestionnaireAIFeelingQuestion v-else-if="currentStep === 'ai_feeling'" v-model="userData.aiUsage.feeling"
+        @next="nextStep" />
 
-      <QuestionnaireStepCommonAIValuePropositionQuestion
-        v-else-if="currentStep === 'ai_value_proposition'"
-        v-model="aiValueProposition"
-        @next="nextStep"
-      />
+      <QuestionnaireAIExperienceQuestion v-else-if="currentStep === 'ai_experience'"
+        v-model="userData.aiUsage.experience" @next="nextStep" />
 
-      <QuestionnaireStepCommonAIRateAdjustmentQuestion
-        v-else-if="currentStep === 'ai_rate_adjustment'"
-        v-model="aiRateAdjustment"
-        @next="nextStep"
-      />
+      <QuestionnaireAIImpactQuestion v-else-if="currentStep === 'ai_impact'" v-model="userData.aiUsage.impact"
+        @next="nextStep" />
 
-      <QuestionnaireStepCommonAIProjectImpactQuestion
-        v-else-if="currentStep === 'ai_project_impact'"
-        v-model="aiProjectImpact"
-        @next="nextStep"
-      />
+      <!-- Analysis and Results -->
+      <QuestionnaireStepAnalysis v-else-if="currentStep === 'analysis'" :analyzing="analyzing" :error="analysisError"
+        @analyze="handleAnalyzeProfile" @retry="clearAnalysisError" />
 
-      <!-- Final steps -->
-      <QuestionnaireStepEmail
-        v-else-if="currentStep === 'email'"
-        v-model="userData.email"
-        @next="nextStep"
-      />
+      <QuestionnaireStepResults v-else-if="currentStep === 'results'" :diagnostic="userData.diagnostic"
+        @restart="restartQuestionnaire" />
 
-      <QuestionnaireStepAnalysis
-        v-else-if="currentStep === 'analysis'"
-        :profile-description="getProfileDescription()"
-        :is-analyzing="isAnalyzing"
-        :error="analysisError"
-        @analyze="handleAnalyzeProfile"
-        @clearError="clearAnalysisError"
-      />
+      <QuestionnaireStepFreelancerExperienceQuestion v-else-if="currentStep === 'freelancer_experience'"
+        v-model="freelancerExperience" @next="nextStep" />
 
-      <QuestionnaireStepResults
-        v-else-if="currentStep === 'results'"
-        :diagnostic="userData.diagnostic"
-        :user-name="userData.name"
-        :user-id="userData.id || ''"
-        :referral-code="userData.referralCode || ''"
-        @restart="restartQuestionnaire"
-      />
+      <QuestionnaireStepFreelancerClientsQuestion v-else-if="currentStep === 'freelancer_clients'"
+        v-model="freelancerClients" @next="nextStep" />
 
-      <!-- Interactive components -->
-      <QuestionnaireConversationalFeedback
-        v-else-if="currentStep === 'conversation'"
-        :message="conversationalMessage"
-        :user-name="userData.name"
-        @continue="continueAfterMessage"
-      />
+      <QuestionnaireStepFreelancerPlatformsQuestion v-else-if="currentStep === 'freelancer_platforms'"
+        v-model="freelancerPlatforms" v-model:otherPlatform="freelancerOtherPlatform" @next="nextStep" />
 
-      <QuestionnaireTipCard
-        v-else-if="currentStep === 'tip'"
-        :tip="currentTip"
-        @next="nextStep"
-      />
+      <!-- Business owner specific steps -->
+      <QuestionnaireStepBusinessOwnerTypeQuestion v-else-if="currentStep === 'business_type'" v-model="businessType"
+        v-model:otherBusinessType="businessOtherType" @next="nextStep" />
+
+      <QuestionnaireStepBusinessOwnerSizeQuestion v-else-if="currentStep === 'business_size'" v-model="businessSize"
+        @next="nextStep" />
+
+      <!-- AI Usage questions -->
+      <QuestionnaireAIFrequencyQuestion v-else-if="currentStep === 'ai_frequency'" v-model="userData.aiUsage.frequency"
+        @next="nextStep" />
+
+      <QuestionnaireAIToolsQuestion v-else-if="currentStep === 'ai_tools'" v-model="userData.aiUsage.tools"
+        v-model:otherTool="userData.aiUsage.otherTool" @next="nextStep" />
+
+      <QuestionnaireAIVersionsQuestion v-else-if="currentStep === 'ai_versions'" v-model="userData.aiUsage.versions"
+        @next="nextStep" />
+
+      <QuestionnaireAIUsageQuestion v-else-if="currentStep === 'ai_purposes'" v-model="userData.aiUsage.purposes"
+        @next="nextStep" />
+
+      <QuestionnaireAIFeelingQuestion v-else-if="currentStep === 'ai_feeling'" v-model="userData.aiUsage.feeling"
+        @next="nextStep" />
+
+      <QuestionnaireAIExperienceQuestion v-else-if="currentStep === 'ai_experience'"
+        v-model="userData.aiUsage.experience" @next="nextStep" />
+
+      <QuestionnaireAIImpactQuestion v-else-if="currentStep === 'ai_impact'" v-model="userData.aiUsage.impact"
+        @next="nextStep" />
+
+      <!-- Analysis and Results -->
+      <QuestionnaireStepAnalysis v-else-if="currentStep === 'analysis'" :analyzing="analyzing" :error="analysisError"
+        @analyze="handleAnalyzeProfile" @retry="clearAnalysisError" />
+
+      <QuestionnaireStepResults v-else-if="currentStep === 'results'" :diagnostic="userData.diagnostic"
+        @restart="restartQuestionnaire" />
     </div>
   </div>
+  <!-- Offline Banner is always visible -->
+
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type { UserData } from "~/types/questionnaire";
+import type { UserData, WorkStatus } from "~/types/questionnaire";
+import { useScoring } from "~/composables/useScoring";
+import { useRecommendations } from "~/composables/useRecommendations";
+import useApiService from "~/composables/useApiService";
 import useErrorHandling from "~/composables/useErrorHandling";
 import type { ErrorState } from "~/composables/useErrorHandling";
 import ErrorMessage from "~/components/ui/ErrorMessage.vue";
 import OfflineBanner from "~/components/ui/OfflineBanner.vue";
+import ColorModeToggle from "~/components/ui/ColorModeToggle.vue";
 
-// Use the composables (auto-imported by Nuxt)
-const {
-  userData,
-  currentStep,
-  lastQuestionStep,
-  progress,
-  currentTip,
-  currentQuestion,
-  conversationalMessage,
-  currentSection,
-  validationError,
-  isStepValid,
-  nextStep,
-  continueAfterMessage,
-  restartQuestionnaire,
-  getProfileDescription,
-  isValidEmail,
-  validateCurrentStep,
-  clearError,
-} = useQuestionnaire();
+// Initialize error handling
+const { error: errorHandlingState, setError, clearError } = useErrorHandling();
 
-const {
-  isFreelancerServiceSelected,
-  toggleFreelancerService,
-  selectFreelancerExperience,
-  selectFreelancerClients,
-  isFreelancerPlatformSelected,
-  toggleFreelancerPlatform,
-} = useFreelancerQuestions(userData);
+// Initialize user data with empty values
+const userData = ref<UserData>({
+  name: "",
+  email: "",
+  workStatus: 'employee',
+  otherWorkStatus: "",
+  sector: 'tech',
+  otherSector: "",
+  aiUsage: {
+    frequency: 'never',
+    tools: [],
+    versions: 'unsure',
+    purposes: [],
+    feeling: 'neutral',
+    experience: 'no_experience',
+    impact: 'none'
+  },
+  diagnostic: undefined,
+  referralCode: undefined
+});
 
-const {
-  isBusinessTypeValid,
-  selectBusinessType,
-  selectBusinessSize,
-  selectBusinessAge,
-  selectBusinessAIPolicy,
-} = useBusinessQuestions(userData);
+// Define the steps for each path
+const commonSteps = ['welcome', 'work_status', 'sector'] as const;
+const freelancerSteps = [
+  'freelancer_experience',
+  'freelancer_platforms'
+] as const;
+const businessOwnerSteps = [
+  'business_size',
+  'business_ai_strategy'
+] as const;
+const aiSteps = [
+  'ai_frequency',
+  'ai_tools',
+  'ai_versions',
+  'ai_purposes',
+  'ai_feeling',
+  'ai_experience',
+  'ai_impact'
+] as const;
+const finalSteps = ['analysis', 'results'] as const;
 
-const {
-  selectAIFunding,
-  selectAIDisclosure,
-  selectAIInvestment,
-  selectAIValueProposition,
-  selectAIRateAdjustment,
-  selectAIProjectImpact,
-} = useAIQuestions(userData);
-
-const {
-  isAnalyzing,
-  analyzeProfile,
-  error: diagnosticError,
-} = useDiagnostic(userData);
-const {
-  error: errorHandlingState,
-  setError,
-  handleFetchError,
-} = useErrorHandling();
-
-// Refs para manejar errores específicos
+// Track current step and analysis state
+const currentStep = ref('welcome');
+const analyzing = ref(false);
 const analysisError = ref<ErrorState | null>(null);
+
+// Calculate progress
+const progress = computed(() => {
+  const allSteps = [
+    ...commonSteps,
+    ...(userData.value.workStatus === 'freelancer' ? freelancerSteps : []),
+    ...(userData.value.workStatus === 'business_owner' ? businessOwnerSteps : []),
+    ...aiSteps,
+    ...finalSteps
+  ];
+
+  const currentIndex = allSteps.indexOf(currentStep.value);
+  return Math.round((currentIndex / (allSteps.length - 1)) * 100);
+});
+
+// Calculate current section
+const currentSection = computed(() => {
+  if (commonSteps.includes(currentStep.value as any)) return 'Información Básica';
+  if (freelancerSteps.includes(currentStep.value as any)) return 'Perfil Freelancer';
+  if (businessOwnerSteps.includes(currentStep.value as any)) return 'Perfil Empresario';
+  if (aiSteps.includes(currentStep.value as any)) return 'Uso de IA';
+  if (finalSteps.includes(currentStep.value as any)) return 'Resultados';
+  return '';
+});
 
 // Error global para mostrar en la UI
 const error = computed(() => {
-  return diagnosticError.value || errorHandlingState.value;
+  return analysisError?.value || errorHandlingState.value;
 });
 
 // Function to handle error dismissal
 const handleDismissError = () => {
-  // Call clearError regardless of which error is showing
-  // This ensures we reset all error states in the app
   clearError();
-
-  // Also clear the analysis error if it exists
   clearAnalysisError();
 };
 
-// Función para manejar el reintento de operaciones tras un error
+// Function to handle error retry
 const handleErrorRetry = async () => {
   if (error.value?.retry) {
     await error.value.retry();
   }
 };
 
-// Función para limpiar errores específicos del análisis
+// Function to clear analysis error
 const clearAnalysisError = () => {
   analysisError.value = null;
 };
 
-const handleAnalyzeProfile = async () => {
+// Function to handle profile analysis
+async function handleAnalyzeProfile() {
+  analyzing.value = true;
+  analysisError.value = null;
+
   console.log("Starting handleAnalyzeProfile");
   console.log("userData:", userData);
-  console.log("analysisError:", analysisError);
-  console.log("Is nextStep a function?", typeof nextStep === 'function');
-  console.log("Is setError a function?", typeof setError === 'function');
-  console.log("Is handleFetchError a function?", typeof handleFetchError === 'function');
 
   // Make sure we have initialized objects before using them
   if (!userData.value) {
     userData.value = {};
-  }
-
-  if (analysisError && typeof analysisError.value === "function") {
-    analysisError.value = null;
   }
 
   try {
@@ -300,36 +271,72 @@ const handleAnalyzeProfile = async () => {
           null,
           handleAnalyzeProfile
         );
+        analyzing.value = false;
+        return;
       }
-      return;
     }
 
-    // Llama a la función del composable para generar el diagnóstico
-    console.log("Llamando a analyzeProfile");
+    // Submit questionnaire data
+    console.log("Llamando a submitQuestionnaire");
     const result = await useApiService().submitQuestionnaire(userData.value);
 
-    console.log("Resultado de analyzeProfile:", result);
+    console.log("Resultado de submitQuestionnaire:", result);
 
     // Verificamos que tenemos datos en el resultado
     if (!result) {
-      console.error("No se recibió resultado de analyzeProfile");
       throw new Error("No se recibió resultado del diagnóstico");
     }
+
+    // Generate local diagnostic
+    const { generateDiagnostic } = useScoring();
+    const { analyzeStrengths, generateRecommendations, recommendCourses, recommendServices } = useRecommendations();
+
+    // Calculate base diagnostic with score and profile
+    const diagnostic = generateDiagnostic(userData.value);
+
+    // Generate strengths based on usage and metrics
+    const strengths = analyzeStrengths(
+      userData.value.aiUsage,
+      diagnostic.metrics,
+      diagnostic.professionalProfile
+    );
+
+    // Generate recommendations based on profile and sector
+    const recommendations = generateRecommendations(
+      diagnostic.professionalProfile,
+      userData.value.sector,
+      diagnostic.metrics
+    );
+
+    // Get course recommendations
+    const courses = recommendCourses(
+      diagnostic.professionalProfile,
+      userData.value.sector,
+      diagnostic.metrics
+    );
+
+    // Get service recommendations
+    const services = recommendServices(
+      diagnostic.professionalProfile,
+      userData.value.sector
+    );
 
     // Initialize diagnostic object if it doesn't exist
     if (!userData.value.diagnostic) {
       userData.value.diagnostic = {};
     }
 
-    // Update the diagnostic properties one by one to avoid issues
-    userData.value.diagnostic.professionalProfile =
-      result.professionalProfile || "";
-    userData.value.diagnostic.strengths = result.strengths || [];
-    userData.value.diagnostic.recommendations = result.recommendations || [];
-    userData.value.diagnostic.courses = result.courses || [];
-    userData.value.diagnostic.services = result.services || [];
+    // Update the diagnostic with all recommendations
+    userData.value.diagnostic = {
+      ...diagnostic,
+      ...result,
+      strengths: [...(result.strengths || []), ...strengths.map(s => s.title)],
+      recommendations: [...(result.recommendations || []), ...recommendations.map(r => r.title)],
+      courses: [...(result.courses || []), ...(courses || [])],
+      services: [...(result.services || []), ...(services || [])]
+    };
 
-    // Actualizamos ID y código de referido si los recibimos
+    // Store user ID and referral code if provided
     if (result.userId) {
       userData.value.id = result.userId;
     }
@@ -338,35 +345,30 @@ const handleAnalyzeProfile = async () => {
       userData.value.referralCode = result.referralCode;
     }
 
-    // Una vez completado el análisis, avanzamos al siguiente paso
-    console.log("Avanzando al siguiente paso");
-    if (typeof nextStep === "function") {
-      nextStep();
-    }
-
-    return result;
+    // Move to next step
+    currentStep.value = getNextStep(currentStep.value);
   } catch (error) {
     console.error("Error en handleAnalyzeProfile:", error);
 
-    // Si el error ya es un ErrorState de nuestro sistema, lo propagamos directamente
     if (error && typeof error === "object" && "type" in error) {
-      if (analysisError) {
-        analysisError.value = error;
-      }
+      analysisError.value = error;
+    } else if (handleFetchError && analysisError) {
+      analysisError.value = handleFetchError(
+        error,
+        "Error al procesar tu diagnóstico. Por favor, inténtalo de nuevo.",
+        handleAnalyzeProfile
+      );
     } else {
-      // Si no, creamos un nuevo error
-      if (handleFetchError && analysisError) {
-        analysisError.value = handleFetchError(
-          error,
-          "Error al procesar tu diagnóstico. Por favor, inténtalo de nuevo.",
-          handleAnalyzeProfile
-        );
-      }
+      analysisError.value = {
+        type: "analysis",
+        message: "Hubo un error al analizar tu perfil. Por favor, intenta nuevamente.",
+        retry: handleAnalyzeProfile
+      };
     }
   } finally {
-    isAnalyzing.value = false;
+    analyzing.value = false;
   }
-};
+}
 
 // Ensure freelancer data exists before accessing
 const ensureFreelancerData = () => {
@@ -402,144 +404,48 @@ const ensureCommonAIData = () => {
   return userData.value.commonAI;
 };
 
-// Additional computed properties to handle the "other" fields
-const freelancerOtherService = computed({
-  get: () => userData.value.freelancer?.otherService || "",
-  set: (value: string) => {
-    const freelancer = ensureFreelancerData();
-    freelancer.otherService = value;
-  },
-});
+// Function to go to next step
+function nextStep() {
+  currentStep.value = getNextStep(currentStep.value);
+}
 
-const freelancerOtherPlatform = computed({
-  get: () => userData.value.freelancer?.otherPlatform || "",
-  set: (value: string) => {
-    const freelancer = ensureFreelancerData();
-    freelancer.otherPlatform = value;
-  },
-});
+// Function to determine the next step based on current step and user type
+function getNextStep(currentStep: string): string {
+  const workStatus = userData.value.workStatus as WorkStatus;
 
-const businessOtherType = computed({
-  get: () => userData.value.businessOwner?.otherBusinessType || "",
-  set: (value: string) => {
-    const businessOwner = ensureBusinessOwnerData();
-    businessOwner.otherBusinessType = value;
-  },
-});
+  const allSteps = [
+    ...commonSteps,
+    ...(workStatus === 'freelancer' ? freelancerSteps : []),
+    ...(workStatus === 'business_owner' ? businessOwnerSteps : []),
+    ...aiSteps,
+    ...finalSteps,
+  ];
 
-// Computed properties for v-model bindings with simplified typing
-// Freelancer properties
-const freelancerServices = computed<string[]>({
-  get: () => userData.value.freelancer?.services || [],
-  set: (value) => {
-    const freelancer = ensureFreelancerData();
-    freelancer.services = value as any;
-  },
-});
+  const currentIndex = allSteps.indexOf(currentStep);
+  return currentIndex < allSteps.length - 1 ? allSteps[currentIndex + 1] : currentStep;
+}
 
-const freelancerExperience = computed<string>({
-  get: () => userData.value.freelancer?.experience || "less_than_1",
-  set: (value) => {
-    const freelancer = ensureFreelancerData();
-    freelancer.experience = value as any;
-  },
-});
-
-const freelancerClients = computed<string>({
-  get: () => userData.value.freelancer?.clientsPerMonth || "1_2",
-  set: (value) => {
-    const freelancer = ensureFreelancerData();
-    freelancer.clientsPerMonth = value as any;
-  },
-});
-
-const freelancerPlatforms = computed<string[]>({
-  get: () => userData.value.freelancer?.platforms || [],
-  set: (value) => {
-    const freelancer = ensureFreelancerData();
-    freelancer.platforms = value as any;
-  },
-});
-
-// Business owner properties
-const businessType = computed<string>({
-  get: () => userData.value.businessOwner?.businessType || "tech_startup",
-  set: (value) => {
-    const businessOwner = ensureBusinessOwnerData();
-    businessOwner.businessType = value as any;
-  },
-});
-
-const businessSize = computed<string>({
-  get: () => userData.value.businessOwner?.employeeCount || "solo",
-  set: (value) => {
-    const businessOwner = ensureBusinessOwnerData();
-    businessOwner.employeeCount = value as any;
-  },
-});
-
-const businessAge = computed<string>({
-  get: () => userData.value.businessOwner?.foundingTime || "less_than_1",
-  set: (value) => {
-    const businessOwner = ensureBusinessOwnerData();
-    businessOwner.foundingTime = value as any;
-  },
-});
-
-const businessAIPolicy = computed<string>({
-  get: () => userData.value.businessOwner?.aiPolicy || "not_considered",
-  set: (value) => {
-    const businessOwner = ensureBusinessOwnerData();
-    businessOwner.aiPolicy = value as any;
-  },
-});
-
-// AI-related properties
-const aiFunding = computed<string>({
-  get: () => userData.value.commonAI?.funding || "",
-  set: (value) => {
-    const commonAI = ensureCommonAIData();
-    commonAI.funding = value as any;
-  },
-});
-
-const aiDisclosure = computed<string>({
-  get: () => userData.value.commonAI?.disclosure || "",
-  set: (value) => {
-    const commonAI = ensureCommonAIData();
-    commonAI.disclosure = value as any;
-  },
-});
-
-const aiInvestment = computed<string>({
-  get: () => userData.value.commonAI?.investment || "",
-  set: (value) => {
-    const commonAI = ensureCommonAIData();
-    commonAI.investment = value as any;
-  },
-});
-
-const aiValueProposition = computed<string>({
-  get: () => userData.value.commonAI?.valueProposition || "",
-  set: (value) => {
-    const commonAI = ensureCommonAIData();
-    commonAI.valueProposition = value as any;
-  },
-});
-
-const aiRateAdjustment = computed<string>({
-  get: () => userData.value.commonAI?.rateAdjustment || "",
-  set: (value) => {
-    const commonAI = ensureCommonAIData();
-    commonAI.rateAdjustment = value as any;
-  },
-});
-
-const aiProjectImpact = computed<string>({
-  get: () => userData.value.commonAI?.projectImpact || "",
-  set: (value) => {
-    const commonAI = ensureCommonAIData();
-    commonAI.projectImpact = value as any;
-  },
-});
+// Function to restart questionnaire
+function restartQuestionnaire() {
+  userData.value = {
+    name: "",
+    email: "",
+    workStatus: 'employee',
+    otherWorkStatus: "",
+    sector: 'tech',
+    otherSector: "",
+    aiUsage: {
+      frequency: 'never',
+      tools: [],
+      versions: 'unsure',
+      purposes: [],
+      feeling: 'neutral',
+      experience: 'no_experience',
+      impact: 'none'
+    },
+    diagnostic: undefined,
+    referralCode: undefined
+  };
+  currentStep.value = 'welcome';
+}
 </script>

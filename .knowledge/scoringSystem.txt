@@ -1,0 +1,300 @@
+# Sistema de Puntuación MINDSET AI y Lineamientos para Diagnóstico
+
+## 1. Metodología de Puntuación
+
+Para clasificar a los usuarios en los perfiles definidos (IA-Curioso, IA-Entusiasta, IA-Táctico, IA-Estratega, IA-Visionario), se utilizará un sistema de puntuación basado en las respuestas al cuestionario.
+
+### 1.1 Preguntas Clave y su Peso
+
+Cada pregunta del cuestionario tiene asignado un peso específico según su relevancia para determinar el nivel de adopción de IA. A continuación, se detallan las preguntas clave y su peso en la puntuación final:
+
+| Pregunta | Descripción | Peso |
+|----------|-------------|------|
+| Q6 | Frecuencia de uso de IA | 12% |
+| Q7 | Herramientas de IA utilizadas | 8% |
+| Q8 | Tipo de versiones (gratuitas/pagas) | 5% |
+| Q9 | Usos principales de la IA | 8% |
+| Q10 | Sentimiento hacia la IA | 5% |
+| Q11 | Experiencia con IA | 5% |
+| Q12 | Impacto de perder acceso a IA | 8% |
+| Q13 | Nivel de conocimiento | 5% |
+| Q14 | Habilidad de prompting (evaluación objetiva) | 12% |
+| Q15 | Formación en IA | 5% |
+| Q16 | Tiempo ahorrado con IA | 5% |
+| Q17 | Mejoras en el trabajo | 5% |
+| Q18 | Flujos de trabajo con IA | 8% |
+| Q19 | Objetivo principal con IA | 5% |
+| Q21 | Obstáculos encontrados | 4% |
+
+### 1.2 Escala de Puntuación por Respuesta
+
+Para cada pregunta, las opciones de respuesta reciben una puntuación en una escala de 0 a 4:
+
+- Opción 1 (Más avanzada): 4 puntos
+- Opción 2: 3 puntos
+- Opción 3: 2 puntos
+- Opción 4: 1 punto
+- Opción 5 (Menos avanzada): 0 puntos
+
+### 1.3 Ejemplos de Puntuación para Preguntas Específicas
+
+#### Q6: Frecuencia de uso de IA
+- 🔥 Diariamente (varias veces): 4 puntos
+- 👍 Regularmente (algunas veces por semana): 3 puntos
+- 😐 Ocasionalmente (algunas veces al mes): 2 puntos
+- 🌱 Raramente (he probado alguna vez): 1 punto
+- ❌ Nunca: 0 puntos
+
+#### Q8: Tipo de versiones de IA utilizadas
+- 💎 Solo versiones de pago: 4 puntos
+- 💰 Principalmente versiones de pago: 3 puntos
+- 🔄 Principalmente gratuitas, ocasionalmente de pago: 2 puntos
+- 🆓 Solo versiones gratuitas: 1 punto
+- ❓ No estoy seguro / No aplica: 0 puntos
+
+#### Q10: Sentimiento hacia la IA
+- 🤩 Entusiasmado - veo muchas oportunidades: 4 puntos
+- 🤔 Interesado pero cauteloso: 3 puntos
+- 😐 Neutral: 2 puntos
+- 😰 Ansioso - me preocupa no estar al día: 1 punto
+- 😟 Preocupado por los riesgos: 0 puntos
+- 😨 Reacio a utilizarla: 0 puntos
+
+#### Q14: Evaluación de habilidad de prompting
+- 🎯 Prompt detallado con audiencia, tono, estructura: 4 puntos
+- 📢 Prompt con algunos detalles y estructura: 3 puntos
+- 📋 Prompt con información básica: 2 puntos
+- 📝 Prompt genérico/vago: 1 punto
+- 🤷‍♂️ No estoy seguro / No uso prompts: 0 puntos
+
+#### Q21: Obstáculos encontrados
+(Inverso - menos obstáculos = puntuación más alta)
+- 🚫 No encuentro obstáculos significativos: 4 puntos
+- 🔒 Preocupaciones sobre privacidad o propiedad intelectual: 3 puntos
+- 🤔 Dificultad para identificar casos de uso prácticos: 2 puntos
+- 💰 Costo de las herramientas y suscripciones: 1 punto
+- 🧠 Falta de conocimientos o habilidades técnicas: 0 puntos
+
+### 1.4 Cálculo de Puntuación Total
+
+La puntuación total se calcula multiplicando la puntuación de cada respuesta por el peso asignado a la pregunta correspondiente, y sumando todos los resultados. La puntuación máxima posible es 100 puntos.
+
+Fórmula: Puntuación Total = Σ (Puntuación de respuesta × Peso de pregunta) × 25
+
+### 1.5 Clasificación por Perfiles
+
+Basándose en la puntuación total, los usuarios se clasifican en uno de los cinco perfiles:
+
+- **IA-Curioso:** 0-20 puntos
+- **IA-Entusiasta:** 21-40 puntos
+- **IA-Táctico:** 41-60 puntos
+- **IA-Estratega:** 61-80 puntos
+- **IA-Visionario:** 81-100 puntos
+
+## 2. Configuración del Documento de Diagnóstico
+
+El diagnóstico final enviado al usuario debe incluir métricas específicas según el perfil identificado. A continuación se detallan los lineamientos para la configuración del documento de diagnóstico por perfil.
+
+### 2.1 Estructura del Documento
+
+El diagnóstico consta de cuatro páginas:
+1. **Portada**: Introducción personalizada y contextualización sectorial
+2. **Perfil de Adopción**: Descripción del perfil con métricas específicas
+3. **Oportunidades y Desafíos**: Análisis personalizado según perfil y sector
+4. **Recomendaciones**: Soluciones adaptadas al perfil, sector y necesidades
+
+### 2.2 Métricas por Perfil para la Página de Adopción
+
+Para cada perfil, se deben configurar las siguientes métricas en rangos específicos:
+
+#### IA-Curioso (0-20 puntos)
+- **Implementación actual**: 10-30%
+- **Conocimiento técnico**: 5-25% 
+- **Integración en procesos**: 0-20%
+- **Generación de valor**: 5-25%
+
+#### IA-Entusiasta (21-40 puntos)
+- **Implementación actual**: 31-55%
+- **Conocimiento técnico**: 26-50%
+- **Integración en procesos**: 21-45%
+- **Generación de valor**: 26-50%
+
+#### IA-Táctico (41-60 puntos)
+- **Implementación actual**: 56-70%
+- **Conocimiento técnico**: 51-65%
+- **Integración en procesos**: 46-65%
+- **Generación de valor**: 51-70%
+
+#### IA-Estratega (61-80 puntos)
+- **Implementación actual**: 71-90%
+- **Conocimiento técnico**: 66-85%
+- **Integración en procesos**: 66-90%
+- **Generación de valor**: 71-85%
+
+#### IA-Visionario (81-100 puntos)
+- **Implementación actual**: 91-98%
+- **Conocimiento técnico**: 86-97%
+- **Integración en procesos**: 91-98%
+- **Generación de valor**: 86-95%
+
+### 2.3 Cálculo de Métricas Específicas
+
+Para determinar el valor exacto de cada métrica dentro del rango correspondiente, utilizar la siguiente fórmula:
+
+```
+Valor Métrica = Valor Mínimo del Rango + ((Puntuación Total - Puntuación Mínima del Perfil) / Rango de Puntos del Perfil) × (Valor Máximo del Rango - Valor Mínimo del Rango)
+```
+
+Ejemplo para un usuario con 35 puntos (IA-Entusiasta) calculando Implementación actual:
+- Valor Mínimo del Rango = 31%
+- Valor Máximo del Rango = 55%
+- Puntuación Total = 35
+- Puntuación Mínima del Perfil = 21
+- Rango de Puntos del Perfil = 20 (de 21 a 40)
+
+Implementación actual = 31 + ((35-21)/20) × (55-31) = 31 + (0.7 × 24) = 31 + 16.8 = 47.8%
+
+### 2.4 Datos Comparativos para Incluir en el Diagnóstico
+
+Para cada perfil, incluir datos comparativos relevantes:
+
+#### IA-Curioso
+"El X% de profesionales en [sector] se encuentran en la fase inicial de adopción de IA, similar a tu nivel actual."
+
+#### IA-Entusiasta
+"Tu nivel de adopción está por encima del X% de profesionales en [sector], pero aún hay un margen importante de crecimiento."
+
+#### IA-Táctico
+"Te encuentras entre el X% superior de adopción de IA en [sector], superando a la mayoría de profesionales."
+
+#### IA-Estratega
+"Solo el X% de profesionales en [sector] han alcanzado este avanzado nivel de adopción de IA."
+
+#### IA-Visionario
+"Te encuentras en el exclusivo X% superior de adopción de IA, posicionándote como referente en tu sector."
+
+### 2.5 Personalización por Sector
+
+Adaptar las métricas y datos del informe según el sector del usuario:
+
+- **Tecnología/Software**: Enfatizar comparativas con competidores tecnológicos e innovación
+- **Marketing/Publicidad**: Destacar métricas de engagement, conversión y personalización
+- **Diseño/Creatividad**: Enfocarse en velocidad de iteración, cantidad de conceptos y calidad
+- **Finanzas**: Priorizar precisión, cumplimiento normativo y reducción de riesgos
+- **Salud**: Destacar precisión diagnóstica, tiempo ahorrado y mejora en atención
+
+## 3. Generación del Diagnóstico Personalizado
+
+### 3.1 Elementos a Personalizar en cada Página
+
+1. **Portada**:
+   - Título adaptado al sector
+   - Estadísticas específicas del sector con fuentes verificadas
+   - Introducción personalizada según rol/tipo de trabajador
+
+2. **Perfil de Adopción**:
+   - Título y descripción del perfil identificado
+   - Métricas calculadas según fórmulas de la sección 2.3
+   - Datos comparativos según sección 2.4
+   - Gráfico radar con las cuatro métricas principales
+
+3. **Oportunidades y Desafíos**:
+   - 3 oportunidades específicas para el perfil y sector
+   - 3 desafíos específicos con posibles soluciones
+   - Benchmarks relevantes del sector con fuentes verificadas
+
+4. **Recomendaciones**:
+   - 3 recomendaciones adaptadas al perfil, sector y necesidades
+   - Beneficios específicos de cada recomendación
+   - Call-to-action personalizado
+
+### 3.2 Estilo y Tono del Diagnóstico
+
+- **IA-Curioso**: Tono informativo y alentador, enfocado en primeros pasos y beneficios inmediatos
+- **IA-Entusiasta**: Tono motivador y estructurado, orientado a sistematización
+- **IA-Táctico**: Tono profesional y estratégico, centrado en optimización y escalabilidad
+- **IA-Estratega**: Tono visionario y de liderazgo, enfocado en innovación y ventaja competitiva
+- **IA-Visionario**: Tono de colaboración entre pares, centrado en disrupción y nuevos modelos# Sistema de Puntuación para Perfiles de Adopción de IA
+
+## Metodología de Puntuación
+
+Para clasificar a los usuarios en los perfiles definidos (IA-Curioso, IA-Entusiasta, IA-Táctico, IA-Estratega, IA-Visionario), se utilizará un sistema de puntuación basado en las respuestas al cuestionario.
+
+### Preguntas Clave y su Peso
+
+Cada pregunta del cuestionario tiene asignado un peso específico según su relevancia para determinar el nivel de adopción de IA. A continuación, se detallan las preguntas clave y su peso en la puntuación final:
+
+| Pregunta | Descripción | Peso |
+|----------|-------------|------|
+| Q6 | Frecuencia de uso de IA | 12% |
+| Q7 | Herramientas de IA utilizadas | 8% |
+| Q8 | Tipo de versiones (gratuitas/pagas) | 5% |
+| Q9 | Usos principales de la IA | 8% |
+| Q10 | Sentimiento hacia la IA | 5% |
+| Q11 | Experiencia con IA | 5% |
+| Q12 | Impacto de perder acceso a IA | 8% |
+| Q13 | Nivel de conocimiento | 5% |
+| Q14 | Habilidad de prompting (evaluación objetiva) | 12% |
+| Q15 | Formación en IA | 5% |
+| Q16 | Tiempo ahorrado con IA | 5% |
+| Q17 | Mejoras en el trabajo | 5% |
+| Q18 | Flujos de trabajo con IA | 8% |
+| Q19 | Objetivo principal con IA | 5% |
+| Q21 | Obstáculos encontrados | 4% |
+
+### Escala de Puntuación por Respuesta
+
+Para cada pregunta, las opciones de respuesta reciben una puntuación en una escala de 0 a 4:
+
+- Opción 1 (Más avanzada): 4 puntos
+- Opción 2: 3 puntos
+- Opción 3: 2 puntos
+- Opción 4: 1 punto
+- Opción 5 (Menos avanzada): 0 puntos
+
+### Ejemplos de Puntuación para Preguntas Específicas
+
+#### Q6: Frecuencia de uso de IA
+- 🔥 Diariamente (varias veces): 4 puntos
+- 👍 Regularmente (algunas veces por semana): 3 puntos
+- 😐 Ocasionalmente (algunas veces al mes): 2 puntos
+- 🌱 Raramente (he probado alguna vez): 1 punto
+- ❌ Nunca: 0 puntos
+
+#### Q8: Tipo de versiones de IA utilizadas
+- 💎 Solo versiones de pago: 4 puntos
+- 💰 Principalmente versiones de pago: 3 puntos
+- 🔄 Principalmente gratuitas, ocasionalmente de pago: 2 puntos
+- 🆓 Solo versiones gratuitas: 1 punto
+- ❓ No estoy seguro / No aplica: 0 puntos
+
+#### Q14: Evaluación de habilidad de prompting
+- 🎯 Prompt detallado con audiencia, tono, estructura: 4 puntos
+- 📢 Prompt con algunos detalles y estructura: 3 puntos
+- 📋 Prompt con información básica: 2 puntos
+- 📝 Prompt genérico/vago: 1 punto
+- 🤷‍♂️ No estoy seguro / No uso prompts: 0 puntos
+
+#### Q21: Obstáculos encontrados
+(Inverso - menos obstáculos = puntuación más alta)
+- 🚫 No encuentro obstáculos significativos: 4 puntos
+- 🔒 Preocupaciones sobre privacidad o propiedad intelectual: 3 puntos
+- 🤔 Dificultad para identificar casos de uso prácticos: 2 puntos
+- 💰 Costo de las herramientas y suscripciones: 1 punto
+- 🧠 Falta de conocimientos o habilidades técnicas: 0 puntos
+
+### Cálculo de Puntuación Total
+
+La puntuación total se calcula multiplicando la puntuación de cada respuesta por el peso asignado a la pregunta correspondiente, y sumando todos los resultados. La puntuación máxima posible es 100 puntos.
+
+Fórmula: Puntuación Total = Σ (Puntuación de respuesta × Peso de pregunta) × 25
+
+### Clasificación por Perfiles
+
+Basándose en la puntuación total, los usuarios se clasifican en uno de los cinco perfiles:
+
+- **IA-Curioso:** 0-20 puntos
+- **IA-Entusiasta:** 21-40 puntos
+- **IA-Táctico:** 41-60 puntos
+- **IA-Estratega:** 61-80 puntos
+- **IA-Visionario:** 81-100 puntos

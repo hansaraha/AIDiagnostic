@@ -1,27 +1,87 @@
 <template>
-  <UCard class="max-w-2xl mx-auto w-full">
-    <template #header>
-      <h2 class="text-xl font-bold text-gray-800">{{ title }}</h2>
-    </template>
+  <!-- Mobile version: no card styling -->
+  <div class="mx-auto w-full max-w-2xl md:hidden px-4 py-5">
+    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">{{ title }}</h2>
     
-    <div class="text-gray-700 mb-4">
+    <div class="text-gray-700 dark:text-gray-300 mb-6">
       <slot></slot>
       
-      <!-- Mensaje de validación que aparece cuando se intenta continuar sin una selección válida -->
-      <div v-if="showValidationMessage && disabled" class="mt-4 p-2 bg-red-50 text-red-600 rounded-md text-sm">
+      <!-- Validation message -->
+      <UAlert
+        v-if="showValidationMessage && disabled"
+        color="red"
+        variant="soft"
+        icon="i-heroicons-exclamation-triangle"
+        class="mt-4"
+        size="sm"
+      >
         Por favor, completa esta pregunta antes de continuar.
-      </div>
+      </UAlert>
+    </div>
+    
+    <div class="flex justify-center sm:justify-end pt-4 mt-auto">
+      <UButton 
+        color="indigo" 
+        variant="solid" 
+        @click="handleNextClick" 
+        :disabled="disabled && preventInvalidProgress"
+        size="xl"
+        :block="isMobile"
+        :ui="{
+          rounded: 'rounded-full',
+          padding: { lg: 'py-3 px-6' }
+        }"
+      >
+        {{ buttonText || 'Continuar' }}
+      </UButton>
+    </div>
+  </div>
+  
+  <!-- Desktop version with card styling -->
+  <UCard 
+    class="container-card mx-auto w-full shadow-md dark:shadow-gray-800/20 max-w-2xl hidden md:block border border-gray-200 dark:border-gray-700 overflow-hidden"
+    :ui="{
+      rounded: 'rounded-xl',
+      body: { padding: 'p-6' },
+      header: { padding: 'px-6 py-5' },
+      footer: { padding: 'px-6 py-5' }
+    }"
+  >
+    <template #header>
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ title }}</h2>
+    </template>
+    
+    <div class="text-gray-700 dark:text-gray-300">
+      <slot></slot>
+      
+      <!-- Validation message -->
+      <UAlert
+        v-if="showValidationMessage && disabled"
+        color="red"
+        variant="soft"
+        icon="i-heroicons-exclamation-triangle"
+        class="mt-4"
+        size="sm"
+      >
+        Por favor, completa esta pregunta antes de continuar.
+      </UAlert>
     </div>
     
     <template #footer>
-      <div class="flex justify-center">
+      <div class="flex justify-end">
         <UButton 
           color="indigo" 
           variant="solid" 
           @click="handleNextClick" 
           :disabled="disabled && preventInvalidProgress"
+          size="lg"
+          class="px-6 rounded-xl"
+          :ui="{
+            rounded: 'rounded-xl',
+            padding: { lg: 'py-3 px-6' }
+          }"
         >
-          {{ buttonText }}
+          {{ buttonText || 'Continuar' }}
         </UButton>
       </div>
     </template>
@@ -50,6 +110,12 @@ const props = defineProps({
     default: true
   }
 });
+
+const breakpoints = useBreakpoints({
+  mobile: 768, // max width for mobile
+})
+
+const isMobile = breakpoints.smaller('mobile')
 
 const emit = defineEmits(['next']);
 
