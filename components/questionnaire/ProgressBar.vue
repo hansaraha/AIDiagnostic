@@ -2,7 +2,7 @@
   <div class="w-full">
     <div class="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
       <div 
-        class="h-2 bg-indigo-600 dark:bg-indigo-500 rounded-full transition-all duration-300 ease-in-out" 
+        class="h-2 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full transition-all duration-300 ease-in-out" 
         :style="{ width: `${progress}%` }"
       ></div>
     </div>
