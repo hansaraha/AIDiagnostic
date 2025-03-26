@@ -1,15 +1,16 @@
 <template>
-  <div>
+  <div class="h-full">
     <OfflineBanner />
     <!-- Header only appears after the welcome screen -->
     <div
+    v-if="currentStep !== 'welcome'"
     :class="{
       'pb-5': currentStep !== 'welcome',
     }"
       class="fixed top-0 left-0 right-0 w-full  dark:bg-gradient-to-b dark:from-[#403397] from-70% dark:via-[#403397] dark:to-transparent z-10 transition-all duration-300 ease-in-out">
       <div class="container-responsive py-4 flex items-center "
         :class="{ 'justify-between': currentStep !== 'welcome', 'justify-end': currentStep === 'welcome' }">
-        <h1 v-if="currentStep !== 'welcome'" class="text-responsive-lg text-indigo-900 dark:text-indigo-300">
+        <h1 class="text-responsive-lg text-indigo-900 dark:text-indigo-300">
           MINDSET AI
         </h1>
 
@@ -18,20 +19,20 @@
           <ColorModeToggle />
 
           <!-- Progress bar (desktop) -->
-          <div v-if="currentStep !== 'welcome'" class="hidden sm:block w-48 md:w-64 lg:w-80">
+          <div class="hidden sm:block w-48 md:w-64 lg:w-80">
             <QuestionnaireProgressBar :progress="progress" :sectionText="currentSection" />
           </div>
         </div>
       </div>
 
       <!-- Mobile progress bar -->
-      <div v-if="currentStep !== 'welcome'" class="sm:hidden container-responsive pb-2">
+      <div class="sm:hidden container-responsive pb-2">
         <QuestionnaireProgressBar :progress="progress" :sectionText="currentSection" />
       </div>
     </div>
 
     <!-- Main content with dynamic padding based on header visibility -->
-    <div class="container-narrow py-8 question-container" :class="currentStep !== 'welcome' ? 'pt-24' : 'pt-8'">
+    <div class="h-full" :class="currentStep !== 'welcome' ? 'pt-24' : 'pt-8'">
 
       <!-- Global error message -->
       <ErrorMessage v-if="error" :error="error" class="max-w-2xl mx-auto mb-4" @retry="handleErrorRetry"

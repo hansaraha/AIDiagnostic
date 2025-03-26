@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   
-  modules: ['@nuxt/ui', '@vueuse/nuxt'],
+  modules: ['@nuxt/ui', '@vueuse/nuxt', '@nuxtjs/google-fonts'],
   
   // Custom CSS for UI kit
   css: ['~/assets/css/main.css'],
@@ -16,6 +16,14 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'light',
     fallback: 'light',
+  },
+
+  googleFonts: {
+    families: {
+      Roboto: [400, 500, 700]
+    },
+    display: 'swap',
+    preload: true
   },
   
   // Configuración para entorno SPA

@@ -2,6 +2,7 @@
   <!-- Mobile version: full screen with no extra space -->
   <div class="md:hidden w-full min-h-screen h-full fixed inset-0 overflow-y-auto">
     <div class="w-full px-6 flex flex-col min-h-screen justify-between py-4">
+      <div class="h-1.5 w-11/12 mx-auto rounded-full bg-gradient-to-r from-orange-500 to-pink-500 absolute top-6 left-0 right-0 "></div>
       <!-- Main content wrapper with precise spacing -->
       <div class="flex flex-col items-center text-center flex-1 pt-12 pb-4">
         <!-- Header section with precise spacing -->
@@ -60,13 +61,13 @@
   </div>
   
   <!-- Desktop version: full height card -->
-  <div class="hidden md:flex items-center justify-center min-h-screen w-full p-6 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-gray-900 dark:to-indigo-950">
-    <div class="max-w-5xl w-full bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden">
+  <div class="hidden md:flex items-center justify-center h-full">
+    <div class="flex max-w-5xl mx-auto w-full bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden">
       <div class="grid grid-cols-2 h-full">
         <!-- Left Column: Image/Branding -->
         <div class="bg-indigo-900 text-white p-10 flex flex-col relative">
           <!-- Gradient line at top -->
-          <div class="h-1.5 w-full rounded-full bg-gradient-to-r from-orange-500 to-pink-500 absolute top-6 left-0 right-0 mx-10"></div>
+          <div class="h-1.5 w-11/12 mx-auto rounded-full bg-gradient-to-r from-orange-500 to-pink-500 absolute top-6 left-0 right-0 "></div>
           
           <div class="mt-12">
             <div class="mb-2 tracking-wide">DIAGNÓSTICO</div>
@@ -128,6 +129,7 @@
       </div>
     </div>
   </div>
+   
 </template>
 
 <script setup lang="ts">
