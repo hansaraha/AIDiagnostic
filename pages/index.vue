@@ -199,7 +199,7 @@ const finalSteps = ['analysis', 'results'] as const;
 const tips = ['']
 
 // Track current step and analysis state
-const currentStep = ref('analysis');
+const currentStep = ref('welcome');
 const analyzing = ref(false);
 const analysisError = ref<ErrorState | null>(null);
 
