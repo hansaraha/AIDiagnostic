@@ -1,42 +1,42 @@
 <template>
-  <UCard class="max-w-2xl mx-auto w-full bg-gradient-to-r from-indigo-50 to-white">
-    <template #header>
-      <h2 class="text-xl font-bold text-indigo-800">¡Estoy analizando tu perfil!</h2>
-    </template>
-    <div class="text-gray-700 mb-4 flex flex-col items-center py-8">
-      <UIcon name="i-heroicons-arrow-path" class="text-indigo-500 animate-spin h-12 w-12 mb-4" />
-      <p class="text-center mb-4">
-        Estoy generando recomendaciones personalizadas para tu perfil 
-        <span class="font-semibold text-indigo-700">{{ profileDescription }}</span>
-      </p>
-      <div class="w-full bg-gray-200 rounded-full h-2 mt-4">
-        <div class="bg-indigo-600 h-2 rounded-full animate-pulse" style="width: 75%"></div>
+   <div class="h-1.5 w-11/12 mx-auto rounded-full bg-gradient-to-r from-orange-500 to-pink-500 absolute top-6 left-0 right-0 "></div>
+  <div class=" max-w-xl mx-auto text-center space-y-20 p-5">
+   
+    <div class="space-y-3">
+      <div>
+        <p>DIAGNÓSTICO</p>
       </div>
-      <p class="text-sm text-gray-500 mt-3">Este análisis es 100% personalizado según tus respuestas</p>
-      
-      <!-- Error message component -->
-      <ErrorMessage 
-        v-if="error" 
-        :error="error" 
-        class="mt-6 w-full" 
-        @retry="handleAnalyze" 
-        @dismiss="handleClearError"
-      />
+      <div>
+        <p class="text-5xl font-bold">Mindset AI</p>
+      </div>
     </div>
-    <template #footer>
-      <div class="flex justify-center">
-        <UButton 
-          color="indigo" 
-          variant="solid" 
-          @click="handleAnalyze"
-          :loading="isAnalyzing"
-          :disabled="isAnalyzing"
-        >
-          VER RESULTADOS
-        </UButton>
+    <div>
+      <div class="rounded-2xl border border-[#5D49F6] bg-[#403397] bg-opacity-20 p-8 flex items-center justify-center">
+        <div class="text-center space-y-20">
+          <div class="space-y-3">
+            <div>
+              <p class="text-[#FF6B3C] font-bold text-3xl">¡Excelente!</p>
+            </div>
+            <div>
+              <p class="text-2xl font-bold">La IA va a transformar la forma en que todos trabajamos, no te quedes atrás!</p>
+            </div>
+          </div>
+          <div>
+            <p class="text-xl">Enviaremos al correo que nos proporcionaste el resultado para saber que tan adelante estás en el uso de
+              la
+              IA en tu sector y que puedes hacer para sobresalir.</p>
+          </div>
+        </div>
+
       </div>
-    </template>
-  </UCard>
+    </div>
+    <div>
+      <UButton size="lg" :ui="{
+        rounded: 'rounded-full',
+        padding: { lg: 'py-5 px-6' }
+      }" :block="isMobile" @click="handleAnalyze" :loading="isAnalyzing">Finalizar</UButton>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -57,6 +57,12 @@ const props = defineProps({
     default: null
   }
 });
+
+const breakpoints = useBreakpoints({
+  mobile: 768, // max width for mobile
+})
+
+const isMobile = breakpoints.smaller('mobile')
 
 const emit = defineEmits(['analyze', 'clearError']);
 

@@ -3,7 +3,7 @@
     <OfflineBanner />
     <!-- Header only appears after the welcome screen -->
     <div
-    v-if="currentStep !== 'welcome'"
+    v-if="currentStep !== 'welcome' && currentStep !== 'analysis'"
     :class="{
       'pb-5': currentStep !== 'welcome',
     }"
@@ -32,7 +32,7 @@
     </div>
 
     <!-- Main content with dynamic padding based on header visibility -->
-    <div class="h-full" :class="currentStep !== 'welcome' ? 'pt-24' : 'pt-8'">
+    <div class="h-full" :class="currentStep !== 'welcome' && currentStep !== 'analysis' ? 'pt-0' : 'pt-8'">
 
       <!-- Global error message -->
       <ErrorMessage v-if="error" :error="error" class="max-w-2xl mx-auto mb-4" @retry="handleErrorRetry"
@@ -196,9 +196,10 @@ const aiSteps = [
   'ai_impact'
 ] as const;
 const finalSteps = ['analysis', 'results'] as const;
+const tips = ['']
 
 // Track current step and analysis state
-const currentStep = ref('welcome');
+const currentStep = ref('analysis');
 const analyzing = ref(false);
 const analysisError = ref<ErrorState | null>(null);
 
