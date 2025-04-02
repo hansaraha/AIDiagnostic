@@ -16,12 +16,14 @@
 
         <!-- Color mode toggle and progress info -->
         <div class="flex items-center gap-4">
-          <ColorModeToggle />
+          
 
           <!-- Progress bar (desktop) -->
           <div class="hidden sm:block w-48 md:w-64 lg:w-80">
             <QuestionnaireProgressBar :progress="progress" :sectionText="currentSection" />
           </div>
+
+          <ColorModeToggle />
         </div>
       </div>
 
