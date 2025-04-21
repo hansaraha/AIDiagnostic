@@ -88,20 +88,14 @@
       <!-- Stoppers ya no se renderizan aquí porque ahora usan Teleport -->
       <!-- Se muestran con Teleport al final del documento -->
 
+      
       <!-- Recopilación de email antes del análisis final -->
       <QuestionnaireStepEmail v-else-if="currentStep === 'email'" v-model="userData.email"
         @next="nextStep" />
 
       <!-- Analysis and Results -->
-      <QuestionnaireStepAnalysis v-else-if="currentStep === 'analysis'" :analyzing="analyzing" :error="analysisError"
+      <QuestionnaireStepAnalysis v-else-if="currentStep === 'stopper_success'" :analyzing="analyzing" :error="analysisError"
         @analyze="handleAnalyzeProfile" @retry="clearAnalysisError" />
-
-      <QuestionnaireStepResults v-else-if="currentStep === 'results'" 
-        :diagnostic="userData.diagnostic || {}"
-        :userName="userData.name"
-        :userId="userData.id"
-        :referralCode="userData.referralCode"
-        @restart="restartQuestionnaire" />
     </div>
   </div>
   <!-- Offline Banner is always visible -->
@@ -129,6 +123,7 @@ import ErrorMessage from "~/components/ui/ErrorMessage.vue";
 import OfflineBanner from "~/components/ui/OfflineBanner.vue";
 import ColorModeToggle from "~/components/ui/ColorModeToggle.vue";
 import QuestionnaireStopperCard from "~/components/questionnaire/StopperCard.vue";
+import { QuestionnaireStepEmail } from "#components";
 
 // Initialize error handling
 const { error: errorHandlingState, setError, clearError } = useErrorHandling();
@@ -428,24 +423,24 @@ const ensureCommonAIData = () => {
 // Function to go to next step
 // Función para manejar el evento del botón continuar en el stopper
 function handleStopperNext() {
-  console.log('handleStopperNext - Paso actual antes:', currentStep.value);
-  // Oculta el stopper overlay
+  console.log('handleStopperNext called, current step:', currentStep.value);
+  
+  // Hide the stopper overlay
   showStopper.value = false;
   
-  // Avanza al siguiente paso en la navegación después del stopper
-  // Importante: Tenemos que usar el paso actual (que es un stopper) para determinar el paso siguiente
+  // Get the next step
   const nextStepValue = getNextStep(currentStep.value);
-  console.log('handleStopperNext - Siguiente paso calculado:', nextStepValue);
+  console.log('Next step should be:', nextStepValue);
   
-  // Verificar si estamos en el stopper de adopción
-  if (currentStep.value === stopperSteps.adoption) {
-    console.log('Saliendo del stopper de adopción, el siguiente debería ser casos de éxito');
+  // Special handling for stopper_success
+  if (currentStep.value === stopperSteps.success) {
+    console.log('Processing success stopper transition to email');
   }
   
-  // Aplicar un pequeño retraso para permitir que la animación de salida del stopper termine
+  // Apply a delay to allow the stopper animation to complete
   setTimeout(() => {
     currentStep.value = nextStepValue;
-    console.log('Navegando al paso:', nextStepValue);
+    console.log('Step updated to:', currentStep.value);
   }, 350);
 }
 
@@ -565,6 +560,14 @@ function nextStep(data?: any) {
 
 // Function to determine the next step based on current step and user type
 function getNextStep(currentStep: string): string {
+   // Add debug
+   console.log('Getting next step for:', currentStep);
+  
+  // Make sure this case is handled correctly
+  if (currentStep === stopperSteps.success) {
+    console.log('Success stopper detected, should go to email');
+    return 'email';
+  } 
   // Flujo del welcome al sector
   if (currentStep === 'welcome') return 'work_status';
   if (currentStep === 'work_status') return 'sector';
@@ -600,10 +603,8 @@ function getNextStep(currentStep: string): string {
   if (currentStep === 'ai_impact') return stopperSteps.adoption;
   
   // Después de adopción, ir a casos de éxito, luego email y finalmente análisis
-  if (currentStep === stopperSteps.adoption) return stopperSteps.success;
-  if (currentStep === stopperSteps.success) return 'email';
-  if (currentStep === 'email') return 'analysis';
-  if (currentStep === 'analysis') return 'results';
+  if (currentStep === stopperSteps.adoption) return 'email';
+  if (currentStep === 'email') return stopperSteps.success;
   
   // Default
   return 'results';

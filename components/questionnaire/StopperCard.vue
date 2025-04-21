@@ -68,7 +68,7 @@ watch(() => props.show, (newVal) => {
 const handleNextClick = () => {
   // Animar salida antes de emitir el evento next
   showCard.value = false;
-
+  console.log('Stopper next button clicked');
   // Esperar a que termine la animación antes de continuar
   setTimeout(() => {
     emit('next');

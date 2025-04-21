@@ -324,6 +324,7 @@ export default function useStopperData() {
 
   // Función para obtener un caso de éxito por sector
   function getSuccessCase(sector: string): StopperData {
+    console.log('Success case data for sector:', sector, successCases.value[sector]);
     return successCases.value[sector] || {
       id: 'success_default',
       title: 'Caso de éxito con IA',
