@@ -1,14 +1,7 @@
 <template>
-  <QuestionCard 
-    title="¿Cuál es tu correo electrónico?" 
-    buttonText="SIGUIENTE" 
-    :disabled="!isValidEmail(email)" 
-    @next="$emit('next')"
-  >
-    <UFormGroup 
-      label="Email" 
-      :error="email && !isValidEmail(email) ? 'Por favor ingresa un email válido' : ''"
-    >
+  <QuestionCard title="¿Cuál es tu correo electrónico?" buttonText="SIGUIENTE" :disabled="!isValidEmail(email)"
+    @next="handleNext">
+    <UFormGroup label="Email" :error="email && !isValidEmail(email) ? 'Por favor ingresa un email válido' : ''">
       <UInput v-model="email" type="email" placeholder="tu@email.com" />
     </UFormGroup>
     <p class="text-sm text-gray-500 mt-2">Te enviaremos tu diagnóstico a esta dirección de correo.</p>
@@ -37,5 +30,11 @@ const isValidEmail = (email?: string): boolean => {
   if (!email) return false;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
+};
+
+const handleNext = () => {
+  if (isValidEmail(email.value)) {
+    emit('next');
+  }
 };
 </script>

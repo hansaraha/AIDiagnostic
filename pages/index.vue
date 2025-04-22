@@ -2,9 +2,7 @@
   <div class="h-full">
     <OfflineBanner />
     <!-- Header only appears after the welcome screen -->
-    <div
-    v-if="currentStep !== 'welcome' && currentStep !== 'analysis'"
-    :class="{
+    <div v-if="currentStep !== 'welcome' && currentStep !== 'analysis'" :class="{
       'pb-5': currentStep !== 'welcome',
     }"
       class="fixed top-0 left-0 right-0 w-full  dark:bg-gradient-to-b dark:from-[#403397] from-70% dark:via-[#403397] dark:to-transparent z-10 transition-all duration-300 ease-in-out">
@@ -16,7 +14,7 @@
 
         <!-- Color mode toggle and progress info -->
         <div class="flex items-center gap-4">
-          
+
 
           <!-- Progress bar (desktop) -->
           <div class="hidden sm:block w-48 md:w-64 lg:w-80">
@@ -84,30 +82,24 @@
 
       <QuestionnaireAIImpactQuestion v-else-if="currentStep === 'ai_impact'" v-model="userData.aiUsage.impact"
         @next="nextStep" />
-        
+
       <!-- Stoppers ya no se renderizan aquí porque ahora usan Teleport -->
       <!-- Se muestran con Teleport al final del documento -->
 
-      
+
       <!-- Recopilación de email antes del análisis final -->
-      <QuestionnaireStepEmail v-else-if="currentStep === 'email'" v-model="userData.email"
-        @next="nextStep" />
+      <QuestionnaireStepEmail v-else-if="currentStep === 'email'" v-model="userData.email" @next="nextStep" />
 
       <!-- Analysis and Results -->
-      <QuestionnaireStepAnalysis v-else-if="currentStep === 'stopper_success'" :analyzing="analyzing" :error="analysisError"
+      <QuestionnaireStepAnalysis v-else-if="currentStep === 'analysis'" :analyzing="analyzing" :error="analysisError"
         @analyze="handleAnalyzeProfile" @retry="clearAnalysisError" />
     </div>
   </div>
   <!-- Offline Banner is always visible -->
 
   <!-- Stopper Card (overlay con Teleport) -->
-  <QuestionnaireStopperCard 
-    :show="showStopper"
-    :title="currentStopperData.title || ''"
-    :message="currentStopperData.message || ''"
-    :source="currentStopperData.source || ''"
-    @next="handleStopperNext" 
-  />
+  <QuestionnaireStopperCard :show="showStopper" :title="currentStopperData.title || ''"
+    :message="currentStopperData.message || ''" :source="currentStopperData.source || ''" @next="handleStopperNext" />
 </template>
 
 <script setup lang="ts">
@@ -193,13 +185,13 @@ const showStopper = ref(false);
 const comingFromStopper = ref(false);
 
 // Inicializar el stopper data
-const { 
-  getSectorStopper, 
-  getWorkerTypeStopper, 
-  getExperienceTip, 
+const {
+  getSectorStopper,
+  getWorkerTypeStopper,
+  getExperienceTip,
   getFutureReflection,
   getIndustryAdoptionStopper,
-  getSuccessCase 
+  getSuccessCase
 } = useStopperData();
 
 // Datos del stopper actual
@@ -258,6 +250,9 @@ const clearAnalysisError = () => {
 
 // Function to handle profile analysis
 async function handleAnalyzeProfile() {
+
+  console.log("Iniciando handleAnalyzeProfile");
+
   analyzing.value = true;
   analysisError.value = null;
 
@@ -424,19 +419,19 @@ const ensureCommonAIData = () => {
 // Función para manejar el evento del botón continuar en el stopper
 function handleStopperNext() {
   console.log('handleStopperNext called, current step:', currentStep.value);
-  
+
   // Hide the stopper overlay
   showStopper.value = false;
-  
+
   // Get the next step
   const nextStepValue = getNextStep(currentStep.value);
   console.log('Next step should be:', nextStepValue);
-  
+
   // Special handling for stopper_success
   if (currentStep.value === stopperSteps.success) {
     console.log('Processing success stopper transition to email');
   }
-  
+
   // Apply a delay to allow the stopper animation to complete
   setTimeout(() => {
     currentStep.value = nextStepValue;
@@ -448,20 +443,20 @@ function nextStep(data?: any) {
   if (data) {
     if (currentStep.value === 'welcome') userData.value.name = data;
   }
-  
+
   // Si estamos analizando, no permitir avanzar
   if (analyzing.value) {
     return;
   }
-  
+
   // Calcular el siguiente paso
   const nextStepValue = getNextStep(currentStep.value);
   console.log('Paso actual:', currentStep.value, 'Siguiente paso:', nextStepValue);
-  
+
   // Verificar si el siguiente paso es un stopper
   const isStopperStep = Object.values(stopperSteps).includes(nextStepValue as any);
   console.log('¿Es un stopper?', isStopperStep);
-  
+
   if (isStopperStep) {
     // Actualizar datos del stopper según el tipo
     if (nextStepValue === stopperSteps.sector) {
@@ -471,7 +466,7 @@ function nextStep(data?: any) {
         message: stopper.message,
         source: stopper.source
       };
-    } 
+    }
     else if (nextStepValue === stopperSteps.worker) {
       const stopper = getWorkerTypeStopper(userData.value.workStatus);
       currentStopperData.value = {
@@ -483,15 +478,15 @@ function nextStep(data?: any) {
     else if (nextStepValue === stopperSteps.experience) {
       // Determinar nivel de experiencia basado en las respuestas
       let experienceLevel: 'beginner' | 'intermediate' | 'advanced' | 'team' | 'leadership' = 'beginner';
-      
+
       if (userData.value.aiUsage.frequency === 'daily' || userData.value.aiUsage.tools.length > 2) {
         experienceLevel = 'intermediate';
       }
-      
+
       if (userData.value.aiUsage.versions === 'paid_only' || userData.value.aiUsage.versions === 'mostly_paid') {
         experienceLevel = 'advanced';
       }
-      
+
       const stopper = getExperienceTip(experienceLevel);
       currentStopperData.value = {
         title: stopper.title,
@@ -517,10 +512,10 @@ function nextStep(data?: any) {
     }
     else if (nextStepValue === stopperSteps.success) {
       console.log('Configurando stopper de CASO DE ÉXITO para sector:', userData.value.sector);
-      
+
       // Mapear el sector del usuario a los sectores disponibles en successCases
       let mappedSector = userData.value.sector;
-      
+
       // Mapeo de sectores de usuario a sectores de casos de éxito
       const sectorMapping: Record<string, string> = {
         'tech': 'development',
@@ -530,15 +525,15 @@ function nextStep(data?: any) {
         'sales': 'retail',
         'other': 'education'
       };
-      
+
       if (sectorMapping[userData.value.sector]) {
         mappedSector = sectorMapping[userData.value.sector];
         console.log(`Mapeando sector ${userData.value.sector} a ${mappedSector} para casos de éxito`);
       }
-      
+
       const stopper = getSuccessCase(mappedSector);
       console.log('Datos del stopper de caso de éxito para sector', mappedSector, ':', stopper);
-      
+
       currentStopperData.value = {
         title: stopper.title,
         message: stopper.message,
@@ -546,10 +541,10 @@ function nextStep(data?: any) {
       };
       console.log('currentStopperData actualizado:', currentStopperData.value);
     }
-    
+
     // Actualizar el paso actual en el estado interno (para rastreo)
     currentStep.value = nextStepValue;
-    
+
     // Mostrar el stopper como overlay
     showStopper.value = true;
   } else {
@@ -560,38 +555,32 @@ function nextStep(data?: any) {
 
 // Function to determine the next step based on current step and user type
 function getNextStep(currentStep: string): string {
-   // Add debug
-   console.log('Getting next step for:', currentStep);
-  
-  // Make sure this case is handled correctly
-  if (currentStep === stopperSteps.success) {
-    console.log('Success stopper detected, should go to email');
-    return 'email';
-  } 
-  // Flujo del welcome al sector
+  console.log('Getting next step for:', currentStep);
+
+  // 1) Del welcome al sector
   if (currentStep === 'welcome') return 'work_status';
   if (currentStep === 'work_status') return 'sector';
-  if (currentStep === 'sector') return stopperSteps.sector; // Mostrar stopper de sector
-  
-  // Después del stopper de sector, bifurcar según tipo de usuario
+  if (currentStep === 'sector') return stopperSteps.sector;
+
+  // 2) Después del stopper de sector
   if (currentStep === stopperSteps.sector) {
     if (userData.value.workStatus === 'freelancer') return 'freelancer_experience';
     if (userData.value.workStatus === 'business_owner') return 'business_size';
-    return 'ai_frequency'; // Si es otro tipo, ir directamente a preguntas de IA
+    return 'ai_frequency';
   }
-  
-  // Ruta freelancer
+
+  // 3) Ruta freelancer
   if (currentStep === 'freelancer_experience') return 'freelancer_platforms';
   if (currentStep === 'freelancer_platforms') return stopperSteps.worker;
-  
-  // Ruta business owner
+
+  // 4) Ruta business owner
   if (currentStep === 'business_size') return 'business_ai_strategy';
   if (currentStep === 'business_ai_strategy') return stopperSteps.worker;
-  
-  // Después de mostrar stopper por tipo de trabajador, ir a preguntas de IA
+
+  // 5) Después del stopper por tipo de trabajador
   if (currentStep === stopperSteps.worker) return 'ai_frequency';
-  
-  // Ruta común de IA
+
+  // 6) Ruta común de IA
   if (currentStep === 'ai_frequency') return 'ai_tools';
   if (currentStep === 'ai_tools') return 'ai_versions';
   if (currentStep === 'ai_versions') return stopperSteps.experience;
@@ -600,15 +589,21 @@ function getNextStep(currentStep: string): string {
   if (currentStep === 'ai_feeling') return 'ai_experience';
   if (currentStep === 'ai_experience') return stopperSteps.future;
   if (currentStep === stopperSteps.future) return 'ai_impact';
+
+  // ← Aquí termina la penúltima pregunta
   if (currentStep === 'ai_impact') return stopperSteps.adoption;
-  
-  // Después de adopción, ir a casos de éxito, luego email y finalmente análisis
+
+  // 7) Transiciones finales:
+  //    adoption → email → success → analysis → results
   if (currentStep === stopperSteps.adoption) return 'email';
   if (currentStep === 'email') return stopperSteps.success;
-  
-  // Default
+  if (currentStep === stopperSteps.success) return 'analysis';
+  if (currentStep === 'analysis') return 'results';
+
+  // 8) Fallback (por si algo falla)
   return 'results';
 }
+
 
 // Function to restart questionnaire
 function restartQuestionnaire() {
