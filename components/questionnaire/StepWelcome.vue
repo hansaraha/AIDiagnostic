@@ -106,7 +106,7 @@
             y la <a href="#" class="underline text-indigo-600 dark:text-indigo-400">Política de privacidad</a>
           </p>
 
-          <UButton color="indigo" :disabled="!name.trim()" @click="startDiagnostic" size="lg" class="w-1/2">
+          <UButton color="indigo" :disabled="!name.trim()" @click="$emit('next', name)" size="lg" class="w-1/2">
             Comenzar Diagnóstico
           </UButton>
         </div>
@@ -118,26 +118,5 @@
 
 <script setup lang="ts">
 const name = ref('');
-const emit = defineEmits(['next'])
-
-const startDiagnostic = async () => {
-
-  const payload = {
-    name: name.value,
-    timestamp: new Date().toISOString()
-  };
-
-  try {
-    await useFetch('https://holaamigo.app.n8n.cloud/webhook/start', {
-      method: 'POST',
-      body: payload,
-    });
-    console.log('Webhook enviado con éxito');
-  } catch (error) {
-    console.error('Error al enviar webhook:', error);
-  }
-
-  emit('next', name.value);
-};
-
+defineEmits(['next']);
 </script>

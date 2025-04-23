@@ -181,7 +181,6 @@ export interface ServiceRecommendation {
 // Option types for various questions
 export interface WorkStatusOption {
   value:
-    | "employee"
     | "freelancer"
     | "business_owner"
     | "full_time"
