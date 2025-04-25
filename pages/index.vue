@@ -52,14 +52,29 @@
         v-model="ensureFreelancerData().experience" @next="nextStep" />
 
       <QuestionnaireStepFreelancerPlatformsQuestion v-else-if="currentStep === 'freelancer_platforms'"
-        v-model="ensureFreelancerData().clientAcquisition" @next="nextStep" />
+        v-model="ensureFreelancerData().clientAcquisition" v-model:otherPlatform="ensureFreelancerData().otherPlatform"
+        @next="nextStep" />
 
-      <!-- Business owner specific steps -->
+      <QuestionnaireStepFreelancerClientsQuestion v-else-if="currentStep === 'freelancer_clients'"
+        v-model="ensureFreelancerData().clientsPerMonth" @next="nextStep" />
+
+      <!-- Business Owner specific steps -->
+      <QuestionnaireStepBusinessOwnerTypeQuestion v-else-if="currentStep === 'business_type'"
+        v-model="ensureBusinessOwnerData().businessType"
+        v-model:otherBusinessType="ensureBusinessOwnerData().otherBusinessType" @next="nextStep" />
+
+      <QuestionnaireStepBusinessOwnerAgeQuestion v-else-if="currentStep === 'business_age'"
+        v-model="ensureBusinessOwnerData().foundingTime" @next="nextStep" />
+
       <QuestionnaireStepBusinessOwnerSizeQuestion v-else-if="currentStep === 'business_size'"
         v-model="ensureBusinessOwnerData().employeeCount" @next="nextStep" />
 
       <QuestionnaireStepBusinessOwnerAIStrategyQuestion v-else-if="currentStep === 'business_ai_strategy'"
-        v-model="ensureBusinessOwnerData().aiStrategy" @next="nextStep" />
+        :modelValue="ensureBusinessOwnerData().aiStrategy || ''"
+        @update:modelValue="ensureBusinessOwnerData().aiStrategy = $event" @next="nextStep" />
+
+      <QuestionnaireStepBusinessOwnerAIPolicyQuestion v-else-if="currentStep === 'business_ai_policy'"
+        v-model="ensureBusinessOwnerData().aiPolicy" @next="nextStep" />
 
       <!-- Employee specific steps -->
       <QuestionnaireStepEmployeeRoleQuestion v-else-if="currentStep === 'employee_role'"
@@ -163,11 +178,15 @@ const stopperSteps = {
 
 const freelancerSteps = [
   'freelancer_experience',
-  'freelancer_platforms'
+  'freelancer_platforms',
+  'freelancer_clients'
 ] as const;
 const businessOwnerSteps = [
+  'business_type',
+  'business_age',
   'business_size',
-  'business_ai_strategy'
+  'business_ai_strategy',
+  'business_ai_policy'
 ] as const;
 const employeeSteps = [
   'employee_role',
@@ -393,6 +412,7 @@ const ensureFreelancerData = () => {
       experience: "less_than_1",
       clientsPerMonth: "1_2",
       platforms: [],
+      otherPlatform: "",
     };
   }
   return userData.value.freelancer;
@@ -402,10 +422,12 @@ const ensureFreelancerData = () => {
 const ensureBusinessOwnerData = () => {
   if (!userData.value.businessOwner) {
     userData.value.businessOwner = {
-      businessType: "tech_startup",
-      employeeCount: "solo",
-      foundingTime: "less_than_1",
-      aiPolicy: "not_considered",
+      businessType: "",
+      otherBusinessType: "",
+      employeeCount: "",
+      foundingTime: "",
+      aiPolicy: "",
+      aiStrategy: "",
     };
   }
   return userData.value.businessOwner;
@@ -588,18 +610,22 @@ function getNextStep(currentStep: string): string {
   // 2) Después del stopper de sector
   if (currentStep === stopperSteps.sector) {
     if (userData.value.workStatus === 'freelancer') return 'freelancer_experience';
-    if (userData.value.workStatus === 'business_owner') return 'business_size';
+    if (userData.value.workStatus === 'business_owner') return 'business_type';
     if (userData.value.workStatus === 'full_time' || userData.value.workStatus === 'part_time') return 'employee_role';
     return 'ai_frequency';
   }
 
   // 3) Ruta freelancer
   if (currentStep === 'freelancer_experience') return 'freelancer_platforms';
-  if (currentStep === 'freelancer_platforms') return stopperSteps.worker;
+  if (currentStep === 'freelancer_platforms') return 'freelancer_clients';
+  if (currentStep === 'freelancer_clients') return stopperSteps.worker;
 
   // 4) Ruta business owner
+  if (currentStep === 'business_type') return 'business_age';
+  if (currentStep === 'business_age') return 'business_size';
   if (currentStep === 'business_size') return 'business_ai_strategy';
-  if (currentStep === 'business_ai_strategy') return stopperSteps.worker;
+  if (currentStep === 'business_ai_strategy') return 'business_ai_policy';
+  if (currentStep === 'business_ai_policy') return stopperSteps.worker;
 
   // 5) Pasos específicos para empleados
   if (currentStep === 'employee_role') return 'employee_ai_policy';

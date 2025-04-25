@@ -35,17 +35,6 @@ export type Sector =
   | "other";
 
 export interface FreelancerData {
-  services: (
-    | "development"
-    | "design"
-    | "marketing"
-    | "content"
-    | "consulting"
-    | "education"
-    | "translation"
-    | "other"
-  )[];
-  otherService?: string;
   experience: "less_than_1" | "1_to_3" | "4_to_6" | "more_than_6";
   clientsPerMonth: "1_2" | "3_5" | "6_10" | "more_than_10";
   platforms: (
@@ -60,12 +49,6 @@ export interface FreelancerData {
     | "other"
   )[];
   otherPlatform?: string;
-  clientAcquisition?:
-    | "platforms"
-    | "network"
-    | "referrals"
-    | "marketing"
-    | "other"; // Hacer opcional o ajustar según necesidad
 }
 
 export interface BusinessOwnerData {
@@ -180,16 +163,8 @@ export interface ServiceOption {
   label: string;
 }
 
-export interface FreelancerServiceOption {
-  value:
-    | "development"
-    | "design"
-    | "marketing"
-    | "content"
-    | "consulting"
-    | "education"
-    | "translation"
-    | "other";
+export interface WorkStatusOption {
+  value: "full_time" | "part_time" | "freelancer" | "business_owner" | "other";
   label: string;
 }
 

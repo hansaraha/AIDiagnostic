@@ -1,13 +1,13 @@
 <template>
   <QuestionCard
-    title="¿Cuál es la estrategia de IA en tu empresa?"
+    title="¿Cuántos clientes tienes al mes?"
     buttonText="SIGUIENTE"
     :disabled="!selectedValue"
     @next="handleNext"
   >
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
       <div
-        v-for="option in businessAIStrategyOptions"
+        v-for="option in clientsOptions"
         :key="option.value"
         class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"
         :class="selectedValue === option.value ? 'bg-[#5D49F6] bg-opacity-10 dark:bg-opacity-20' : 'border-[#5D49F6]'"
@@ -29,23 +29,25 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import QuestionCard from '../../ui/QuestionCard.vue';
-import useOptionsData from "~/composables/useOptionsData";
+import useOptionsData from '~/composables/useOptionsData';
 
 const props = defineProps<{
   modelValue: string;
 }>();
 const emit = defineEmits(["update:modelValue", "next"]);
 
-const { businessAIStrategyOptions } = useOptionsData();
+const { freelancerClientsOptions } = useOptionsData();
+
+const clientsOptions = freelancerClientsOptions;
 
 const selectedValue = computed({
   get: () => props.modelValue,
   set: (val) => emit("update:modelValue", val)
 });
 
-const selectOption = (value: string) => {
+function selectOption(value: string) {
   selectedValue.value = value;
-};
+}
 
 function handleNext() {
   emit("next");

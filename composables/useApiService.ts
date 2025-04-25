@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import type {
   UserData,
   DiagnosticResult,
@@ -9,8 +9,7 @@ import useErrorHandling from "./useErrorHandling";
 
 export default function useApiService() {
   const isLoading = ref(false);
-  const { error, setError, handleFetchError, withErrorHandling, clearError } =
-    useErrorHandling();
+  const { error, setError, handleFetchError, clearError } = useErrorHandling();
 
   const getHeaders = () => {
     return {
@@ -19,79 +18,11 @@ export default function useApiService() {
     };
   };
 
-  /**
-   * Función para verificar la conexión a internet
-   */
   const checkConnection = () => {
     if (typeof navigator !== "undefined" && !navigator.onLine) {
       throw setError(
         "connection",
         "No hay conexión a internet. Por favor, verifica tu conexión e inténtalo de nuevo."
-      );
-    }
-  };
-
-  /**
-   * Función para manejar la respuesta de una petición
-   */
-  const handleResponse = async (response: Response) => {
-    if (!response.ok) {
-      let errorText = "Error desconocido";
-
-      try {
-        errorText = await response.text();
-      } catch (e) {
-        console.error("Error al leer respuesta de error:", e);
-      }
-
-      let errorMessage = `Error en la API: ${response.status}`;
-
-      try {
-        // Intentar parsear el mensaje de error si es JSON
-        const errorJson = JSON.parse(errorText);
-        if (errorJson.message) {
-          errorMessage = errorJson.message;
-        }
-      } catch (e) {
-        // Si no es JSON, usar el texto tal como está
-        if (errorText && errorText.length < 100) {
-          errorMessage = `${errorMessage} - ${errorText}`;
-        }
-      }
-
-      // Manejar diferentes códigos de error HTTP
-      if (response.status === 404) {
-        throw setError(
-          "notFound",
-          "El recurso solicitado no está disponible.",
-          { status: response.status, details: errorText }
-        );
-      } else if (response.status >= 400 && response.status < 500) {
-        throw setError("validation", errorMessage, {
-          status: response.status,
-          details: errorText,
-        });
-      } else if (response.status >= 500) {
-        throw setError(
-          "server",
-          "Error del servidor. Por favor, inténtalo más tarde.",
-          { status: response.status, details: errorText }
-        );
-      } else {
-        throw setError("unknown", errorMessage, {
-          status: response.status,
-          details: errorText,
-        });
-      }
-    }
-
-    try {
-      return await response.json();
-    } catch (e) {
-      throw setError(
-        "validation",
-        "La respuesta del servidor no es un JSON válido.",
-        { error: e }
       );
     }
   };
@@ -105,8 +36,7 @@ export default function useApiService() {
     try {
       checkConnection();
 
-      const webhookUrl =
-        "https://holaamigo.app.n8n.cloud/webhook/user-data";
+      const webhookUrl = "https://holaamigo.app.n8n.cloud/webhook/user-data";
 
       const response = await fetch(webhookUrl, {
         method: "POST",
@@ -140,7 +70,9 @@ export default function useApiService() {
       console.error("Error in submitQuestionnaire:", err);
 
       // Handle error with retry function
-      const retryFn = async () => await submitQuestionnaire(userData);
+      const retryFn = async () => {
+        await submitQuestionnaire(userData);
+      };
 
       throw handleFetchError(
         err,
@@ -245,18 +177,6 @@ export default function useApiService() {
       }
     }
 
-    // Fortalezas basadas en inversión en IA
-    if (userData.commonAI?.investment === "over_100") {
-      strengths.push("Inversión en tecnología");
-    } else if (userData.commonAI?.investment === "50_to_100") {
-      strengths.push("Adopción tecnológica");
-    }
-
-    // Fortalezas basadas en la actitud hacia la IA
-    if (userData.commonAI?.disclosure === "always") {
-      strengths.push("Transparencia y ética");
-    }
-
     return strengths.slice(0, 5); // Limitamos a 5 fortalezas para no sobrecargar el informe
   };
 
@@ -329,26 +249,6 @@ export default function useApiService() {
       recommendations.push(
         "Utilizar herramientas de IA para destacar en tu entorno laboral",
         "Desarrollar habilidades en IA que complementen tu perfil profesional"
-      );
-    }
-
-    // Recomendaciones basadas en la inversión en IA
-    if (
-      userData.commonAI?.investment === "none" ||
-      userData.commonAI?.investment === "under_50"
-    ) {
-      recommendations.push(
-        "Explorar soluciones de IA más avanzadas que puedan ofrecer mayor retorno de inversión"
-      );
-    }
-
-    // Recomendaciones basadas en la experiencia con IA
-    if (
-      userData.commonAI?.projectImpact === "negative" ||
-      userData.commonAI?.projectImpact === "mixed"
-    ) {
-      recommendations.push(
-        "Buscar formación especializada para maximizar los beneficios de la IA"
       );
     }
 
