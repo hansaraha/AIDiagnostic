@@ -106,7 +106,7 @@ export default function useApiService() {
       checkConnection();
 
       const webhookUrl =
-        "https://holaamigo.app.n8n.cloud/webhook-test/user-data";
+        "https://holaamigo.app.n8n.cloud/webhook/user-data";
 
       const response = await fetch(webhookUrl, {
         method: "POST",

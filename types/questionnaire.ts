@@ -15,13 +15,10 @@ export interface UserData {
 }
 
 export type WorkStatus =
-  | "employee"
   | "freelancer"
   | "business_owner"
   | "full_time"
   | "part_time"
-  | "student"
-  | "unemployed"
   | "other";
 
 export type Sector =
@@ -176,17 +173,6 @@ export interface ServiceRecommendation {
   type: "automatización" | "productividad" | "análisis" | "creatividad";
   price?: string;
   link?: string;
-}
-
-// Option types for various questions
-export interface WorkStatusOption {
-  value:
-    | "freelancer"
-    | "business_owner"
-    | "full_time"
-    | "part_time"
-    | "other";
-  label: string;
 }
 
 export interface ServiceOption {

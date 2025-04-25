@@ -1,5 +1,5 @@
 <template>
-  <UApp :tooltip="{
+  <div :tooltip="{
     delay: 200,
     closeDelay: 100,
     openDelay: 200,
@@ -8,21 +8,22 @@
     position: 'top-right',
     pauseOnHover: true,
     duration: 5000
-  }">
+  }" class=" min-h-screen h-full w-full ">
     <div class="h-full overflow-auto">
       <NuxtPage />
     </div>
-  </UApp>
+  </div>
 </template>
 
 <script setup lang="ts">
-// UApp provides global configurations for all UI components
-// It wraps ToastProvider and TooltipProvider for global toasts and tooltips
-// and provides control for scroll body behavior and more
+
+
 </script>
 
 <style>
-html, body, #__nuxt {
+html,
+body,
+#__nuxt {
   @apply h-screen;
 }
 

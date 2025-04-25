@@ -61,6 +61,13 @@
       <QuestionnaireStepBusinessOwnerAIStrategyQuestion v-else-if="currentStep === 'business_ai_strategy'"
         v-model="ensureBusinessOwnerData().aiStrategy" @next="nextStep" />
 
+      <!-- Employee specific steps -->
+      <QuestionnaireStepEmployeeRoleQuestion v-else-if="currentStep === 'employee_role'"
+        v-model="ensureEmployeeData().role" @next="nextStep" />
+
+      <QuestionnaireStepEmployeeAIPolicyQuestion v-else-if="currentStep === 'employee_ai_policy'"
+        v-model="ensureEmployeeData().aiPolicy" @next="nextStep" />
+
       <!-- AI Usage questions -->
       <QuestionnaireAIFrequencyQuestion v-else-if="currentStep === 'ai_frequency'" v-model="userData.aiUsage.frequency"
         @next="nextStep" />
@@ -124,18 +131,18 @@ const { error: errorHandlingState, setError, clearError } = useErrorHandling();
 const userData = ref<UserData>({
   name: "",
   email: "",
-  workStatus: 'employee',
+  workStatus: '',
   otherWorkStatus: "",
-  sector: 'tech',
+  sector: '',
   otherSector: "",
   aiUsage: {
-    frequency: 'never',
+    frequency: '',
     tools: [],
-    versions: 'unsure',
+    versions: '',
     purposes: [],
-    feeling: 'neutral',
-    experience: 'no_experience',
-    impact: 'none'
+    feeling: '',
+    experience: '',
+    impact: ''
   },
   diagnostic: undefined,
   referralCode: undefined
@@ -161,6 +168,10 @@ const freelancerSteps = [
 const businessOwnerSteps = [
   'business_size',
   'business_ai_strategy'
+] as const;
+const employeeSteps = [
+  'employee_role',
+  'employee_ai_policy'
 ] as const;
 const aiSteps = [
   'ai_frequency',
@@ -207,6 +218,7 @@ const progress = computed(() => {
     ...commonSteps,
     ...(userData.value.workStatus === 'freelancer' ? freelancerSteps : []),
     ...(userData.value.workStatus === 'business_owner' ? businessOwnerSteps : []),
+    ...(userData.value.workStatus === 'full_time' || userData.value.workStatus === 'part_time' ? employeeSteps : []),
     ...aiSteps,
     ...finalSteps
   ];
@@ -415,6 +427,17 @@ const ensureCommonAIData = () => {
   return userData.value.aiUsage;
 };
 
+// Ensure employee data exists before accessing
+const ensureEmployeeData = () => {
+  if (!userData.value.employee) {
+    userData.value.employee = {
+      role: '',
+      aiPolicy: ''
+    };
+  }
+  return userData.value.employee;
+};
+
 // Function to go to next step
 // Función para manejar el evento del botón continuar en el stopper
 function handleStopperNext() {
@@ -566,6 +589,7 @@ function getNextStep(currentStep: string): string {
   if (currentStep === stopperSteps.sector) {
     if (userData.value.workStatus === 'freelancer') return 'freelancer_experience';
     if (userData.value.workStatus === 'business_owner') return 'business_size';
+    if (userData.value.workStatus === 'full_time' || userData.value.workStatus === 'part_time') return 'employee_role';
     return 'ai_frequency';
   }
 
@@ -577,10 +601,14 @@ function getNextStep(currentStep: string): string {
   if (currentStep === 'business_size') return 'business_ai_strategy';
   if (currentStep === 'business_ai_strategy') return stopperSteps.worker;
 
-  // 5) Después del stopper por tipo de trabajador
+  // 5) Pasos específicos para empleados
+  if (currentStep === 'employee_role') return 'employee_ai_policy';
+  if (currentStep === 'employee_ai_policy') return stopperSteps.worker;
+
+  // 6) Después del stopper por tipo de trabajador
   if (currentStep === stopperSteps.worker) return 'ai_frequency';
 
-  // 6) Ruta común de IA
+  // 7) Ruta común de IA
   if (currentStep === 'ai_frequency') return 'ai_tools';
   if (currentStep === 'ai_tools') return 'ai_versions';
   if (currentStep === 'ai_versions') return stopperSteps.experience;
@@ -593,14 +621,14 @@ function getNextStep(currentStep: string): string {
   // ← Aquí termina la penúltima pregunta
   if (currentStep === 'ai_impact') return stopperSteps.adoption;
 
-  // 7) Transiciones finales:
+  // 8) Transiciones finales:
   //    adoption → email → success → analysis → results
   if (currentStep === stopperSteps.adoption) return 'email';
   if (currentStep === 'email') return stopperSteps.success;
   if (currentStep === stopperSteps.success) return 'analysis';
   if (currentStep === 'analysis') return 'results';
 
-  // 8) Fallback (por si algo falla)
+  // 9) Fallback (por si algo falla)
   return 'results';
 }
 
