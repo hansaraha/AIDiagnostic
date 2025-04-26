@@ -17,6 +17,9 @@ import type {
   AISavingTime,
   AIImprovements,
   AIWorkflows,
+  AIObjective,
+  AIObstacle,
+  AISupportNeed,
 } from "~/types/questionnaire";
 
 export default function useOptionsData() {
@@ -206,6 +209,60 @@ export default function useOptionsData() {
     { value: "not_using", label: "❌ No uso IA" },
   ]);
 
+  // Opciones para Pregunta 19: ¿Cuál es tu principal objetivo con la IA?
+  const aiObjectiveOptions = ref<{ value: AIObjective; label: string }[]>([
+    { value: "productivity", label: "⚡ Aumentar productividad" },
+    { value: "quality", label: "🌟 Mejorar calidad del trabajo" },
+    { value: "cost", label: "💰 Reducir costos" },
+    { value: "innovation", label: "💡 Innovar/crear nuevas ofertas" },
+    { value: "competitiveness", label: "🏆 Mantenerme competitivo" },
+    { value: "no_clear_goal", label: "❓ No tengo objetivos claros" },
+  ]);
+
+  // Opciones para Pregunta 21: ¿Qué obstáculos encuentras al utilizar IA en tu trabajo?
+  const aiObstacleOptions = ref<{ value: AIObstacle; label: string }[]>([
+    {
+      value: "lack_skills",
+      label: "🧠 Falta de conocimientos o habilidades técnicas",
+    },
+    { value: "cost", label: "💰 Costo de las herramientas y suscripciones" },
+    {
+      value: "lack_time",
+      label: "⏱️ Falta de tiempo para aprender y experimentar",
+    },
+    {
+      value: "use_case",
+      label: "🤔 Dificultad para identificar casos de uso prácticos",
+    },
+    {
+      value: "culture",
+      label: "👥 Resistencia cultural en mi entorno laboral",
+    },
+    {
+      value: "privacy",
+      label: "🔒 Preocupaciones sobre privacidad o propiedad intelectual",
+    },
+    {
+      value: "no_obstacle",
+      label: "🚫 No encuentro obstáculos significativos",
+    },
+    { value: "other", label: "🌐 Otro (especificar)" },
+  ]);
+
+  // Opciones para Pregunta 22: ¿Qué tipo de apoyo necesitas ahora mismo?
+  const aiSupportNeedOptions = ref<{ value: AISupportNeed; label: string }[]>([
+    { value: "basic_training", label: "🌱 Formación básica sobre IA" },
+    {
+      value: "advanced_prompting",
+      label: "🎯 Entrenamiento avanzado en prompting",
+    },
+    { value: "consulting", label: "👨‍💼 Consultoría personalizada" },
+    { value: "premium_tools", label: "🔑 Acceso a herramientas premium" },
+    { value: "sector_guides", label: "📚 Guías específicas para mi sector" },
+    { value: "community", label: "👥 Comunidad de práctica con pares" },
+    { value: "not_interested", label: "❌ No estoy interesado actualmente" },
+  ]);
+
   return {
     workStatusOptions,
     freelancerExperienceOptions,
@@ -225,5 +282,8 @@ export default function useOptionsData() {
     aiSavingTimeOptions,
     aiImprovementsOptions,
     aiWorkflowsOptions,
+    aiObjectiveOptions,
+    aiObstacleOptions,
+    aiSupportNeedOptions,
   };
 }

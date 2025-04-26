@@ -60,12 +60,7 @@
         v-model="ensureBusinessOwnerData().employeeCount" @next="nextStep" />
 
       <QuestionnaireStepBusinessOwnerAIStrategyQuestion v-else-if="currentStep === 'business_ai_strategy'"
-        :modelValue="ensureBusinessOwnerData().aiStrategy?.value || ''" @update:modelValue="(val: string) => {
-          ensureBusinessOwnerData().aiStrategy = {
-            value: val as AIStrategy['value'],
-            label: ''
-          };
-        }" @next="nextStep" />
+        v-model="ensureBusinessOwnerData().aiStrategy" @next="nextStep" />
 
 
       <!-- Employee specific steps -->
@@ -97,12 +92,7 @@
       <QuestionnaireAIImpactQuestion v-else-if="currentStep === 'ai_impact'" v-model="userData.aiUsage.impact"
         @next="nextStep" />
 
-      <AISavingTime v-else-if="currentStep === 'ai_saving_time'" v-model="userData.aiSavingTime" @next="nextStep" />
-      <AIImprovements v-else-if="currentStep === 'ai_improvements'" v-model="userData.aiImprovements"
-        @next="nextStep" />
-      <AIWorkflows v-else-if="currentStep === 'ai_workflows'" v-model="userData.aiWorkflows" @next="nextStep" />
 
-      <!-- Nuevas preguntas después de ai_impact -->
       <AIKnowledgeLevel v-else-if="currentStep === 'ai_knowledge_level'" v-model="userData.aiKnowledgeLevel"
         @next="nextStep" />
       <MarketingPromptChoice v-else-if="currentStep === 'marketing_prompt_choice'"
@@ -110,12 +100,17 @@
       <AITrainingInvestment v-else-if="currentStep === 'ai_training_investment'" v-model="userData.aiTrainingInvestment"
         @next="nextStep" />
 
-      <!-- Stoppers ya no se renderizan aquí porque ahora usan Teleport -->
-      <!-- Se muestran con Teleport al final del documento -->
+      <AIObjective v-else-if="currentStep === 'ai_objective'" v-model="userData.aiObjective" @next="nextStep" />
 
+      <AISavingTime v-else-if="currentStep === 'ai_saving_time'" v-model="userData.aiSavingTime" @next="nextStep" />
+      <AIImprovements v-else-if="currentStep === 'ai_improvements'" v-model="userData.aiImprovements"
+        @next="nextStep" />
+      <AIWorkflows v-else-if="currentStep === 'ai_workflows'" v-model="userData.aiWorkflows" @next="nextStep" />
 
-      <!-- Recopilación de email antes del análisis final -->
       <QuestionnaireStepEmail v-else-if="currentStep === 'email'" v-model="userData.email" @next="nextStep" />
+      <AIObstacles v-else-if="currentStep === 'ai_obstacles'" v-model="userData.aiObstacle"
+        v-model:otherValue="userData.aiObstacleOther" @next="nextStep" />
+      <AISupport v-else-if="currentStep === 'ai_support'" v-model="userData.aiSupportNeed" @next="nextStep" />
 
       <!-- Analysis and Results -->
       <QuestionnaireStepAnalysis v-else-if="currentStep === 'analysis'" :analyzing="analyzing"
@@ -146,9 +141,12 @@ import { QuestionnaireStepEmail } from "#components";
 import AIKnowledgeLevel from "~/components/questionnaire/AIKnowledgeLevel.vue";
 import MarketingPromptChoice from "~/components/questionnaire/MarketingPromptChoice.vue";
 import AITrainingInvestment from "~/components/questionnaire/AITrainingInvestment.vue";
+import AIObjective from "~/components/questionnaire/AIObjective.vue";
 import AISavingTime from "~/components/questionnaire/AISavingTime.vue";
 import AIImprovements from "~/components/questionnaire/AIImprovements.vue";
 import AIWorkflows from "~/components/questionnaire/AIWorkflows.vue";
+import AIObstacles from "~/components/questionnaire/AIObstacles.vue";
+import AISupport from "~/components/questionnaire/AISupport.vue";
 
 // Initialize error handling
 const { error: errorHandlingState, setError, clearError, handleFetchError } = useErrorHandling();
@@ -173,6 +171,7 @@ const userData = ref<UserData>({
   aiSavingTime: "none",
   aiImprovements: "no_change",
   aiWorkflows: "not_using",
+  aiObjective: "no_clear_goal",
   diagnostic: undefined,
 });
 
@@ -214,9 +213,10 @@ const aiSteps = [
   'ai_workflows',
   'ai_knowledge_level',
   'marketing_prompt_choice',
-  'ai_training_investment'
+  'ai_training_investment',
+  'ai_objective',
 ] as const;
-const finalSteps = ['email', 'analysis', 'results'] as const;
+const finalSteps = ['email', 'ai_obstacles', 'ai_support', 'analysis', 'results'] as const;
 
 // Track current step and analysis state
 const currentStep = ref('welcome');
@@ -457,10 +457,7 @@ const ensureBusinessOwnerData = () => {
   if (!userData.value.businessOwner) {
     userData.value.businessOwner = {
       employeeCount: "solo",
-      aiStrategy: {
-        value: "none",
-        label: "No considerado"
-      },
+      aiStrategy: "none",
     };
   }
   return userData.value.businessOwner;
@@ -633,8 +630,6 @@ function nextStep(data?: any) {
 
 // Function to determine the next step based on current step and user type
 function getNextStep(currentStep: string): string {
-  console.log('Getting next step for:', currentStep);
-
   // 1) Del welcome al sector
   if (currentStep === 'welcome') return 'work_status';
   if (currentStep === 'work_status') return 'sector';
@@ -673,28 +668,28 @@ function getNextStep(currentStep: string): string {
   if (currentStep === 'ai_purposes') return 'ai_feeling';
   if (currentStep === 'ai_feeling') return 'ai_experience';
   if (currentStep === 'ai_experience') return 'ai_impact';
-  if (currentStep === 'ai_impact') return 'ai_saving_time';
+  if (currentStep === 'ai_impact') return stopperSteps.future;
+  if (currentStep === stopperSteps.future) return 'ai_saving_time';
   if (currentStep === 'ai_saving_time') return 'ai_improvements';
   if (currentStep === 'ai_improvements') return 'ai_workflows';
-  if (currentStep === 'ai_workflows') return stopperSteps.future;
-  if (currentStep === stopperSteps.future) return 'ai_knowledge_level';
+  // Stopper 6: Casos de éxito por sector
+  if (currentStep === 'ai_workflows') return stopperSteps.success;
+  if (currentStep === stopperSteps.success) return 'ai_knowledge_level';
   if (currentStep === 'ai_knowledge_level') return 'marketing_prompt_choice';
   if (currentStep === 'marketing_prompt_choice') return 'ai_training_investment';
+  // Stopper 5: Adopción de IA por industria
   if (currentStep === 'ai_training_investment') return stopperSteps.adoption;
+  if (currentStep === stopperSteps.adoption) return 'ai_objective';
+  if (currentStep === 'ai_objective') return 'email';
 
-  // ← Aquí termina la penúltima pregunta
-  if (currentStep === stopperSteps.adoption) return 'email';
-
-  // 8) Transiciones finales:
-  //    adoption → email → success → analysis → results
-  if (currentStep === 'email') return stopperSteps.success;
-  if (currentStep === stopperSteps.success) return 'analysis';
+  // Email → ai_obstacles → ai_support → análisis → resultados
+  if (currentStep === 'email') return 'ai_obstacles';
+  if (currentStep === 'ai_obstacles') return 'ai_support';
+  if (currentStep === 'ai_support') return 'analysis';
   if (currentStep === 'analysis') return 'results';
 
-  // 9) Fallback (por si algo falla)
+  // Fallback
   return 'results';
 }
-
-
 
 </script>

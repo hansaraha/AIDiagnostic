@@ -21,6 +21,10 @@ export interface UserData {
   aiSavingTime?: AISavingTime;
   aiImprovements?: AIImprovements;
   aiWorkflows?: AIWorkflows;
+  aiObjective?: AIObjective;
+  aiObstacle?: AIObstacle[];
+  aiObstacleOther?: string;
+  aiSupportNeed?: AISupportNeed;
 }
 
 export type WorkStatus =
@@ -56,15 +60,12 @@ export interface FreelancerData {
 
 export interface BusinessOwnerData {
   employeeCount: "solo" | "2_5" | "6_20" | "21_50" | "50_plus";
-  aiStrategy: {
-    value:
-      | "defined"
-      | "developing"
-      | "unstructured"
-      | "none"
-      | "not_considered";
-    label: string;
-  };
+  aiStrategy:
+    | "defined"
+    | "developing"
+    | "unstructured"
+    | "none"
+    | "not_considered";
 }
 
 export interface AIUsageData {
@@ -280,3 +281,33 @@ export type AIWorkflows =
   | "some_attempts"
   | "improvised"
   | "not_using";
+
+// Pregunta 19: ¿Cuál es tu principal objetivo con la IA?
+export type AIObjective =
+  | "productivity"
+  | "quality"
+  | "cost"
+  | "innovation"
+  | "competitiveness"
+  | "no_clear_goal";
+
+// Pregunta 21: ¿Qué obstáculos encuentras al utilizar IA en tu trabajo?
+export type AIObstacle =
+  | "lack_skills"
+  | "cost"
+  | "lack_time"
+  | "use_case"
+  | "culture"
+  | "privacy"
+  | "no_obstacle"
+  | "other";
+
+// Pregunta 22: ¿Qué tipo de apoyo necesitas ahora mismo?
+export type AISupportNeed =
+  | "basic_training"
+  | "advanced_prompting"
+  | "consulting"
+  | "premium_tools"
+  | "sector_guides"
+  | "community"
+  | "not_interested";
