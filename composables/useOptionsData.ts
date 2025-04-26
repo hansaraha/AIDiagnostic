@@ -1,14 +1,9 @@
 import { ref } from "vue";
 import type {
   WorkStatusOption,
-  ServiceOption,
   FreelancerExperienceOption,
-  FreelancerClientsOption,
   FreelancerPlatformOption,
-  BusinessTypeOption,
   BusinessSizeOption,
-  BusinessAgeOption,
-  BusinessAIPolicyOption,
   AIFundingOption,
   AIDisclosureOption,
   AIInvestmentOption,
@@ -16,10 +11,15 @@ import type {
   AIRateAdjustmentOption,
   AIProjectImpactOption,
   ExperienceOption,
+  AIKnowledgeLevel,
+  MarketingPromptChoice,
+  AITrainingInvestment,
+  AISavingTime,
+  AIImprovements,
+  AIWorkflows,
 } from "~/types/questionnaire";
 
 export default function useOptionsData() {
-  // Work Status Options
   const workStatusOptions = ref<WorkStatusOption[]>([
     { value: "full_time", label: "Empleado de tiempo completo" },
     { value: "part_time", label: "Empleado de tiempo parcial" },
@@ -28,15 +28,6 @@ export default function useOptionsData() {
     { value: "other", label: "Otro" },
   ]);
 
-  // Service Options
-  const servicesOptions = ref<ServiceOption[]>([
-    { value: "development", label: "Desarrollo de software/Programación" },
-    { value: "design", label: "Diseño/Creatividad" },
-    { value: "marketing", label: "Marketing digital" },
-    { value: "content", label: "Redacción/Contenido" },
-  ]);
-
-  // Freelancer Experience Options
   const freelancerExperienceOptions = ref<FreelancerExperienceOption[]>([
     { value: "less_than_1", label: "Menos de 1 año" },
     { value: "1_to_3", label: "1-3 años" },
@@ -44,77 +35,36 @@ export default function useOptionsData() {
     { value: "more_than_6", label: "Más de 6 años" },
   ]);
 
-  // Freelancer Clients Options
-  const freelancerClientsOptions = ref<FreelancerClientsOption[]>([
-    { value: "1_2", label: "1-2 clientes" },
-    { value: "3_5", label: "3-5 clientes" },
-    { value: "6_10", label: "6-10 clientes" },
-    { value: "more_than_10", label: "Más de 10 clientes" },
-  ]);
-
-  // Freelancer Platforms Options
   const freelancerPlatformsOptions = ref<FreelancerPlatformOption[]>([
-    { value: "upwork", label: "Upwork" },
-    { value: "fiverr", label: "Fiverr" },
-    { value: "freelancer", label: "Freelancer.com" },
-    { value: "toptal", label: "Toptal" },
-    { value: "linkedin", label: "LinkedIn" },
-    { value: "direct_network", label: "Red de contactos directos" },
+    { value: "freelance_platforms", label: "Plataformas de Freelance" },
+    { value: "professional_networks", label: "Redes Profesionales" },
+    { value: "personal_recommendations", label: "Recomendaciones Personales" },
+    { value: "self_marketing", label: "Marketing Propio" },
     { value: "other", label: "Otro" },
   ]);
 
-  // Business Type Options
-  const businessTypeOptions = ref<BusinessTypeOption[]>([
-    { value: "tech_startup", label: "Startup tecnológica" },
-    {
-      value: "professional_services",
-      label: "Empresa de servicios profesionales",
-    },
-    { value: "retail", label: "Comercio minorista" },
-    { value: "manufacturing", label: "Empresa de manufactura" },
-    { value: "creative_agency", label: "Agencia creativa/marketing" },
-    { value: "consulting", label: "Consultoría" },
-    { value: "other", label: "Otro" },
-  ]);
-
-  // Business Size Options
   const businessSizeOptions = ref<BusinessSizeOption[]>([
-    { value: "solo", label: "Solo yo" },
-    { value: "2_5", label: "2-5 empleados" },
-    { value: "6_20", label: "6-20 empleados" },
-    { value: "21_50", label: "21-50 empleados" },
-    { value: "50_plus", label: "Más de 50 empleados" },
+    { value: "solo", label: "1️⃣ Solo yo" },
+    { value: "2_5", label: "👥 2-5 empleados" },
+    { value: "6_20", label: "👨‍👩‍👧 6-20 empleados" },
+    { value: "21_50", label: "👨‍👩‍👧‍👦 1-50 empleados" },
+    { value: "50_plus", label: "👨‍👩‍👧‍👧 Más de 50 empleados" },
   ]);
 
-  // Business Age Options
-  const businessAgeOptions = ref<BusinessAgeOption[]>([
-    { value: "less_than_1", label: "Menos de 1 año" },
-    { value: "1_to_3", label: "1-3 años" },
-    { value: "4_to_6", label: "4-6 años" },
-    { value: "more_than_6", label: "Más de 6 años" },
-  ]);
-
-  // Business AI Policy Options
-  const businessAIPolicyOptions = ref<BusinessAIPolicyOption[]>([
-    { value: "formal", label: "Sí, tenemos políticas formales" },
-    { value: "planned", label: "No, pero planeamos implementarlas" },
-    { value: "no_plans", label: "No, y no planeamos implementarlas" },
-    { value: "not_considered", label: "No lo he considerado" },
-  ]);
-
-  // Business AI Strategy Options
   const businessAIStrategyOptions = ref([
-    { value: "defined", label: "Sí, tenemos una estrategia de IA definida" },
+    { value: "defined", label: "✅ Sí, tenemos una estrategia de IA definida" },
     {
       value: "developing",
-      label: "Estamos desarrollando una estrategia de IA",
+      label: "🔄 Estamos desarrollando una estrategia de IA",
     },
-    { value: "unstructured", label: "Usamos IA pero sin una estrategia clara" },
-    { value: "none", label: "No usamos IA en la empresa" },
-    { value: "not_considered", label: "No lo hemos considerado aún" },
+    {
+      value: "unstructured",
+      label: "⏸️ Usamos IA pero sin una estrategia clara",
+    },
+    { value: "none", label: "❌ No usamos IA en la empresa" },
+    { value: "not_considered", label: "🤷 No lo hemos considerado aún" },
   ]);
 
-  // AI Funding Options
   const aiFundingOptions = ref<AIFundingOption[]>([
     { value: "personal", label: "Pago personal (de mi bolsillo)" },
     { value: "business", label: "Gastos de empresa/negocio" },
@@ -122,7 +72,6 @@ export default function useOptionsData() {
     { value: "free", label: "Solo uso herramientas gratuitas" },
   ]);
 
-  // AI Disclosure Options
   const aiDisclosureOptions = ref<AIDisclosureOption[]>([
     { value: "always", label: "Siempre informo sobre mi uso de IA" },
     { value: "sometimes", label: "A veces, dependiendo del cliente" },
@@ -130,7 +79,6 @@ export default function useOptionsData() {
     { value: "when_asked", label: "Solo cuando me preguntan" },
   ]);
 
-  // AI Investment Options
   const aiInvestmentOptions = ref<AIInvestmentOption[]>([
     { value: "none", label: "Nada (solo uso herramientas gratuitas)" },
     { value: "under_50", label: "Menos de 50€ al mes" },
@@ -138,14 +86,12 @@ export default function useOptionsData() {
     { value: "over_100", label: "Más de 100€ al mes" },
   ]);
 
-  // AI Value Proposition Options
   const aiValuePropositionOptions = ref<AIValuePropositionOption[]>([
     { value: "yes", label: "Sí, he adaptado mi propuesta de valor" },
     { value: "no", label: "No, sigo ofreciendo lo mismo" },
     { value: "working_on_it", label: "Estoy trabajando en ello" },
   ]);
 
-  // AI Rate Adjustment Options
   const aiRateAdjustmentOptions = ref<AIRateAdjustmentOption[]>([
     { value: "increased", label: "He aumentado mis tarifas" },
     { value: "decreased", label: "He reducido mis tarifas" },
@@ -153,7 +99,6 @@ export default function useOptionsData() {
     { value: "case_by_case", label: "Depende del proyecto" },
   ]);
 
-  // AI Project Impact Options
   const aiProjectImpactOptions = ref<AIProjectImpactOption[]>([
     { value: "positive", label: "Impacto muy positivo" },
     { value: "negative", label: "Impacto negativo" },
@@ -161,7 +106,6 @@ export default function useOptionsData() {
     { value: "mixed", label: "Resultados mixtos" },
   ]);
 
-  // Experience Options
   const experienceOptions = ref<ExperienceOption[]>([
     { value: "less_than_1", label: "Menos de 1 año" },
     { value: "1_to_3", label: "1-3 años" },
@@ -169,16 +113,104 @@ export default function useOptionsData() {
     { value: "more_than_6", label: "Más de 6 años" },
   ]);
 
+  const aiKnowledgeLevelOptions = ref<
+    { value: AIKnowledgeLevel; label: string }[]
+  >([
+    { value: "advanced", label: "🧠 Avanzado - comprendo aspectos técnicos" },
+    {
+      value: "intermediate",
+      label: "👍 Intermedio - manejo bien los conceptos",
+    },
+    { value: "basic", label: "🌱 Básico - tengo nociones fundamentales" },
+    { value: "limited", label: "🤔 Limitado - sé muy poco" },
+    { value: "none", label: "❓ Nulo - no tengo conocimiento" },
+  ]);
+
+  const marketingPromptChoiceOptions = ref<
+    { value: MarketingPromptChoice; label: string }[]
+  >([
+    {
+      value: "detailed",
+      label:
+        '🎯 "Crea una campaña para un producto de belleza dirigido a mujeres de 30-45 años, enfocada en ingredientes naturales. El tono debe ser sofisticado pero accesible. Incluye: titular principal, 3 puntos clave, y llamado a la acción."',
+    },
+    {
+      value: "generic",
+      label:
+        '📝 "Necesito una campaña de marketing para un producto de belleza."',
+    },
+    {
+      value: "natural_ingredients",
+      label:
+        '📋 "Escribe contenido de marketing para una crema facial con ingredientes naturales para mujeres."',
+    },
+    {
+      value: "ad_format",
+      label:
+        '📢 "Hazme una publicidad con título, puntos y CTA para un producto de belleza natural para mujeres de mediana edad."',
+    },
+    {
+      value: "unsure",
+      label: "🤷‍♂️ No estoy seguro / No uso prompts",
+    },
+  ]);
+
+  const aiTrainingInvestmentOptions = ref<
+    { value: AITrainingInvestment; label: string }[]
+  >([
+    {
+      value: "advanced_training",
+      label: "🎓 Sí, formación avanzada o especializada",
+    },
+    { value: "basic_courses", label: "📚 Sí, cursos básicos o introductorios" },
+    {
+      value: "self_learning",
+      label: "🔍 Solo autoformación (tutoriales, artículos)",
+    },
+    { value: "not_yet_interested", label: "🤔 No, pero me interesa" },
+    { value: "not_interested", label: "❌ No y no me interesa por ahora" },
+  ]);
+
+  // Opciones para Pregunta 16: ¿Cuánto tiempo te ahorra la IA semanalmente?
+  const aiSavingTimeOptions = ref<{ value: AISavingTime; label: string }[]>([
+    { value: "more_than_10", label: "⏱️ Más de 10 horas" },
+    { value: "5_10", label: "⏰ 5-10 horas" },
+    { value: "1_5", label: "🕒 1-5 horas" },
+    { value: "less_than_1", label: "🕐 Menos de 1 hora" },
+    { value: "none", label: "❌ No me ahorra tiempo/No la uso" },
+  ]);
+
+  // Opciones para Pregunta 17: ¿Has notado mejoras en tu trabajo con IA?
+  const aiImprovementsOptions = ref<{ value: AIImprovements; label: string }[]>(
+    [
+      { value: "significant", label: "🌟 Sí, mejoras significativas" },
+      { value: "some", label: "👍 Sí, algunas mejoras" },
+      { value: "no_change", label: "😐 Sin cambios notables" },
+      { value: "worse", label: "👎 Ha empeorado algunos aspectos" },
+      { value: "not_using", label: "❌ No uso IA en mi trabajo" },
+    ]
+  );
+
+  // Opciones para Pregunta 18: ¿Has desarrollado flujos de trabajo con IA?
+  const aiWorkflowsOptions = ref<{ value: AIWorkflows; label: string }[]>([
+    {
+      value: "defined",
+      label: "✅ Sí, tengo procesos bien definidos y optimizados",
+    },
+    { value: "in_progress", label: "🔄 Estoy en proceso de desarrollarlos" },
+    {
+      value: "some_attempts",
+      label: "🌱 He hecho algunos intentos sin sistematizar",
+    },
+    { value: "improvised", label: "🤔 Uso la IA de forma improvisada" },
+    { value: "not_using", label: "❌ No uso IA" },
+  ]);
+
   return {
     workStatusOptions,
-    servicesOptions,
     freelancerExperienceOptions,
-    freelancerClientsOptions,
     freelancerPlatformsOptions,
-    businessTypeOptions,
     businessSizeOptions,
-    businessAgeOptions,
-    businessAIPolicyOptions,
     businessAIStrategyOptions,
     aiFundingOptions,
     aiDisclosureOptions,
@@ -187,5 +219,11 @@ export default function useOptionsData() {
     aiRateAdjustmentOptions,
     aiProjectImpactOptions,
     experienceOptions,
+    aiKnowledgeLevelOptions,
+    marketingPromptChoiceOptions,
+    aiTrainingInvestmentOptions,
+    aiSavingTimeOptions,
+    aiImprovementsOptions,
+    aiWorkflowsOptions,
   };
 }

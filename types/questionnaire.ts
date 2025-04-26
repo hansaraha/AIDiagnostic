@@ -1,17 +1,26 @@
 // User data types
 export interface UserData {
-  id?: string; // ID único para tracking
+  id?: string;
   name: string;
   email?: string;
   workStatus?: WorkStatus;
   otherWorkStatus?: string;
   sector?: Sector;
   otherSector?: string;
-  freelancer?: FreelancerData;
+  aiUsage: AIUsageData;
+  diagnostic?: any;
+  employee?: {
+    role: string;
+    aiPolicy: string;
+  };
   businessOwner?: BusinessOwnerData;
-  aiUsage?: AIUsageData;
-  diagnostic?: DiagnosticResult;
-  referralCode?: string; // Código de referido para tracking
+  freelancer?: FreelancerData;
+  aiKnowledgeLevel?: AIKnowledgeLevel;
+  marketingPromptChoice?: MarketingPromptChoice;
+  aiTrainingInvestment?: AITrainingInvestment;
+  aiSavingTime?: AISavingTime;
+  aiImprovements?: AIImprovements;
+  aiWorkflows?: AIWorkflows;
 }
 
 export type WorkStatus =
@@ -36,40 +45,26 @@ export type Sector =
 
 export interface FreelancerData {
   experience: "less_than_1" | "1_to_3" | "4_to_6" | "more_than_6";
-  clientsPerMonth: "1_2" | "3_5" | "6_10" | "more_than_10";
   platforms: (
-    | "upwork"
-    | "fiverr"
-    | "freelancer"
-    | "toptal"
-    | "linkedin"
-    | "personal_website"
-    | "referrals"
-    | "direct_network"
+    | "freelance_platforms"
+    | "professional_networks"
+    | "personal_recommendations"
+    | "self_marketing"
     | "other"
   )[];
-  otherPlatform?: string;
 }
 
 export interface BusinessOwnerData {
-  businessType:
-    | "tech_startup"
-    | "professional_services"
-    | "retail"
-    | "manufacturing"
-    | "creative_agency"
-    | "consulting"
-    | "other";
-  otherBusinessType?: string;
   employeeCount: "solo" | "2_5" | "6_20" | "21_50" | "50_plus";
-  foundingTime: "less_than_1" | "1_to_3" | "4_to_6" | "more_than_6";
-  aiPolicy: "formal" | "planned" | "no_plans" | "not_considered";
-  aiStrategy?:
-    | "defined"
-    | "developing"
-    | "unstructured"
-    | "none"
-    | "not_considered"; // Hacer opcional
+  aiStrategy: {
+    value:
+      | "defined"
+      | "developing"
+      | "unstructured"
+      | "none"
+      | "not_considered";
+    label: string;
+  };
 }
 
 export interface AIUsageData {
@@ -158,11 +153,6 @@ export interface ServiceRecommendation {
   link?: string;
 }
 
-export interface ServiceOption {
-  value: "development" | "design" | "marketing" | "content";
-  label: string;
-}
-
 export interface WorkStatusOption {
   value: "full_time" | "part_time" | "freelancer" | "business_owner" | "other";
   label: string;
@@ -180,26 +170,10 @@ export interface FreelancerClientsOption {
 
 export interface FreelancerPlatformOption {
   value:
-    | "upwork"
-    | "fiverr"
-    | "freelancer"
-    | "toptal"
-    | "linkedin"
-    | "personal_website"
-    | "referrals"
-    | "direct_network"
-    | "other";
-  label: string;
-}
-
-export interface BusinessTypeOption {
-  value:
-    | "tech_startup"
-    | "professional_services"
-    | "retail"
-    | "manufacturing"
-    | "creative_agency"
-    | "consulting"
+    | "freelance_platforms"
+    | "professional_networks"
+    | "personal_recommendations"
+    | "self_marketing"
     | "other";
   label: string;
 }
@@ -211,6 +185,11 @@ export interface BusinessSizeOption {
 
 export interface BusinessAgeOption {
   value: "less_than_1" | "1_to_3" | "4_to_6" | "more_than_6";
+  label: string;
+}
+
+export interface AIStrategy {
+  value: "defined" | "developing" | "unstructured" | "none" | "not_considered";
   label: string;
 }
 
@@ -253,3 +232,51 @@ export interface ExperienceOption {
   value: "less_than_1" | "1_to_3" | "4_to_6" | "more_than_6";
   label: string;
 }
+
+// Pregunta 13: Nivel de conocimiento en IA
+export type AIKnowledgeLevel =
+  | "advanced"
+  | "intermediate"
+  | "basic"
+  | "limited"
+  | "none";
+
+// Pregunta 14: Prompt preferido para marketing
+export type MarketingPromptChoice =
+  | "detailed"
+  | "generic"
+  | "natural_ingredients"
+  | "ad_format"
+  | "unsure";
+
+// Pregunta 15: Inversión en formación IA
+export type AITrainingInvestment =
+  | "advanced_training"
+  | "basic_courses"
+  | "self_learning"
+  | "not_yet_interested"
+  | "not_interested";
+
+// Pregunta 16: ¿Cuánto tiempo te ahorra la IA semanalmente?
+export type AISavingTime =
+  | "more_than_10"
+  | "5_10"
+  | "1_5"
+  | "less_than_1"
+  | "none";
+
+// Pregunta 17: ¿Has notado mejoras en tu trabajo con IA?
+export type AIImprovements =
+  | "significant"
+  | "some"
+  | "no_change"
+  | "worse"
+  | "not_using";
+
+// Pregunta 18: ¿Has desarrollado flujos de trabajo con IA?
+export type AIWorkflows =
+  | "defined"
+  | "in_progress"
+  | "some_attempts"
+  | "improvised"
+  | "not_using";

@@ -5,7 +5,7 @@
     <div v-if="currentStep !== 'welcome' && currentStep !== 'analysis'" :class="{
       'pb-5': currentStep !== 'welcome',
     }"
-      class="fixed top-0 left-0 right-0 w-full  dark:bg-gradient-to-b dark:from-[#403397] from-70% dark:via-[#403397] dark:to-transparent z-10 transition-all duration-300 ease-in-out">
+      class="fixed top-0 left-0 right-0 w-full  dark:bg-gradient-to-b dark:from-[#454547] from-70% dark:via-[#403397] dark:to-transparent z-10 transition-all duration-300 ease-in-out">
       <div class="container-responsive py-4 flex items-center "
         :class="{ 'justify-between': currentStep !== 'welcome', 'justify-end': currentStep === 'welcome' }">
         <h1 class="text-responsive-lg text-indigo-900 dark:text-indigo-300">
@@ -49,32 +49,24 @@
 
       <!-- Freelancer specific steps -->
       <QuestionnaireStepFreelancerExperienceQuestion v-else-if="currentStep === 'freelancer_experience'"
-        v-model="ensureFreelancerData().experience" @next="nextStep" />
+        v-model="freelancerExperience" @next="nextStep" />
 
       <QuestionnaireStepFreelancerPlatformsQuestion v-else-if="currentStep === 'freelancer_platforms'"
-        v-model="ensureFreelancerData().clientAcquisition" v-model:otherPlatform="ensureFreelancerData().otherPlatform"
-        @next="nextStep" />
-
-      <QuestionnaireStepFreelancerClientsQuestion v-else-if="currentStep === 'freelancer_clients'"
-        v-model="ensureFreelancerData().clientsPerMonth" @next="nextStep" />
+        v-model="freelancerPlatforms" @next="nextStep" />
 
       <!-- Business Owner specific steps -->
-      <QuestionnaireStepBusinessOwnerTypeQuestion v-else-if="currentStep === 'business_type'"
-        v-model="ensureBusinessOwnerData().businessType"
-        v-model:otherBusinessType="ensureBusinessOwnerData().otherBusinessType" @next="nextStep" />
-
-      <QuestionnaireStepBusinessOwnerAgeQuestion v-else-if="currentStep === 'business_age'"
-        v-model="ensureBusinessOwnerData().foundingTime" @next="nextStep" />
 
       <QuestionnaireStepBusinessOwnerSizeQuestion v-else-if="currentStep === 'business_size'"
         v-model="ensureBusinessOwnerData().employeeCount" @next="nextStep" />
 
       <QuestionnaireStepBusinessOwnerAIStrategyQuestion v-else-if="currentStep === 'business_ai_strategy'"
-        :modelValue="ensureBusinessOwnerData().aiStrategy || ''"
-        @update:modelValue="ensureBusinessOwnerData().aiStrategy = $event" @next="nextStep" />
+        :modelValue="ensureBusinessOwnerData().aiStrategy?.value || ''" @update:modelValue="(val: string) => {
+          ensureBusinessOwnerData().aiStrategy = {
+            value: val as AIStrategy['value'],
+            label: ''
+          };
+        }" @next="nextStep" />
 
-      <QuestionnaireStepBusinessOwnerAIPolicyQuestion v-else-if="currentStep === 'business_ai_policy'"
-        v-model="ensureBusinessOwnerData().aiPolicy" @next="nextStep" />
 
       <!-- Employee specific steps -->
       <QuestionnaireStepEmployeeRoleQuestion v-else-if="currentStep === 'employee_role'"
@@ -105,6 +97,19 @@
       <QuestionnaireAIImpactQuestion v-else-if="currentStep === 'ai_impact'" v-model="userData.aiUsage.impact"
         @next="nextStep" />
 
+      <AISavingTime v-else-if="currentStep === 'ai_saving_time'" v-model="userData.aiSavingTime" @next="nextStep" />
+      <AIImprovements v-else-if="currentStep === 'ai_improvements'" v-model="userData.aiImprovements"
+        @next="nextStep" />
+      <AIWorkflows v-else-if="currentStep === 'ai_workflows'" v-model="userData.aiWorkflows" @next="nextStep" />
+
+      <!-- Nuevas preguntas después de ai_impact -->
+      <AIKnowledgeLevel v-else-if="currentStep === 'ai_knowledge_level'" v-model="userData.aiKnowledgeLevel"
+        @next="nextStep" />
+      <MarketingPromptChoice v-else-if="currentStep === 'marketing_prompt_choice'"
+        v-model="userData.marketingPromptChoice" @next="nextStep" />
+      <AITrainingInvestment v-else-if="currentStep === 'ai_training_investment'" v-model="userData.aiTrainingInvestment"
+        @next="nextStep" />
+
       <!-- Stoppers ya no se renderizan aquí porque ahora usan Teleport -->
       <!-- Se muestran con Teleport al final del documento -->
 
@@ -113,8 +118,8 @@
       <QuestionnaireStepEmail v-else-if="currentStep === 'email'" v-model="userData.email" @next="nextStep" />
 
       <!-- Analysis and Results -->
-      <QuestionnaireStepAnalysis v-else-if="currentStep === 'analysis'" :analyzing="analyzing" :error="analysisError"
-        @analyze="handleAnalyzeProfile" @retry="clearAnalysisError" />
+      <QuestionnaireStepAnalysis v-else-if="currentStep === 'analysis'" :analyzing="analyzing"
+        :error="analysisError || undefined" @analyze="handleAnalyzeProfile" @retry="clearAnalysisError" />
     </div>
   </div>
   <!-- Offline Banner is always visible -->
@@ -126,7 +131,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type { UserData, WorkStatus } from "~/types/questionnaire";
+import type { AIStrategy, AIUsageData, Sector, UserData, WorkStatus } from "~/types/questionnaire";
 import { useScoring } from "~/composables/useScoring";
 import { useRecommendations } from "~/composables/useRecommendations";
 import useApiService from "~/composables/useApiService";
@@ -138,29 +143,37 @@ import OfflineBanner from "~/components/ui/OfflineBanner.vue";
 import ColorModeToggle from "~/components/ui/ColorModeToggle.vue";
 import QuestionnaireStopperCard from "~/components/questionnaire/StopperCard.vue";
 import { QuestionnaireStepEmail } from "#components";
+import AIKnowledgeLevel from "~/components/questionnaire/AIKnowledgeLevel.vue";
+import MarketingPromptChoice from "~/components/questionnaire/MarketingPromptChoice.vue";
+import AITrainingInvestment from "~/components/questionnaire/AITrainingInvestment.vue";
+import AISavingTime from "~/components/questionnaire/AISavingTime.vue";
+import AIImprovements from "~/components/questionnaire/AIImprovements.vue";
+import AIWorkflows from "~/components/questionnaire/AIWorkflows.vue";
 
 // Initialize error handling
-const { error: errorHandlingState, setError, clearError } = useErrorHandling();
+const { error: errorHandlingState, setError, clearError, handleFetchError } = useErrorHandling();
 
 // Initialize user data with empty values
 const userData = ref<UserData>({
   name: "",
   email: "",
-  workStatus: '',
+  workStatus: '' as WorkStatus,
   otherWorkStatus: "",
-  sector: '',
+  sector: '' as Sector,
   otherSector: "",
   aiUsage: {
-    frequency: '',
+    frequency: 'never',
     tools: [],
-    versions: '',
+    versions: "unsure",
     purposes: [],
-    feeling: '',
-    experience: '',
-    impact: ''
+    feeling: 'neutral',
+    experience: 'mixed',
+    impact: 'none'
   },
+  aiSavingTime: "none",
+  aiImprovements: "no_change",
+  aiWorkflows: "not_using",
   diagnostic: undefined,
-  referralCode: undefined
 });
 
 // Define the steps for each path
@@ -179,13 +192,9 @@ const stopperSteps = {
 const freelancerSteps = [
   'freelancer_experience',
   'freelancer_platforms',
-  'freelancer_clients'
 ] as const;
 const businessOwnerSteps = [
-  'business_type',
-  'business_age',
   'business_size',
-  'business_ai_strategy',
   'business_ai_policy'
 ] as const;
 const employeeSteps = [
@@ -199,7 +208,13 @@ const aiSteps = [
   'ai_purposes',
   'ai_feeling',
   'ai_experience',
-  'ai_impact'
+  'ai_impact',
+  'ai_saving_time',
+  'ai_improvements',
+  'ai_workflows',
+  'ai_knowledge_level',
+  'marketing_prompt_choice',
+  'ai_training_investment'
 ] as const;
 const finalSteps = ['email', 'analysis', 'results'] as const;
 
@@ -210,9 +225,6 @@ const analysisError = ref<ErrorState | null>(null);
 
 // Variable para controlar la visibilidad del stopper como overlay
 const showStopper = ref(false);
-
-// Variable para rastrear si venimos de un stopper (para el manejo de la transición)
-const comingFromStopper = ref(false);
 
 // Inicializar el stopper data
 const {
@@ -242,7 +254,7 @@ const progress = computed(() => {
     ...finalSteps
   ];
 
-  const currentIndex = allSteps.indexOf(currentStep.value);
+  const currentIndex = allSteps.indexOf(currentStep.value as typeof allSteps[number]);
   return Math.round((currentIndex / (allSteps.length - 1)) * 100);
 });
 
@@ -279,6 +291,11 @@ const clearAnalysisError = () => {
   analysisError.value = null;
 };
 
+const freelancerPlatforms = computed({
+  get: () => ensureFreelancerData().platforms,
+  set: (val) => { ensureFreelancerData().platforms = val; }
+});
+
 // Function to handle profile analysis
 async function handleAnalyzeProfile() {
 
@@ -292,7 +309,24 @@ async function handleAnalyzeProfile() {
 
   // Make sure we have initialized objects before using them
   if (!userData.value) {
-    userData.value = {};
+    userData.value = {
+      name: "",
+      email: "",
+      workStatus: "" as WorkStatus,
+      otherWorkStatus: "",
+      sector: "" as Sector,
+      otherSector: "",
+      aiUsage: {
+        frequency: "never" as const,
+        tools: [],
+        versions: "unsure",
+        purposes: [],
+        feeling: "neutral",
+        experience: "mixed",
+        impact: "none"
+      },
+      diagnostic: undefined,
+    };
   }
 
   try {
@@ -330,7 +364,7 @@ async function handleAnalyzeProfile() {
 
     // Generate strengths based on usage and metrics
     const strengths = analyzeStrengths(
-      userData.value.aiUsage,
+      userData.value.aiUsage as AIUsageData,
       diagnostic.metrics,
       diagnostic.professionalProfile
     );
@@ -338,21 +372,21 @@ async function handleAnalyzeProfile() {
     // Generate recommendations based on profile and sector
     const recommendations = generateRecommendations(
       diagnostic.professionalProfile,
-      userData.value.sector,
+      userData.value.sector as Sector,
       diagnostic.metrics
     );
 
     // Get course recommendations
     const courses = recommendCourses(
       diagnostic.professionalProfile,
-      userData.value.sector,
+      userData.value.sector as Sector,
       diagnostic.metrics
     );
 
     // Get service recommendations
     const services = recommendServices(
       diagnostic.professionalProfile,
-      userData.value.sector
+      userData.value.sector || ('default_sector' as Sector)
     );
 
     // Initialize diagnostic object if it doesn't exist
@@ -375,59 +409,58 @@ async function handleAnalyzeProfile() {
       userData.value.id = result.userId;
     }
 
-    if (result.referralCode) {
-      userData.value.referralCode = result.referralCode;
-    }
 
     // Move to next step
     currentStep.value = getNextStep(currentStep.value);
   } catch (error) {
+
+
+
     console.error("Error en handleAnalyzeProfile:", error);
 
-    if (error && typeof error === "object" && "type" in error) {
-      analysisError.value = error;
-    } else if (handleFetchError && analysisError) {
-      analysisError.value = handleFetchError(
-        error,
-        "Error al procesar tu diagnóstico. Por favor, inténtalo de nuevo.",
-        handleAnalyzeProfile
-      );
-    } else {
-      analysisError.value = {
-        type: "analysis",
-        message: "Hubo un error al analizar tu perfil. Por favor, intenta nuevamente.",
-        retry: handleAnalyzeProfile
-      };
+    // Manejar errores de análisis específicos
+    analysisError.value = handleFetchError(
+      error,
+      "Error al procesar tu diagnóstico. Por favor, inténtalo de nuevo.",
+      handleAnalyzeProfile
+    );
+
+    // Sobreescribir el tipo para errores de análisis
+    if (analysisError.value) {
+      analysisError.value.type = 'analysis';
     }
   } finally {
     analyzing.value = false;
   }
 }
 
+// Computed properties para v-model en freelancer
+const freelancerExperience = computed({
+  get: () => ensureFreelancerData().experience,
+  set: (val) => { ensureFreelancerData().experience = val; }
+});
+
+
 // Ensure freelancer data exists before accessing
 const ensureFreelancerData = () => {
   if (!userData.value.freelancer) {
     userData.value.freelancer = {
-      services: [],
       experience: "less_than_1",
-      clientsPerMonth: "1_2",
       platforms: [],
-      otherPlatform: "",
     };
   }
-  return userData.value.freelancer;
+  return userData.value.freelancer || {};
 };
 
 // Ensure business owner data exists before accessing
 const ensureBusinessOwnerData = () => {
   if (!userData.value.businessOwner) {
     userData.value.businessOwner = {
-      businessType: "",
-      otherBusinessType: "",
-      employeeCount: "",
-      foundingTime: "",
-      aiPolicy: "",
-      aiStrategy: "",
+      employeeCount: "solo",
+      aiStrategy: {
+        value: "none",
+        label: "No considerado"
+      },
     };
   }
   return userData.value.businessOwner;
@@ -505,7 +538,7 @@ function nextStep(data?: any) {
   if (isStopperStep) {
     // Actualizar datos del stopper según el tipo
     if (nextStepValue === stopperSteps.sector) {
-      const stopper = getSectorStopper(userData.value.sector);
+      const stopper = getSectorStopper(userData.value.sector || 'default_sector');
       currentStopperData.value = {
         title: stopper.title,
         message: stopper.message,
@@ -513,7 +546,7 @@ function nextStep(data?: any) {
       };
     }
     else if (nextStepValue === stopperSteps.worker) {
-      const stopper = getWorkerTypeStopper(userData.value.workStatus);
+      const stopper = getWorkerTypeStopper(userData.value.workStatus || ('default_work_status' as WorkStatus));
       currentStopperData.value = {
         title: stopper.title,
         message: stopper.message,
@@ -524,11 +557,11 @@ function nextStep(data?: any) {
       // Determinar nivel de experiencia basado en las respuestas
       let experienceLevel: 'beginner' | 'intermediate' | 'advanced' | 'team' | 'leadership' = 'beginner';
 
-      if (userData.value.aiUsage.frequency === 'daily' || userData.value.aiUsage.tools.length > 2) {
+      if (ensureCommonAIData().frequency === 'daily' || ensureCommonAIData().tools.length > 2) {
         experienceLevel = 'intermediate';
       }
 
-      if (userData.value.aiUsage.versions === 'paid_only' || userData.value.aiUsage.versions === 'mostly_paid') {
+      if (ensureCommonAIData().versions === 'paid_only' || ensureCommonAIData().versions === 'mostly_paid') {
         experienceLevel = 'advanced';
       }
 
@@ -548,7 +581,7 @@ function nextStep(data?: any) {
       };
     }
     else if (nextStepValue === stopperSteps.adoption) {
-      const stopper = getIndustryAdoptionStopper(userData.value.sector);
+      const stopper = getIndustryAdoptionStopper(userData.value.sector || 'default_sector');
       currentStopperData.value = {
         title: stopper.title,
         message: stopper.message,
@@ -571,12 +604,12 @@ function nextStep(data?: any) {
         'other': 'education'
       };
 
-      if (sectorMapping[userData.value.sector]) {
-        mappedSector = sectorMapping[userData.value.sector];
+      if (sectorMapping[userData.value.sector ?? 'default_sector']) {
+        mappedSector = sectorMapping[userData.value.sector ?? 'default_sector'] as Sector | undefined;
         console.log(`Mapeando sector ${userData.value.sector} a ${mappedSector} para casos de éxito`);
       }
 
-      const stopper = getSuccessCase(mappedSector);
+      const stopper = getSuccessCase(mappedSector || 'default_sector');
       console.log('Datos del stopper de caso de éxito para sector', mappedSector, ':', stopper);
 
       currentStopperData.value = {
@@ -610,21 +643,19 @@ function getNextStep(currentStep: string): string {
   // 2) Después del stopper de sector
   if (currentStep === stopperSteps.sector) {
     if (userData.value.workStatus === 'freelancer') return 'freelancer_experience';
-    if (userData.value.workStatus === 'business_owner') return 'business_type';
+    if (userData.value.workStatus === 'business_owner') return 'business_size';
     if (userData.value.workStatus === 'full_time' || userData.value.workStatus === 'part_time') return 'employee_role';
     return 'ai_frequency';
   }
 
   // 3) Ruta freelancer
   if (currentStep === 'freelancer_experience') return 'freelancer_platforms';
-  if (currentStep === 'freelancer_platforms') return 'freelancer_clients';
-  if (currentStep === 'freelancer_clients') return stopperSteps.worker;
+  if (currentStep === 'freelancer_platforms') return stopperSteps.worker;
 
   // 4) Ruta business owner
-  if (currentStep === 'business_type') return 'business_age';
   if (currentStep === 'business_age') return 'business_size';
   if (currentStep === 'business_size') return 'business_ai_strategy';
-  if (currentStep === 'business_ai_strategy') return 'business_ai_policy';
+  if (currentStep === 'business_ai_strategy') return 'ai_frequency';
   if (currentStep === 'business_ai_policy') return stopperSteps.worker;
 
   // 5) Pasos específicos para empleados
@@ -641,15 +672,21 @@ function getNextStep(currentStep: string): string {
   if (currentStep === stopperSteps.experience) return 'ai_purposes';
   if (currentStep === 'ai_purposes') return 'ai_feeling';
   if (currentStep === 'ai_feeling') return 'ai_experience';
-  if (currentStep === 'ai_experience') return stopperSteps.future;
-  if (currentStep === stopperSteps.future) return 'ai_impact';
+  if (currentStep === 'ai_experience') return 'ai_impact';
+  if (currentStep === 'ai_impact') return 'ai_saving_time';
+  if (currentStep === 'ai_saving_time') return 'ai_improvements';
+  if (currentStep === 'ai_improvements') return 'ai_workflows';
+  if (currentStep === 'ai_workflows') return stopperSteps.future;
+  if (currentStep === stopperSteps.future) return 'ai_knowledge_level';
+  if (currentStep === 'ai_knowledge_level') return 'marketing_prompt_choice';
+  if (currentStep === 'marketing_prompt_choice') return 'ai_training_investment';
+  if (currentStep === 'ai_training_investment') return stopperSteps.adoption;
 
   // ← Aquí termina la penúltima pregunta
-  if (currentStep === 'ai_impact') return stopperSteps.adoption;
+  if (currentStep === stopperSteps.adoption) return 'email';
 
   // 8) Transiciones finales:
   //    adoption → email → success → analysis → results
-  if (currentStep === stopperSteps.adoption) return 'email';
   if (currentStep === 'email') return stopperSteps.success;
   if (currentStep === stopperSteps.success) return 'analysis';
   if (currentStep === 'analysis') return 'results';
@@ -659,27 +696,5 @@ function getNextStep(currentStep: string): string {
 }
 
 
-// Function to restart questionnaire
-function restartQuestionnaire() {
-  userData.value = {
-    name: "",
-    email: "",
-    workStatus: 'employee',
-    otherWorkStatus: "",
-    sector: 'tech',
-    otherSector: "",
-    aiUsage: {
-      frequency: 'never',
-      tools: [],
-      versions: 'unsure',
-      purposes: [],
-      feeling: 'neutral',
-      experience: 'no_experience',
-      impact: 'none'
-    },
-    diagnostic: undefined,
-    referralCode: undefined
-  };
-  currentStep.value = 'welcome';
-}
+
 </script>

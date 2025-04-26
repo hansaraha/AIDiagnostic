@@ -36,7 +36,8 @@ export default function useApiService() {
     try {
       checkConnection();
 
-      const webhookUrl = "https://holaamigo.app.n8n.cloud/webhook/user-data";
+      const webhookUrl =
+        "https://holaamigo.app.n8n.cloud/webhook-test/user-data";
 
       const response = await fetch(webhookUrl, {
         method: "POST",
@@ -143,13 +144,6 @@ export default function useApiService() {
       } else if (userData.freelancer?.experience === "4_to_6") {
         strengths.push("Experiencia significativa");
       }
-
-      // Fortalezas según cantidad de clientes
-      if (userData.freelancer?.clientsPerMonth === "more_than_10") {
-        strengths.push("Gestión de múltiples clientes");
-      } else if (userData.freelancer?.clientsPerMonth === "6_10") {
-        strengths.push("Diversificación de cartera");
-      }
     } else if (userData.workStatus === "business_owner") {
       strengths.push("Liderazgo", "Visión estratégica");
 
@@ -158,13 +152,6 @@ export default function useApiService() {
         strengths.push("Gestión de equipos grandes");
       } else if (userData.businessOwner?.employeeCount === "21_50") {
         strengths.push("Escalamiento empresarial");
-      }
-
-      // Fortalezas según tipo de empresa
-      if (userData.businessOwner?.businessType === "tech_startup") {
-        strengths.push("Innovación tecnológica");
-      } else if (userData.businessOwner?.businessType === "creative_agency") {
-        strengths.push("Creatividad aplicada");
       }
     } else {
       strengths.push("Integración organizacional");
@@ -208,14 +195,6 @@ export default function useApiService() {
       }
 
       // Recomendaciones según plataformas
-      if (
-        userData.freelancer?.platforms.includes("upwork") ||
-        userData.freelancer?.platforms.includes("fiverr")
-      ) {
-        recommendations.push(
-          "Destacar tus habilidades con IA en tu perfil de plataformas freelance"
-        );
-      }
     } else if (userData.workStatus === "business_owner") {
       recommendations.push(
         "Implementar soluciones de IA para optimizar procesos operativos",
@@ -233,16 +212,6 @@ export default function useApiService() {
       } else {
         recommendations.push(
           "Desarrollar una estrategia de IA integrada para toda la organización"
-        );
-      }
-
-      // Recomendaciones según política de IA
-      if (
-        userData.businessOwner?.aiPolicy === "not_considered" ||
-        userData.businessOwner?.aiPolicy === "no_plans"
-      ) {
-        recommendations.push(
-          "Establecer políticas claras sobre el uso de IA en tu empresa"
         );
       }
     } else {
