@@ -1,7 +1,5 @@
 <template>
-  <UCard
-    class="max-w-2xl mx-auto w-full bg-gradient-to-r from-indigo-50 to-white"
-  >
+  <UCard class="max-w-2xl mx-auto w-full bg-gradient-to-r from-indigo-50 to-white">
     <template #header>
       <h2 class="text-xl font-bold text-indigo-900">Tu Diagnóstico IA</h2>
     </template>
@@ -33,10 +31,7 @@
       <div class="mb-6">
         <h3 class="font-bold text-lg text-indigo-800 mb-2">Recomendaciones</h3>
         <ul class="list-disc pl-5 space-y-2">
-          <li
-            v-for="(recommendation, index) in diagnostic.recommendations"
-            :key="index"
-          >
+          <li v-for="(recommendation, index) in diagnostic.recommendations" :key="index">
             {{ recommendation }}
           </li>
         </ul>
@@ -50,43 +45,27 @@
         <h4 class="font-medium text-indigo-700 mt-4 mb-2">
           Cursos recomendados
         </h4>
-        <div
-          v-if="diagnostic.courses && diagnostic.courses.length > 0"
-          class="space-y-4"
-        >
-          <div
-            v-for="(course, index) in diagnostic.courses"
-            :key="'course-' + index"
-            class="border border-indigo-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow"
-          >
+        <div v-if="diagnostic.courses && diagnostic.courses.length > 0" class="space-y-4">
+          <div v-for="(course, index) in diagnostic.courses" :key="'course-' + index"
+            class="border border-indigo-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
             <div class="flex justify-between items-start">
               <h5 class="font-semibold text-indigo-900">
                 {{ course.title || "Curso sin título" }}
               </h5>
-              <span
-                class="text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-800"
-              >
+              <span class="text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-800">
                 {{ course.difficulty || "intermedio" }}
               </span>
             </div>
             <p class="text-gray-600 text-sm mt-2">
               {{ course.description || "Sin descripción disponible" }}
             </p>
-            <p v-if="course.reason" class="text-indigo-600 text-sm mt-2 italic">
-              {{ course.reason }}
-            </p>
+
             <div class="flex justify-between items-center mt-3">
               <span class="font-medium text-indigo-600">{{
                 course.price || "Precio no disponible"
               }}</span>
-              <UButton
-                v-if="course.link"
-                size="sm"
-                color="indigo"
-                variant="ghost"
-                :to="course.link"
-                @click="trackClick(course, 'course')"
-              >
+              <UButton v-if="course.link" size="sm" color="indigo" variant="ghost" :to="course.link"
+                @click="trackClick(course, 'course')">
                 Ver curso
               </UButton>
             </div>
@@ -99,46 +78,27 @@
         <h4 class="font-medium text-indigo-700 mt-6 mb-2">
           Servicios de automatización
         </h4>
-        <div
-          v-if="diagnostic.services && diagnostic.services.length > 0"
-          class="space-y-4"
-        >
-          <div
-            v-for="(service, index) in diagnostic.services"
-            :key="'service-' + index"
-            class="border border-indigo-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow"
-          >
+        <div v-if="diagnostic.services && diagnostic.services.length > 0" class="space-y-4">
+          <div v-for="(service, index) in diagnostic.services" :key="'service-' + index"
+            class="border border-indigo-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
             <div class="flex justify-between items-start">
               <h5 class="font-semibold text-indigo-900">
                 {{ service.title || "Servicio sin título" }}
               </h5>
-              <span
-                class="text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-800"
-              >
+              <span class="text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-800">
                 {{ service.type || "automatización" }}
               </span>
             </div>
             <p class="text-gray-600 text-sm mt-2">
               {{ service.description || "Sin descripción disponible" }}
             </p>
-            <p
-              v-if="service.reason"
-              class="text-indigo-600 text-sm mt-2 italic"
-            >
-              {{ service.reason }}
-            </p>
+
             <div class="flex justify-between items-center mt-3">
               <span class="font-medium text-indigo-600">{{
                 service.price || "Precio no disponible"
               }}</span>
-              <UButton
-                v-if="service.link"
-                size="sm"
-                color="indigo"
-                variant="ghost"
-                :to="service.link"
-                @click="trackClick(service, 'service')"
-              >
+              <UButton v-if="service.link" size="sm" color="indigo" variant="ghost" :to="service.link"
+                @click="trackClick(service, 'service')">
                 Ver servicio
               </UButton>
             </div>
@@ -150,12 +110,8 @@
       </div>
 
       <!-- Componente de opciones para compartir -->
-      <ShareOptions
-        v-if="userId && referralCode"
-        :user-id="userId"
-        :referral-code="referralCode"
-        :user-name="userName"
-      />
+      <ShareOptions v-if="userId && referralCode" :user-id="userId" :referral-code="referralCode"
+        :user-name="userName" />
     </div>
     <template #footer>
       <div class="flex justify-center">
@@ -194,12 +150,7 @@ const props = defineProps({
 
 const emit = defineEmits(["restart"]);
 
-// Si userData no está disponible aquí, creamos un objeto de referencia vacío
-const userDataRef = ref({
-  diagnostic: props.diagnostic,
-});
-
-const { trackRecommendationClick } = useDiagnostic(userDataRef);
+const { trackRecommendationClick } = useDiagnostic(ref({} as any));
 
 // Función para registrar clics en recomendaciones
 const trackClick = (item: any, itemType: "course" | "service") => {

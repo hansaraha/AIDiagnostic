@@ -36,7 +36,7 @@
         <UButton size="lg" :ui="{
           rounded: 'rounded-full',
           padding: { lg: 'py-5 px-6' }
-        }" :block="isMobile" @click="handleAnalyze" :loading="analyzing"> <!-- Cambiado isAnalyzing → analyzing -->
+        }" :block="isMobile" @click="handleAnalyze" :loading="analyzing">
           Finalizar
         </UButton>
       </div>
@@ -45,8 +45,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import ErrorMessage from '../ui/ErrorMessage.vue';
 
 const props = defineProps({
   analyzing: {
@@ -68,7 +66,6 @@ const isMobile = breakpoints.smaller('mobile');
 const emit = defineEmits(['analyze', 'clearError']);
 
 const handleAnalyze = () => {
-  console.log("Button clicked: Analyze profile");
   emit('analyze');
 };
 

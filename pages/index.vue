@@ -114,7 +114,12 @@
 
       <!-- Analysis and Results -->
       <QuestionnaireStepAnalysis v-else-if="currentStep === 'analysis'" :analyzing="analyzing"
-        :error="analysisError || undefined" @analyze="handleAnalyzeProfile" @retry="clearAnalysisError" />
+        :error="analysisError || undefined" @analyze="handleAnalyzeProfile" @retry="clearAnalysisError"
+        @restart="restartQuestionnaire" />
+
+      <!-- Resultados -->
+      <StepResults v-else-if="currentStep === 'results'" :diagnostic="userData.diagnostic" :user-name="userData.name"
+        :user-id="userData.id" :referral-code="userData.diagnostic?.referralCode" @restart="restartQuestionnaire" />
     </div>
   </div>
   <!-- Offline Banner is always visible -->
@@ -147,6 +152,7 @@ import AIImprovements from "~/components/questionnaire/AIImprovements.vue";
 import AIWorkflows from "~/components/questionnaire/AIWorkflows.vue";
 import AIObstacles from "~/components/questionnaire/AIObstacles.vue";
 import AISupport from "~/components/questionnaire/AISupport.vue";
+import StepResults from "~/components/questionnaire/StepResults.vue";
 
 // Initialize error handling
 const { error: errorHandlingState, setError, clearError, handleFetchError } = useErrorHandling();
@@ -298,134 +304,22 @@ const freelancerPlatforms = computed({
 
 // Function to handle profile analysis
 async function handleAnalyzeProfile() {
-
-  console.log("Iniciando handleAnalyzeProfile");
-
   analyzing.value = true;
   analysisError.value = null;
 
-  console.log("Starting handleAnalyzeProfile");
-  console.log("userData:", userData);
-
-  // Make sure we have initialized objects before using them
-  if (!userData.value) {
-    userData.value = {
-      name: "",
-      email: "",
-      workStatus: "" as WorkStatus,
-      otherWorkStatus: "",
-      sector: "" as Sector,
-      otherSector: "",
-      aiUsage: {
-        frequency: "never" as const,
-        tools: [],
-        versions: "unsure",
-        purposes: [],
-        feeling: "neutral",
-        experience: "mixed",
-        impact: "none"
-      },
-      diagnostic: undefined,
-    };
-  }
-
   try {
-    // Verificamos conexión a internet
-    if (typeof navigator !== "undefined" && !navigator.onLine) {
-      if (setError) {
-        analysisError.value = setError(
-          "connection",
-          "No hay conexión a internet. Por favor, verifica tu conexión e inténtalo de nuevo.",
-          null,
-          handleAnalyzeProfile
-        );
-        analyzing.value = false;
-        return;
-      }
-    }
+    // ...envío de datos a n8n...
+    await useApiService().submitQuestionnaire(userData.value);
 
-    // Submit questionnaire data
-    console.log("Llamando a submitQuestionnaire");
-    const result = await useApiService().submitQuestionnaire(userData.value);
-
-    console.log("Resultado de submitQuestionnaire:", result);
-
-    // Verificamos que tenemos datos en el resultado
-    if (!result) {
-      throw new Error("No se recibió resultado del diagnóstico");
-    }
-
-    // Generate local diagnostic
-    const { generateDiagnostic } = useScoring();
-    const { analyzeStrengths, generateRecommendations, recommendCourses, recommendServices } = useRecommendations();
-
-    // Calculate base diagnostic with score and profile
-    const diagnostic = generateDiagnostic(userData.value);
-
-    // Generate strengths based on usage and metrics
-    const strengths = analyzeStrengths(
-      userData.value.aiUsage as AIUsageData,
-      diagnostic.metrics,
-      diagnostic.professionalProfile
-    );
-
-    // Generate recommendations based on profile and sector
-    const recommendations = generateRecommendations(
-      diagnostic.professionalProfile,
-      userData.value.sector as Sector,
-      diagnostic.metrics
-    );
-
-    // Get course recommendations
-    const courses = recommendCourses(
-      diagnostic.professionalProfile,
-      userData.value.sector as Sector,
-      diagnostic.metrics
-    );
-
-    // Get service recommendations
-    const services = recommendServices(
-      diagnostic.professionalProfile,
-      userData.value.sector || ('default_sector' as Sector)
-    );
-
-    // Initialize diagnostic object if it doesn't exist
-    if (!userData.value.diagnostic) {
-      userData.value.diagnostic = {};
-    }
-
-    // Update the diagnostic with all recommendations
-    userData.value.diagnostic = {
-      ...diagnostic,
-      ...result,
-      strengths: [...(result.strengths || []), ...strengths.map(s => s.title)],
-      recommendations: [...(result.recommendations || []), ...recommendations.map(r => r.title)],
-      courses: [...(result.courses || []), ...(courses || [])],
-      services: [...(result.services || []), ...(services || [])]
-    };
-
-    // Store user ID and referral code if provided
-    if (result.userId) {
-      userData.value.id = result.userId;
-    }
-
-
-    // Move to next step
-    currentStep.value = getNextStep(currentStep.value);
+    // Limpiar y volver al inicio
+    restartQuestionnaire();
   } catch (error) {
-
-
-
-    console.error("Error en handleAnalyzeProfile:", error);
-
-    // Manejar errores de análisis específicos
+    // ...manejo de errores...
     analysisError.value = handleFetchError(
       error,
       "Error al procesar tu diagnóstico. Por favor, inténtalo de nuevo.",
       handleAnalyzeProfile
     );
-
-    // Sobreescribir el tipo para errores de análisis
     if (analysisError.value) {
       analysisError.value.type = 'analysis';
     }
@@ -690,6 +584,34 @@ function getNextStep(currentStep: string): string {
 
   // Fallback
   return 'results';
+}
+
+function restartQuestionnaire() {
+  // Limpiar todos los datos del usuario
+  userData.value = {
+    name: "",
+    email: "",
+    workStatus: "" as WorkStatus,
+    otherWorkStatus: "",
+    sector: "" as Sector,
+    otherSector: "",
+    aiUsage: {
+      frequency: "never",
+      tools: [],
+      versions: "unsure",
+      purposes: [],
+      feeling: "neutral",
+      experience: "mixed",
+      impact: "none"
+    },
+    aiSavingTime: "none",
+    aiImprovements: "no_change",
+    aiWorkflows: "not_using",
+    aiObjective: "no_clear_goal",
+    diagnostic: undefined,
+  };
+  // Volver al primer paso
+  currentStep.value = "welcome";
 }
 
 </script>
