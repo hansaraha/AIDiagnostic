@@ -133,27 +133,31 @@ export default function useOptionsData() {
     { value: MarketingPromptChoice; label: string }[]
   >([
     {
-      value: "detailed",
+      value:
+        '🎯 "Crea una campaña para un producto de belleza dirigido a mujeres de 30-45 años, enfocada en ingredientes naturales. El tono debe ser sofisticado pero accesible. Incluye: titular principal, 3 puntos clave, y llamado a la acción."',
       label:
         '🎯 "Crea una campaña para un producto de belleza dirigido a mujeres de 30-45 años, enfocada en ingredientes naturales. El tono debe ser sofisticado pero accesible. Incluye: titular principal, 3 puntos clave, y llamado a la acción."',
     },
     {
-      value: "generic",
+      value:
+        '📝 "Necesito una campaña de marketing para un producto de belleza."',
       label:
         '📝 "Necesito una campaña de marketing para un producto de belleza."',
     },
     {
-      value: "natural_ingredients",
+      value:
+        '📋 "Escribe contenido de marketing para una crema facial con ingredientes naturales para mujeres."',
       label:
         '📋 "Escribe contenido de marketing para una crema facial con ingredientes naturales para mujeres."',
     },
     {
-      value: "ad_format",
+      value:
+        '📢 "Hazme una publicidad con título, puntos y CTA para un producto de belleza natural para mujeres de mediana edad."',
       label:
         '📢 "Hazme una publicidad con título, puntos y CTA para un producto de belleza natural para mujeres de mediana edad."',
     },
     {
-      value: "unsure",
+      value: "🤷‍♂️ No estoy seguro / No uso prompts",
       label: "🤷‍♂️ No estoy seguro / No uso prompts",
     },
   ]);

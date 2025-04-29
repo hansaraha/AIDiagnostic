@@ -244,11 +244,11 @@ export type AIKnowledgeLevel =
 
 // Pregunta 14: Prompt preferido para marketing
 export type MarketingPromptChoice =
-  | "detailed"
-  | "generic"
-  | "natural_ingredients"
-  | "ad_format"
-  | "unsure";
+  | '🎯 "Crea una campaña para un producto de belleza dirigido a mujeres de 30-45 años, enfocada en ingredientes naturales. El tono debe ser sofisticado pero accesible. Incluye: titular principal, 3 puntos clave, y llamado a la acción."'
+  | '📝 "Necesito una campaña de marketing para un producto de belleza."'
+  | '📋 "Escribe contenido de marketing para una crema facial con ingredientes naturales para mujeres."'
+  | '📢 "Hazme una publicidad con título, puntos y CTA para un producto de belleza natural para mujeres de mediana edad."'
+  | "🤷‍♂️ No estoy seguro / No uso prompts";
 
 // Pregunta 15: Inversión en formación IA
 export type AITrainingInvestment =

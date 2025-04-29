@@ -183,32 +183,7 @@ Adaptar las métricas y datos del informe según el sector del usuario:
 - **Finanzas**: Priorizar precisión, cumplimiento normativo y reducción de riesgos
 - **Salud**: Destacar precisión diagnóstica, tiempo ahorrado y mejora en atención
 
-## 3. Generación del Diagnóstico Personalizado
-
-### 3.1 Elementos a Personalizar en cada Página
-
-1. **Portada**:
-   - Título adaptado al sector
-   - Estadísticas específicas del sector con fuentes verificadas
-   - Introducción personalizada según rol/tipo de trabajador
-
-2. **Perfil de Adopción**:
-   - Título y descripción del perfil identificado
-   - Métricas calculadas según fórmulas de la sección 2.3
-   - Datos comparativos según sección 2.4
-   - Gráfico radar con las cuatro métricas principales
-
-3. **Oportunidades y Desafíos**:
-   - 3 oportunidades específicas para el perfil y sector
-   - 3 desafíos específicos con posibles soluciones
-   - Benchmarks relevantes del sector con fuentes verificadas
-
-4. **Recomendaciones**:
-   - 3 recomendaciones adaptadas al perfil, sector y necesidades
-   - Beneficios específicos de cada recomendación
-   - Call-to-action personalizado
-
-### 3.2 Estilo y Tono del Diagnóstico
+### 3 Estilo y Tono del Diagnóstico
 
 - **IA-Curioso**: Tono informativo y alentador, enfocado en primeros pasos y beneficios inmediatos
 - **IA-Entusiasta**: Tono motivador y estructurado, orientado a sistematización
