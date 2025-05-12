@@ -1,10 +1,12 @@
 <template>
-  <QuestionCard title="¿Cuál es tu correo electrónico?" buttonText="SIGUIENTE" :disabled="!isValidEmail(email)"
+  <QuestionCard title="¿Cuál es tu correo electrónico?" buttonText="Continuar" :disabled="!isValidEmail(email)"
     @next="handleNext">
-    <UFormGroup label="Email" :error="email && !isValidEmail(email) ? 'Por favor ingresa un email válido' : ''">
+    <UFormGroup :error="email && !isValidEmail(email) ? 'Por favor ingresa un email válido' : ''">
       <UInput v-model="email" type="email" placeholder="tu@email.com" />
     </UFormGroup>
-    <p class="text-sm text-gray-500 mt-2">Te enviaremos tu diagnóstico a esta dirección de correo.</p>
+    <p class="text-sm text-white mt-10 text-center">Enviaremos a este correo el resultado <strong>para saber que tan
+        adelante
+        estás en el uso de la IA en tu sector</strong> y que puedes hacer para sobresalir.</p>
   </QuestionCard>
 </template>
 

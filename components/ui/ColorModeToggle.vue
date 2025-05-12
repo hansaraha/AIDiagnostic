@@ -1,12 +1,7 @@
 <template>
   <ClientOnly>
-    <UButton
-      :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
-      color="gray"
-      variant="ghost"
-      aria-label="Toggle color mode"
-      @click="isDark = !isDark"
-    />
+    <UButton :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'" color="gray" variant="ghost"
+      aria-label="Toggle color mode" @click="isDark = !isDark" />
 
     <template #fallback>
       <div class="w-8 h-8" />
@@ -16,6 +11,10 @@
 
 <script setup lang="ts">
 const colorMode = useColorMode()
+
+if (!colorMode.preference) {
+  colorMode.preference = 'dark'
+}
 
 const isDark = computed({
   get() {

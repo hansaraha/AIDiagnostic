@@ -1,13 +1,12 @@
 <template>
   <!-- Mobile version: no card styling -->
   <div class="mx-auto w-full max-w-2xl md:hidden px-4 py-5">
-    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ title }}</h2>
+    <h2 class="text-xl text-center text-gray-900 dark:text-white mb-10">{{ title }}</h2>
     <p v-if="subtitle" class="text-sm text-gray-500 mb-6">{{ subtitle }}</p>
 
     <div class="text-gray-700 dark:text-gray-300 mb-6">
       <slot></slot>
 
-      <!-- Validation message -->
       <UAlert v-if="showValidationMessage && disabled" color="red" variant="soft"
         icon="i-heroicons-exclamation-triangle" class="mt-4" size="sm">
         Por favor, completa esta pregunta antes de continuar.
@@ -75,7 +74,7 @@ const props = defineProps({
   },
   buttonText: {
     type: String,
-    default: 'SIGUIENTE'
+    default: 'Continuar'
   },
   disabled: {
     type: Boolean,
@@ -88,24 +87,20 @@ const props = defineProps({
 })
 
 const breakpoints = useBreakpoints({
-  mobile: 768, // max width for mobile
+  mobile: 768,
 })
 
 const isMobile = breakpoints.smaller('mobile')
 
 const emit = defineEmits(['next'])
 
-// Estado para mostrar mensaje de validación
 const showValidationMessage = ref(false)
 
-// Manejar clic en el botón de siguiente
 const handleNextClick = () => {
   if (!props.disabled || !props.preventInvalidProgress) {
-    // Si no está deshabilitado o no estamos previniendo el avance estrictamente, permitir avanzar
     showValidationMessage.value = false
     emit('next')
   } else {
-    // Mostrar mensaje de validación si está deshabilitado
     showValidationMessage.value = true
   }
 }

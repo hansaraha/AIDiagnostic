@@ -1,19 +1,11 @@
 <template>
-  <QuestionCard 
-    title="¿En qué sector trabajas principalmente?" 
-    buttonText="SIGUIENTE" 
-    :disabled="!selectedValue" 
-    @next="$emit('next')"
-  >
+  <QuestionCard title="¿En qué sector trabajas principalmente?" buttonText="Continuar" :disabled="!selectedValue"
+    @next="$emit('next')">
     <!-- Options grid with better responsive layout -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-      <div 
-        v-for="option in options" 
-        :key="option.value" 
-         class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"
+      <div v-for="option in options" :key="option.value" class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"
         :class="selectedValue === option.value ? ' bg-[#5D49F6] bg-opacity-10 dark:bg-opacity-20' : 'border-[#5D49F6]'"
-        @click="selectOption(option.value)"
-      >
+        @click="selectOption(option.value)">
         <div class="flex items-center space-x-3 p-3 sm:p-4 w-full">
           <div class="flex-shrink-0 text-2xl">{{ option.emoji }}</div>
           <div class="flex-1">
@@ -25,16 +17,11 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Other sector input with improved styling -->
     <div v-if="selectedValue === 'other'" class="mt-4">
       <UFormGroup label="Especificar otro sector" class="mb-0">
-        <UInput 
-          v-model="otherValue" 
-          placeholder="Describe tu sector" 
-          size="lg"
-          class="w-full"
-        />
+        <UInput v-model="otherValue" placeholder="Describe tu sector" size="lg" class="w-full" />
       </UFormGroup>
     </div>
   </QuestionCard>
@@ -92,24 +79,31 @@ function selectOption(value: string) {
 <style scoped>
 /* Add animation effects */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.grid > div {
+.grid>div {
   animation: fadeIn 0.3s ease-out;
 }
 
 /* Stagger the animations */
-.grid > div:nth-child(2n) {
+.grid>div:nth-child(2n) {
   animation-delay: 0.05s;
 }
 
-.grid > div:nth-child(3n) {
+.grid>div:nth-child(3n) {
   animation-delay: 0.1s;
 }
 
-.grid > div:nth-child(4n) {
+.grid>div:nth-child(4n) {
   animation-delay: 0.15s;
 }
 </style>

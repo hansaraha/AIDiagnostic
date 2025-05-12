@@ -1,10 +1,5 @@
 <template>
-  <QuestionCard 
-    title="¿Cuál es tu nombre?" 
-    buttonText="SIGUIENTE" 
-    :disabled="!name.trim()" 
-    @next="$emit('next')"
-  >
+  <QuestionCard title="¿Cuál es tu nombre?" buttonText="Continuar" :disabled="!name.trim()" @next="$emit('next')">
     <UFormGroup label="Nombre">
       <UInput v-model="name" placeholder="Tu nombre" />
     </UFormGroup>

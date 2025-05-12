@@ -1,6 +1,6 @@
 <template>
-  <QuestionCard title="¿Has invertido en formación sobre Inteligencia Artificial?" buttonText="SIGUIENTE" :disabled="!selected"
-    @next="emitNext">
+  <QuestionCard title="¿Has invertido en formación sobre Inteligencia Artificial?" buttonText="Continuar"
+    :disabled="!selected" @next="emitNext">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
       <div v-for="option in options" :key="option.value" class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"
         :class="selected === option.value ? 'bg-[#5D49F6] bg-opacity-10 dark:bg-opacity-20' : 'border-[#5D49F6]'"

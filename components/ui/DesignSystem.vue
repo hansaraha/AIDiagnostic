@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-sm">
     <h1 class="text-2xl font-bold text-indigo-900 mb-8">AI Diagnostic Design System</h1>
-    
+
     <section class="mb-10">
       <h2 class="text-xl font-bold text-gray-800 mb-4">Typography</h2>
       <div class="space-y-4">
@@ -19,7 +19,7 @@
         </div>
       </div>
     </section>
-    
+
     <section class="mb-10">
       <h2 class="text-xl font-bold text-gray-800 mb-4">Buttons</h2>
       <div class="flex flex-wrap gap-4">
@@ -29,7 +29,7 @@
         <UButton color="indigo" disabled>Disabled Button</UButton>
       </div>
     </section>
-    
+
     <section class="mb-10">
       <h2 class="text-xl font-bold text-gray-800 mb-4">Question Card</h2>
       <UCard>
@@ -51,12 +51,12 @@
         </div>
         <template #footer>
           <div class="flex justify-center">
-            <UButton color="indigo">SIGUIENTE</UButton>
+            <UButton color="indigo">Continuar</UButton>
           </div>
         </template>
       </UCard>
     </section>
-    
+
     <section class="mb-10">
       <h2 class="text-xl font-bold text-gray-800 mb-4">Stopper/Tip Cards</h2>
       <div class="space-y-6">
@@ -64,14 +64,16 @@
           <h3 class="font-bold text-indigo-800 mb-2">¿Sabías que?</h3>
           <p>El 85% de las empresas consideran que la IA será una ventaja competitiva clave en los próximos años.</p>
         </div>
-        
+
         <div class="card-tip">
           <h3 class="font-bold text-yellow-800 mb-2">Consejo</h3>
-          <p>Considera comenzar con proyectos pequeños de IA para ganar experiencia antes de implementaciones más grandes.</p>
+          <p>Considera comenzar con proyectos pequeños de IA para ganar experiencia antes de implementaciones más
+            grandes.
+          </p>
         </div>
       </div>
     </section>
-    
+
     <section class="mb-10">
       <h2 class="text-xl font-bold text-gray-800 mb-4">Email Card</h2>
       <div class="card-email">
@@ -83,7 +85,7 @@
         <UButton color="indigo">ENVIAR</UButton>
       </div>
     </section>
-    
+
     <section>
       <h2 class="text-xl font-bold text-gray-800 mb-4">Results Card</h2>
       <div class="card-result">
@@ -91,7 +93,8 @@
         <div class="mb-4 p-4 bg-indigo-50 rounded-md">
           <p class="font-medium">Puntuación total: 78/100</p>
         </div>
-        <p class="text-gray-700 mb-4">Has demostrado un enfoque estratégico hacia la adopción de IA en tu negocio, identificando oportunidades clave para implementación.</p>
+        <p class="text-gray-700 mb-4">Has demostrado un enfoque estratégico hacia la adopción de IA en tu negocio,
+          identificando oportunidades clave para implementación.</p>
         <div class="border-t border-gray-200 pt-4 mt-4">
           <h4 class="font-bold text-gray-800 mb-2">Recomendaciones principales:</h4>
           <ul class="list-disc pl-5 text-gray-700">

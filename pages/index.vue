@@ -1,44 +1,35 @@
 <template>
   <div class="h-full">
     <OfflineBanner />
-    <!-- Header only appears after the welcome screen -->
-    <div v-if="currentStep !== 'welcome' && currentStep !== 'analysis'" :class="{
+    <div v-if="currentStep !== 'welcome' && currentStep !== 'analysis' && currentStep !== 'email'" :class="{
       'pb-5': currentStep !== 'welcome',
-    }"
-      class="fixed top-0 left-0 right-0 w-full  dark:bg-gradient-to-b dark:from-[#454547] from-70% dark:via-[#403397] dark:to-transparent z-10 transition-all duration-300 ease-in-out">
-      <div class="container-responsive py-4 flex items-center "
-        :class="{ 'justify-between': currentStep !== 'welcome', 'justify-end': currentStep === 'welcome' }">
-        <h1 class="text-responsive-lg text-indigo-900 dark:text-indigo-300">
+    }" class="fixed top-0 left-0 right-0 w-full transition-all duration-300 ease-in-out">
+      <div class="container-responsive py-4 items-center justify-center hidden sm:flex">
+        <h1 class="text-responsive-lg text-indigo-900 dark:text-indigo-300 mr-auto">
           MINDSET AI
         </h1>
-
-        <!-- Color mode toggle and progress info -->
-        <div class="flex items-center gap-4">
-
-
-          <!-- Progress bar (desktop) -->
-          <div class="hidden sm:block w-48 md:w-64 lg:w-80">
-            <QuestionnaireProgressBar :progress="progress" :sectionText="currentSection" />
+        <div class="flex-1 flex justify-center ml-[-7rem]">
+          <div class="w-48 md:w-64 lg:w-80">
+            <QuestionnaireProgressBar :progress="Math.round((currentQuestionStepNumber / totalQuestionSteps) * 100)"
+              :sectionText="currentSection" :currentStepNumber="currentQuestionStepNumber"
+              :totalSteps="totalQuestionSteps" />
           </div>
-
-          <ColorModeToggle />
         </div>
+        <ColorModeToggle class="ml-auto" />
       </div>
-
-      <!-- Mobile progress bar -->
-      <div class="sm:hidden container-responsive pb-2">
-        <QuestionnaireProgressBar :progress="progress" :sectionText="currentSection" />
+      <div class="sm:hidden flex justify-center items-center pb-2 mt-[1rem] gap-5">
+        <QuestionnaireProgressBar :progress="Math.round((currentQuestionStepNumber / totalQuestionSteps) * 100)"
+          :sectionText="currentSection" :currentStepNumber="currentQuestionStepNumber" :totalSteps="totalQuestionSteps"
+          class=" ml-4" />
+        <ColorModeToggle class="mr-4" />
       </div>
     </div>
 
-    <!-- Main content with dynamic padding based on header visibility -->
-    <div class="h-full" :class="currentStep !== 'welcome' && currentStep !== 'analysis' ? 'pt-24' : 'pt-8'">
-
-      <!-- Global error message -->
+    <div class="flex flex-col items-center justify-center min-h-[calc(100vh-140px)] pt-[8rem]"
+      :class="currentStep !== 'welcome' && currentStep !== 'analysis' ? 'pt-24' : 'pt-8'">
       <ErrorMessage v-if="error" :error="error" class="max-w-2xl mx-auto mb-4" @retry="handleErrorRetry"
         @dismiss="handleDismissError" />
 
-      <!-- Component selection based on current step -->
       <QuestionnaireStepWelcome v-if="currentStep === 'welcome'" @next="nextStep" />
 
       <QuestionnaireStepWorkStatus v-else-if="currentStep === 'work_status'" v-model="userData.workStatus"
@@ -100,17 +91,21 @@
       <AITrainingInvestment v-else-if="currentStep === 'ai_training_investment'" v-model="userData.aiTrainingInvestment"
         @next="nextStep" />
 
-      <AIObjective v-else-if="currentStep === 'ai_objective'" v-model="userData.aiObjective" @next="nextStep" />
-
-      <AISavingTime v-else-if="currentStep === 'ai_saving_time'" v-model="userData.aiSavingTime" @next="nextStep" />
-      <AIImprovements v-else-if="currentStep === 'ai_improvements'" v-model="userData.aiImprovements"
+      <QuestionnaireAIObjective v-else-if="currentStep === 'ai_objective'" v-model="userData.aiObjective"
         @next="nextStep" />
-      <AIWorkflows v-else-if="currentStep === 'ai_workflows'" v-model="userData.aiWorkflows" @next="nextStep" />
+
+      <QuestionnaireAISavingTime v-else-if="currentStep === 'ai_saving_time'" v-model="userData.aiSavingTime"
+        @next="nextStep" />
+      <QuestionnaireAIImprovements v-else-if="currentStep === 'ai_improvements'" v-model="userData.aiImprovements"
+        @next="nextStep" />
+      <QuestionnaireAIWorkflows v-else-if="currentStep === 'ai_workflows'" v-model="userData.aiWorkflows"
+        @next="nextStep" />
 
       <QuestionnaireStepEmail v-else-if="currentStep === 'email'" v-model="userData.email" @next="nextStep" />
-      <AIObstacles v-else-if="currentStep === 'ai_obstacles'" v-model="userData.aiObstacle"
+      <QuestionnaireAIObstacles v-else-if="currentStep === 'ai_obstacles'" v-model="userData.aiObstacle"
         v-model:otherValue="userData.aiObstacleOther" @next="nextStep" />
-      <AISupport v-else-if="currentStep === 'ai_support'" v-model="userData.aiSupportNeed" @next="nextStep" />
+      <QuestionnaireAISupport v-else-if="currentStep === 'ai_support'" v-model="userData.aiSupportNeed"
+        @next="nextStep" />
 
       <!-- Analysis and Results -->
       <QuestionnaireStepAnalysis v-else-if="currentStep === 'analysis'" :analyzing="analyzing"
@@ -131,9 +126,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type { AIStrategy, AIUsageData, Sector, UserData, WorkStatus } from "~/types/questionnaire";
-import { useScoring } from "~/composables/useScoring";
-import { useRecommendations } from "~/composables/useRecommendations";
+import type { AIImprovements, AIObjective, AISavingTime, AIUsageData, AIWorkflows, Sector, UserData, WorkStatus } from "~/types/questionnaire";
 import useApiService from "~/composables/useApiService";
 import useErrorHandling from "~/composables/useErrorHandling";
 import useStopperData from "~/composables/useStopperData";
@@ -146,12 +139,6 @@ import { QuestionnaireStepEmail } from "#components";
 import AIKnowledgeLevel from "~/components/questionnaire/AIKnowledgeLevel.vue";
 import MarketingPromptChoice from "~/components/questionnaire/MarketingPromptChoice.vue";
 import AITrainingInvestment from "~/components/questionnaire/AITrainingInvestment.vue";
-import AIObjective from "~/components/questionnaire/AIObjective.vue";
-import AISavingTime from "~/components/questionnaire/AISavingTime.vue";
-import AIImprovements from "~/components/questionnaire/AIImprovements.vue";
-import AIWorkflows from "~/components/questionnaire/AIWorkflows.vue";
-import AIObstacles from "~/components/questionnaire/AIObstacles.vue";
-import AISupport from "~/components/questionnaire/AISupport.vue";
 import StepResults from "~/components/questionnaire/StepResults.vue";
 
 // Initialize error handling
@@ -166,18 +153,18 @@ const userData = ref<UserData>({
   sector: '' as Sector,
   otherSector: "",
   aiUsage: {
-    frequency: 'never',
+    frequency: '' as AIUsageData['frequency'],
     tools: [],
-    versions: "unsure",
+    versions: "" as AIUsageData['versions'],
     purposes: [],
-    feeling: 'neutral',
-    experience: 'mixed',
-    impact: 'none'
+    feeling: '' as AIUsageData['feeling'],
+    experience: '' as AIUsageData['experience'],
+    impact: '' as AIUsageData['impact'],
   },
-  aiSavingTime: "none",
-  aiImprovements: "no_change",
-  aiWorkflows: "not_using",
-  aiObjective: "no_clear_goal",
+  aiSavingTime: "" as AISavingTime,
+  aiImprovements: "" as AIImprovements,
+  aiWorkflows: "" as AIWorkflows,
+  aiObjective: "" as AIObjective,
   diagnostic: undefined,
 });
 
@@ -224,15 +211,75 @@ const aiSteps = [
 ] as const;
 const finalSteps = ['email', 'ai_obstacles', 'ai_support', 'analysis', 'results'] as const;
 
-// Track current step and analysis state
+// Pasos reales del cuestionario (sin nombre, email, análisis, resultados)
+const maxQuestionSteps = [
+  'work_status',
+  'sector',
+  'freelancer_experience',
+  'freelancer_platforms',
+  'business_size',
+  'business_ai_strategy',
+  'employee_role',
+  'employee_ai_policy',
+  'ai_frequency',
+  'ai_tools',
+  'ai_versions',
+  'ai_purposes',
+  'ai_feeling',
+  'ai_experience',
+  'ai_impact',
+  'ai_saving_time',
+  'ai_improvements',
+  'ai_workflows',
+  'ai_knowledge_level',
+  'marketing_prompt_choice',
+  'ai_training_investment',
+  'ai_objective',
+  'ai_obstacles',
+  'ai_support'
+];
+
+const progressSteps = computed(() => {
+  if (!userData.value.workStatus) {
+    return maxQuestionSteps.slice(0, 20);
+  }
+  return [
+    'work_status',
+    'sector',
+    ...(userData.value.workStatus === 'freelancer' ? ['freelancer_experience', 'freelancer_platforms'] : []),
+    ...(userData.value.workStatus === 'business_owner' ? ['business_size', 'business_ai_strategy'] : []),
+    ...(userData.value.workStatus === 'full_time' || userData.value.workStatus === 'part_time' ? ['employee_role', 'employee_ai_policy'] : []),
+    'ai_frequency',
+    'ai_tools',
+    'ai_versions',
+    'ai_purposes',
+    'ai_feeling',
+    'ai_experience',
+    'ai_impact',
+    'ai_saving_time',
+    'ai_improvements',
+    'ai_workflows',
+    'ai_knowledge_level',
+    'marketing_prompt_choice',
+    'ai_training_investment',
+    'ai_objective',
+    'ai_obstacles',
+    'ai_support'
+  ];
+});
+
+const currentQuestionStepNumber = computed(() => {
+  const idx = progressSteps.value.indexOf(currentStep.value);
+  return idx >= 0 ? idx + 1 : 0;
+});
+const totalQuestionSteps = computed(() => progressSteps.value.length);
+
 const currentStep = ref('welcome');
 const analyzing = ref(false);
 const analysisError = ref<ErrorState | null>(null);
 
-// Variable para controlar la visibilidad del stopper como overlay
 const showStopper = ref(false);
 
-// Inicializar el stopper data
 const {
   getSectorStopper,
   getWorkerTypeStopper,
@@ -242,14 +289,12 @@ const {
   getSuccessCase
 } = useStopperData();
 
-// Datos del stopper actual
 const currentStopperData = ref({
   title: '',
   message: '',
   source: ''
 });
 
-// Calculate progress
 const progress = computed(() => {
   const allSteps = [
     ...commonSteps,
@@ -264,7 +309,6 @@ const progress = computed(() => {
   return Math.round((currentIndex / (allSteps.length - 1)) * 100);
 });
 
-// Calculate current section
 const currentSection = computed(() => {
   if (commonSteps.includes(currentStep.value as any)) return 'Información Básica';
   if (freelancerSteps.includes(currentStep.value as any)) return 'Perfil Freelancer';
@@ -274,25 +318,21 @@ const currentSection = computed(() => {
   return '';
 });
 
-// Error global para mostrar en la UI
 const error = computed(() => {
   return analysisError?.value || errorHandlingState.value;
 });
 
-// Function to handle error dismissal
 const handleDismissError = () => {
   clearError();
   clearAnalysisError();
 };
 
-// Function to handle error retry
 const handleErrorRetry = async () => {
   if (error.value?.retry) {
     await error.value.retry();
   }
 };
 
-// Function to clear analysis error
 const clearAnalysisError = () => {
   analysisError.value = null;
 };
@@ -302,13 +342,11 @@ const freelancerPlatforms = computed({
   set: (val) => { ensureFreelancerData().platforms = val; }
 });
 
-// Function to handle profile analysis
 async function handleAnalyzeProfile() {
   analyzing.value = true;
   analysisError.value = null;
 
   try {
-    // ...envío de datos a n8n...
     await useApiService().submitQuestionnaire(userData.value);
 
     // Limpiar y volver al inicio
@@ -361,13 +399,13 @@ const ensureBusinessOwnerData = () => {
 const ensureCommonAIData = () => {
   if (!userData.value.aiUsage) {
     userData.value.aiUsage = {
-      frequency: 'never',
+      frequency: '' as AIUsageData['frequency'],
       tools: [],
-      versions: 'unsure',
+      versions: '' as AIUsageData['versions'],
       purposes: [],
-      feeling: 'neutral',
-      experience: 'mixed',
-      impact: 'none'
+      feeling: '' as AIUsageData['feeling'],
+      experience: '' as AIUsageData['experience'],
+      impact: '' as AIUsageData['impact'],
     };
   }
   return userData.value.aiUsage;
@@ -596,22 +634,38 @@ function restartQuestionnaire() {
     sector: "" as Sector,
     otherSector: "",
     aiUsage: {
-      frequency: "never",
+      frequency: "" as AIUsageData['frequency'],
       tools: [],
-      versions: "unsure",
+      versions: "" as AIUsageData['versions'],
       purposes: [],
-      feeling: "neutral",
-      experience: "mixed",
-      impact: "none"
+      feeling: "" as AIUsageData['feeling'],
+      experience: "" as AIUsageData['experience'],
+      impact: "" as AIUsageData['impact'],
     },
-    aiSavingTime: "none",
-    aiImprovements: "no_change",
-    aiWorkflows: "not_using",
-    aiObjective: "no_clear_goal",
+    aiSavingTime: "" as AISavingTime,
+    aiImprovements: "" as AIImprovements,
+    aiWorkflows: "" as AIWorkflows,
+    aiObjective: "" as AIObjective,
     diagnostic: undefined,
   };
   // Volver al primer paso
   currentStep.value = "welcome";
 }
+
+// Computed properties for step numbers
+const allSteps = computed(() => [
+  ...commonSteps,
+  ...(userData.value.workStatus === 'freelancer' ? freelancerSteps : []),
+  ...(userData.value.workStatus === 'business_owner' ? businessOwnerSteps : []),
+  ...(userData.value.workStatus === 'full_time' || userData.value.workStatus === 'part_time' ? employeeSteps : []),
+  ...aiSteps,
+  ...finalSteps
+]);
+
+const currentStepNumber = computed(() => {
+  const idx = allSteps.value.indexOf(currentStep.value as typeof allSteps.value[number]);
+  return idx >= 0 ? idx + 1 : 1;
+});
+const totalSteps = computed(() => allSteps.value.length);
 
 </script>

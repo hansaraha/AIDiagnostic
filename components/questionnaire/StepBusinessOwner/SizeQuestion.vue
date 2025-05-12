@@ -1,5 +1,5 @@
 <template>
-  <QuestionCard title="¿Cuántos empleados tiene tu empresa?" buttonText="SIGUIENTE" :disabled="!selectedValue"
+  <QuestionCard title="¿Cuántos empleados tiene tu empresa?" buttonText="Continuar" :disabled="!selectedValue"
     @next="$emit('next')">
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">

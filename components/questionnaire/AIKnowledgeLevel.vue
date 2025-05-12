@@ -1,5 +1,5 @@
 <template>
-  <QuestionCard title="¿Cuál es tu nivel de conocimiento en Inteligencia Artificial?" buttonText="SIGUIENTE"
+  <QuestionCard title="¿Cuál es tu nivel de conocimiento en Inteligencia Artificial?" buttonText="Continuar"
     :disabled="!selected" @next="emitNext">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
       <div v-for="option in options" :key="option.value" class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"

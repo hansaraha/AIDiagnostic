@@ -1,5 +1,5 @@
 <template>
-  <div class="step-analysis-container">
+  <div class="step-analysis-container" :style="bgStyle">
     <div
       class="h-1.5 w-11/12 mx-auto rounded-full bg-gradient-to-r from-orange-500 to-pink-500 absolute top-6 left-0 right-0">
     </div>
@@ -14,7 +14,7 @@
       </div>
       <div>
         <div
-          class="rounded-2xl border border-[#5D49F6] bg-[#403397] bg-opacity-20 p-8 flex items-center justify-center">
+          class="rounded-2xl border border-[#5D49F6] bg-black bg-opacity-70 p-8 flex items-center justify-center backdrop-blur-md">
           <div class="text-center space-y-20">
             <div class="space-y-3">
               <div>
@@ -26,8 +26,7 @@
               </div>
             </div>
             <div>
-              <p class="text-xl">Enviaremos al correo que nos proporcionaste el resultado para saber que tan adelante
-                estás en el uso de la IA en tu sector y que puedes hacer para sobresalir.</p>
+              <p class="text-xl">Revisa tu correo electrónico para conocer cómo puedes convertirte en un líder AI</p>
             </div>
           </div>
         </div>
@@ -45,6 +44,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 
 const props = defineProps({
   analyzing: {
@@ -65,12 +65,22 @@ const isMobile = breakpoints.smaller('mobile');
 
 const emit = defineEmits(['analyze', 'clearError']);
 
+const bgStyle = computed(() => {
+  return `
+    background: url('/images/blob-trans.png') ${window.innerWidth < 768 ? 'right top' : 'center -30%'} / cover no-repeat;
+    min-height: 100vh;
+  `
+});
+
 const handleAnalyze = () => {
   emit('analyze');
 };
-
-const handleClearError = () => {
-  console.log("Clear error called");
-  emit('clearError');
-};
 </script>
+
+<style scoped>
+@media (max-width: 767px) {
+  .step-analysis-container {
+    background-position: right top !important;
+  }
+}
+</style>

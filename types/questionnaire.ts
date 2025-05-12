@@ -69,20 +69,24 @@ export interface BusinessOwnerData {
 }
 
 export interface AIUsageData {
-  frequency: "daily" | "weekly" | "monthly" | "rarely" | "never";
+  frequency: AIFrequency;
   tools: AITool[];
   otherTool?: string;
-  versions:
-    | "free_only"
-    | "mostly_free"
-    | "mostly_paid"
-    | "paid_only"
-    | "unsure";
+  versions: AIToolVersion;
   purposes: AIPurpose[];
   feeling: AIFeeling;
   experience: AIExperience;
   impact: AIImpact;
 }
+
+export type AIFrequency = "daily" | "weekly" | "monthly" | "rarely" | "never";
+
+export type AIToolVersion =
+  | "free_only"
+  | "mostly_free"
+  | "mostly_paid"
+  | "paid_only"
+  | "unsure";
 
 export type AITool =
   | "chatgpt"
@@ -125,34 +129,6 @@ export type AIImpact =
   | "moderate"
   | "minimal"
   | "none";
-
-export interface DiagnosticResult {
-  professionalProfile: string;
-  strengths: string[];
-  recommendations: string[];
-  courses: CourseRecommendation[];
-  services: ServiceRecommendation[];
-  userId?: string; // ID del usuario en el sistema
-  referralCode?: string; // Código único para referir a otros usuarios
-}
-
-export interface CourseRecommendation {
-  id?: string; // ID de Airtable para referencia
-  title: string;
-  description: string;
-  difficulty: "principiante" | "intermedio" | "avanzado";
-  price?: string;
-  link?: string;
-}
-
-export interface ServiceRecommendation {
-  id?: string; // ID de Airtable para referencia
-  title: string;
-  description: string;
-  type: "automatización" | "productividad" | "análisis" | "creatividad";
-  price?: string;
-  link?: string;
-}
 
 export interface WorkStatusOption {
   value: "full_time" | "part_time" | "freelancer" | "business_owner" | "other";
@@ -234,7 +210,6 @@ export interface ExperienceOption {
   label: string;
 }
 
-// Pregunta 13: Nivel de conocimiento en IA
 export type AIKnowledgeLevel =
   | "advanced"
   | "intermediate"
@@ -242,7 +217,6 @@ export type AIKnowledgeLevel =
   | "limited"
   | "none";
 
-// Pregunta 14: Prompt preferido para marketing
 export type MarketingPromptChoice =
   | '🎯 "Crea una campaña para un producto de belleza dirigido a mujeres de 30-45 años, enfocada en ingredientes naturales. El tono debe ser sofisticado pero accesible. Incluye: titular principal, 3 puntos clave, y llamado a la acción."'
   | '📝 "Necesito una campaña de marketing para un producto de belleza."'
@@ -250,7 +224,6 @@ export type MarketingPromptChoice =
   | '📢 "Hazme una publicidad con título, puntos y CTA para un producto de belleza natural para mujeres de mediana edad."'
   | "🤷‍♂️ No estoy seguro / No uso prompts";
 
-// Pregunta 15: Inversión en formación IA
 export type AITrainingInvestment =
   | "advanced_training"
   | "basic_courses"
@@ -258,7 +231,6 @@ export type AITrainingInvestment =
   | "not_yet_interested"
   | "not_interested";
 
-// Pregunta 16: ¿Cuánto tiempo te ahorra la IA semanalmente?
 export type AISavingTime =
   | "more_than_10"
   | "5_10"
@@ -266,7 +238,6 @@ export type AISavingTime =
   | "less_than_1"
   | "none";
 
-// Pregunta 17: ¿Has notado mejoras en tu trabajo con IA?
 export type AIImprovements =
   | "significant"
   | "some"
@@ -274,7 +245,6 @@ export type AIImprovements =
   | "worse"
   | "not_using";
 
-// Pregunta 18: ¿Has desarrollado flujos de trabajo con IA?
 export type AIWorkflows =
   | "defined"
   | "in_progress"
@@ -282,7 +252,6 @@ export type AIWorkflows =
   | "improvised"
   | "not_using";
 
-// Pregunta 19: ¿Cuál es tu principal objetivo con la IA?
 export type AIObjective =
   | "productivity"
   | "quality"
@@ -291,7 +260,6 @@ export type AIObjective =
   | "competitiveness"
   | "no_clear_goal";
 
-// Pregunta 21: ¿Qué obstáculos encuentras al utilizar IA en tu trabajo?
 export type AIObstacle =
   | "lack_skills"
   | "cost"
@@ -302,7 +270,6 @@ export type AIObstacle =
   | "no_obstacle"
   | "other";
 
-// Pregunta 22: ¿Qué tipo de apoyo necesitas ahora mismo?
 export type AISupportNeed =
   | "basic_training"
   | "advanced_prompting"

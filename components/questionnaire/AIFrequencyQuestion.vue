@@ -1,19 +1,11 @@
 <template>
-  <QuestionCard 
-    title="¿Con qué frecuencia usas herramientas de IA?" 
-    buttonText="SIGUIENTE" 
-    :disabled="!selectedValue" 
-    @next="$emit('next')"
-  >
+  <QuestionCard title="¿Con qué frecuencia usas herramientas de IA?" buttonText="Continuar" :disabled="!selectedValue"
+    @next="$emit('next')">
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-      <div 
-        v-for="option in options" 
-        :key="option.value" 
-         class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"
+      <div v-for="option in options" :key="option.value" class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"
         :class="selectedValue === option.value ? ' bg-[#5D49F6] bg-opacity-10 dark:bg-opacity-20' : 'border-[#5D49F6]'"
-        @click="selectOption(option.value)"
-      >
+        @click="selectOption(option.value)">
         <div class="flex items-center space-x-3 p-3 sm:p-4 w-full">
           <div class="flex-shrink-0 text-2xl">{{ option.emoji }}</div>
           <div class="flex-1">
@@ -35,6 +27,7 @@ import QuestionCard from '../ui/QuestionCard.vue';
 const props = defineProps({
   modelValue: {
     type: String,
+    default: '',
     required: true
   }
 });

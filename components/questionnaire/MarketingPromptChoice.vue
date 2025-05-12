@@ -1,6 +1,6 @@
 <template>
   <QuestionCard title="¿Qué tipo de prompt usarías para pedirle a la IA una campaña de marketing?"
-    buttonText="SIGUIENTE" :disabled="!selected" @next="emitNext">
+    buttonText="Continuar" :disabled="!selected" @next="emitNext">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
       <div v-for="option in options" :key="option.value" class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"
         :class="selected === option.value ? 'bg-[#5D49F6] bg-opacity-10 dark:bg-opacity-20' : 'border-[#5D49F6]'"

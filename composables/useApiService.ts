@@ -36,7 +36,8 @@ export default function useApiService() {
     try {
       checkConnection();
 
-      const webhookUrl = "https://holaamigo.app.n8n.cloud/webhook-test/user-data";
+      const webhookUrl =
+        "https://holaamigo.app.n8n.cloud/webhook-test/user-data";
 
       const response = await fetch(webhookUrl, {
         method: "POST",
@@ -50,7 +51,6 @@ export default function useApiService() {
         throw new Error(`Error from API: ${response.status} - ${errorText}`);
       }
 
-      // Parse the response
       const result = await response.json();
 
       if (result.responseType === "error") {
@@ -59,17 +59,14 @@ export default function useApiService() {
         );
       }
 
-      // The diagnostic result should be in result.data
       const diagnosticResult = result.data || result;
 
       console.log("Diagnostic result:", diagnosticResult);
 
-      // Return the diagnostic result
       return diagnosticResult;
     } catch (err) {
       console.error("Error in submitQuestionnaire:", err);
 
-      // Handle error with retry function
       const retryFn = async () => {
         await submitQuestionnaire(userData);
       };

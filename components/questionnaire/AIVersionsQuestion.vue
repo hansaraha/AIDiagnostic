@@ -1,5 +1,5 @@
 <template>
-  <QuestionCard title="¿Qué tipo de versiones de IA utilizas principalmente?" buttonText="SIGUIENTE"
+  <QuestionCard title="¿Qué tipo de versiones de IA utilizas principalmente?" buttonText="Continuar"
     :disabled="!selectedValue" @next="$emit('next')">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
       <div v-for="option in options" :key="option.value" class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"

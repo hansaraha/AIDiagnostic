@@ -1,20 +1,11 @@
 <template>
-  <QuestionCard 
-    title="¿Qué herramientas de IA usas?" 
-    subtitle="Selecciona las principales"
-    buttonText="SIGUIENTE" 
-    :disabled="!hasSelection" 
-    @next="$emit('next')"
-  >
+  <QuestionCard title="¿Qué herramientas de IA usas?" subtitle="Selecciona las principales" buttonText="Continuar"
+    :disabled="!hasSelection" @next="$emit('next')">
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-      <div 
-        v-for="option in options" 
-        :key="option.value" 
-         class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"
+      <div v-for="option in options" :key="option.value" class="border rounded-lg p-3 cursor-pointer border-[#5D49F6]"
         :class="selectedTools.includes(option.value) ? ' bg-[#5D49F6] bg-opacity-10 dark:bg-opacity-20' : 'border-[#5D49F6]'"
-        @click="toggleOption(option.value)"
-      >
+        @click="toggleOption(option.value)">
         <div class="flex items-center space-x-3 p-3 sm:p-4 w-full">
           <div class="flex-shrink-0 text-2xl">{{ option.emoji }}</div>
           <div class="flex-1">
@@ -29,12 +20,8 @@
 
     <div v-if="selectedTools.includes('sector_specific')" class="mt-4">
       <UFormGroup label="Especificar herramienta" class="mb-0">
-        <UInput 
-          v-model="otherValue" 
-          placeholder="Describe tu herramienta específica y su uso" 
-          size="lg"
-          class="w-full"
-        />
+        <UInput v-model="otherValue" placeholder="Describe tu herramienta específica y su uso" size="lg"
+          class="w-full" />
       </UFormGroup>
     </div>
   </QuestionCard>
@@ -81,14 +68,14 @@ const hasSelection = computed(() => selectedTools.value.length > 0);
 
 function toggleOption(value: string) {
   const currentSelection = [...selectedTools.value];
-  
+
   // If selecting 'none', clear other selections
   if (value === 'none') {
     selectedTools.value = currentSelection.includes('none') ? [] : ['none'];
     otherValue.value = '';
     return;
   }
-  
+
   // If selecting any other option, remove 'none' if present
   const index = currentSelection.indexOf(value);
   if (index === -1) {
@@ -103,7 +90,7 @@ function toggleOption(value: string) {
       otherValue.value = '';
     }
   }
-  
+
   selectedTools.value = currentSelection;
 }
 </script>
