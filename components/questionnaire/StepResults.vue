@@ -1,5 +1,5 @@
 <template>
-  <UCard class="max-w-2xl mx-auto w-full bg-gradient-to-r from-indigo-50 to-white">
+  <UCard class="max-w-2xl mx-auto w-full bg-gradient-to-r from-indigo-50 to-white overflow-y-auto max-h-[90vh]">
     <template #header>
       <h2 class="text-xl font-bold text-indigo-900">Tu Diagnóstico IA</h2>
     </template>

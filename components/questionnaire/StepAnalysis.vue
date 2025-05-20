@@ -1,5 +1,5 @@
 <template>
-  <div class="step-analysis-container" :style="bgStyle">
+  <div class="step-analysis-container min-h-screen w-full overflow-y-auto" :style="bgStyle">
     <div
       class="h-1.5 w-11/12 mx-auto rounded-full bg-gradient-to-r from-orange-500 to-pink-500 absolute top-6 left-0 right-0">
     </div>
@@ -68,7 +68,6 @@ const emit = defineEmits(['analyze', 'clearError']);
 const bgStyle = computed(() => {
   return `
     background: url('/images/blob-trans.png') ${window.innerWidth < 768 ? 'right top' : 'center -30%'} / cover no-repeat;
-    min-height: 100vh;
   `
 });
 
